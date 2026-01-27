@@ -23,28 +23,6 @@ export function MapLegend() {
           </div>
         </div>
       </div>
-
-      <div className="pt-3 border-t border-border">
-        <div className="font-semibold mb-2">{t.map.legendTitle[language]}</div>
-        <div className="space-y-1.5">
-          <div className="flex items-center gap-2">
-            <span className="w-3 h-3 rounded-full bg-blue-500"></span>
-            <span className="text-xs">{t.map.layerWater[language]}</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <span className="w-3 h-3 rounded-full bg-red-500"></span>
-            <span className="text-xs">{t.map.layerPollution[language]}</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <span className="w-3 h-3 rounded-full bg-yellow-500"></span>
-            <span className="text-xs">{t.map.layerRisk[language]}</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <span className="w-3 h-3 rounded-full bg-slate-500"></span>
-            <span className="text-xs">{t.map.layerInfrastructure[language]}</span>
-          </div>
-        </div>
-      </div>
     </div>
   )
 }

@@ -8,11 +8,8 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useLanguage } from "@/contexts/language-context";
 
 type NavKey =
@@ -37,18 +34,17 @@ const LANG_OPTIONS = [
   {
     code: "en" as const,
     label: "English",
-    icon: <img src="/en.png" alt="English" className="w-6 h-4 rounded-sm" />,
+    icon: <img src="/en.png" alt="English" className="w-7 h-6 object-cover" />,
   },
   {
     code: "ka" as const,
     label: "ქართული",
-    icon: <img src="/ka.png" alt="ქართული" className="w-6 h-4 rounded-sm" />,
+    icon: <img src="/ka.png" alt="ქართული" className="w-7 h-6 object-cover" />,
   },
 ];
 
 export function SiteHeader() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [isLoggedIn, setIsLoggedIn] = useState(false); // Set to true to see logged-in state
   const { language, setLanguage, t } = useLanguage();
   const currentLang =
     LANG_OPTIONS.find((l) => l.code === language) ?? LANG_OPTIONS[0];
@@ -100,6 +96,9 @@ export function SiteHeader() {
                   title={currentLang.label}
                 >
                   <span className="leading-none">{currentLang.icon}</span>
+                  <span className="text-sm font-medium ml-1">
+                    {currentLang.code.toUpperCase() === "EN" ? "EN" : "ქარ"}
+                  </span>
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="min-w-[160px] z-[60]">
@@ -113,6 +112,9 @@ export function SiteHeader() {
                   >
                     <span className="leading-none">{opt.icon}</span>
                     <span className="text-sm whitespace-nowrap">
+                      {opt.code.toUpperCase()}
+                    </span>
+                    <span className="text-sm whitespace-nowrap text-muted-foreground">
                       {opt.label}
                     </span>
                   </DropdownMenuItem>
@@ -120,61 +122,7 @@ export function SiteHeader() {
               </DropdownMenuContent>
             </DropdownMenu>
 
-            {isLoggedIn ? (
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button
-                    variant="ghost"
-                    className="relative h-9 w-9 rounded-full"
-                  >
-                    <Avatar className="h-9 w-9">
-                      <AvatarImage
-                        src="/abstract-geometric-shapes.png"
-                        alt="User"
-                      />
-                      <AvatarFallback>JD</AvatarFallback>
-                    </Avatar>
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent className="w-56" align="end" forceMount>
-                  <DropdownMenuLabel className="font-normal">
-                    <div className="flex flex-col space-y-1">
-                      <p className="text-sm font-medium leading-none">
-                        John Doe
-                      </p>
-                      <p className="text-xs leading-none text-muted-foreground">
-                        john.doe@example.com
-                      </p>
-                    </div>
-                  </DropdownMenuLabel>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem asChild>
-                    <Link href="/profile">{t.auth.profile[language]}</Link>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem asChild>
-                    <Link href="/profile/settings">{t.auth.settings[language]}</Link>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem asChild>
-                    <Link href="/report">{t.auth.submitReport[language]}</Link>
-                  </DropdownMenuItem>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={() => setIsLoggedIn(false)}>
-                    {t.auth.logout[language]}
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            ) : (
-              <div className="hidden lg:flex items-center gap-2">
-                <Link href="/login">
-                  <Button variant="ghost">{t.auth.login[language]}</Button>
-                </Link>
-                <Link href="/signup">
-                  <Button>{t.auth.signup[language]}</Button>
-                </Link>
-              </div>
-            )}
-
-            {/* Mobile Menu Button */}
+            {/* Mobile menu button */}
             <button
               type="button"
               className="lg:hidden inline-flex items-center justify-center rounded-md p-2 text-foreground hover:bg-accent"
@@ -224,54 +172,7 @@ export function SiteHeader() {
               </Link>
             ))}
 
-            {!isLoggedIn && (
-              <>
-                <div className="border-t border-border my-2" />
-                <Link
-                  href="/login"
-                  className="block px-3 py-2 text-base font-medium text-muted-foreground hover:text-foreground hover:bg-accent rounded-md transition-colors"
-                  onClick={() => setMobileMenuOpen(false)}
-                >
-                  {t.auth.login[language]}
-                </Link>
-                <Link
-                  href="/signup"
-                  className="block px-3 py-2 text-base font-medium text-primary hover:text-primary/90 hover:bg-accent rounded-md transition-colors"
-                  onClick={() => setMobileMenuOpen(false)}
-                >
-                  {t.auth.signup[language]}
-                </Link>
-              </>
-            )}
 
-            {isLoggedIn && (
-              <>
-                <div className="border-t border-border my-2" />
-                <Link
-                  href="/profile"
-                  className="block px-3 py-2 text-base font-medium text-muted-foreground hover:text-foreground hover:bg-accent rounded-md transition-colors"
-                  onClick={() => setMobileMenuOpen(false)}
-                >
-                  {t.auth.profile[language]}
-                </Link>
-                <Link
-                  href="/profile/settings"
-                  className="block px-3 py-2 text-base font-medium text-muted-foreground hover:text-foreground hover:bg-accent rounded-md transition-colors"
-                  onClick={() => setMobileMenuOpen(false)}
-                >
-                  {t.auth.settings[language]}
-                </Link>
-                <button
-                  onClick={() => {
-                    setIsLoggedIn(false);
-                    setMobileMenuOpen(false);
-                  }}
-                  className="block w-full text-left px-3 py-2 text-base font-medium text-muted-foreground hover:text-foreground hover:bg-accent rounded-md transition-colors"
-                >
-                  {t.auth.logout[language]}
-                </button>
-              </>
-            )}
           </div>
         </div>
       )}

@@ -1,91 +1,92 @@
 "use client"
+import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { FileText, Download, ExternalLink, Calendar } from "lucide-react"
-import Link from "next/link"
+import { FileText, Download, ExternalLink, Calendar, Search } from "lucide-react"
 import { useLanguage } from "@/contexts/language-context"
 
-const resources = [
-  {
-    title: "Kaparchina River Baseline Study 2024",
-    type: "Technical Report",
-    date: "December 2024",
-    description:
-      "Comprehensive environmental assessment including water quality analysis, biodiversity survey, and climate risk mapping.",
-    pages: 85,
-    category: "Research",
-  },
-  {
-    title: "Climate Resilience Policy Brief: Poti Urban Area",
-    type: "Policy Document",
-    date: "November 2024",
-    description:
-      "Evidence-based recommendations for local authorities on improving drainage infrastructure and flood management.",
-    pages: 24,
-    category: "Policy",
-  },
-  {
-    title: "Community Monitoring Guide: River Observer Training",
-    type: "Training Material",
-    date: "October 2024",
-    description:
-      "Step-by-step guide for citizen observers on water quality monitoring, data collection, and reporting protocols.",
-    pages: 42,
-    category: "Training",
-  },
-  {
-    title: "Pollution Hotspot Analysis Q3 2024",
-    type: "Data Report",
-    date: "September 2024",
-    description:
-      "Quarterly analysis of citizen-reported pollution incidents with geographic mapping and trend analysis.",
-    pages: 18,
-    category: "Research",
-  },
-  {
-    title: "Youth Environmental Leadership Curriculum",
-    type: "Training Material",
-    date: "August 2024",
-    description:
-      "Educational materials for youth programs covering environmental science, civic engagement, and leadership skills.",
-    pages: 56,
-    category: "Training",
-  },
-  {
-    title: "Climate Risk Assessment: Flood Vulnerability",
-    type: "Technical Report",
-    date: "July 2024",
-    description:
-      "Analysis of flood-prone areas in Poti with infrastructure recommendations and risk mitigation strategies.",
-    pages: 67,
-    category: "Research",
-  },
-]
+interface Resource {
+  id: string
+  title: string
+  type: string
+  date: string
+  description: string
+  pages: number | null
+  category: string
+  fileUrl: string | null
+  externalUrl: string | null
+}
 
-const mediaItems = [
-  {
-    title: "Community Cleanup Day Success",
-    outlet: "Local News Georgia",
-    date: "December 15, 2024",
-    type: "Article",
-  },
-  {
-    title: "Interview: Climate Action in Poti",
-    outlet: "Radio Free Europe",
-    date: "November 28, 2024",
-    type: "Interview",
-  },
-  {
-    title: "Citizen Science Making Impact",
-    outlet: "Georgia Today",
-    date: "October 22, 2024",
-    type: "Feature",
-  },
-]
+interface MediaItem {
+  id: string
+  title: string
+  outlet: string
+  date: string
+  type: string
+  url: string | null
+}
 
 export default function FindingsPage() {
   const { t, language } = useLanguage()
+  const [resources, setResources] = useState<Resource[]>([])
+  const [mediaItems, setMediaItems] = useState<MediaItem[]>([])
+  const [loading, setLoading] = useState(true)
+  const [searchQuery, setSearchQuery] = useState("")
+
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        setLoading(true)
+        // Fetch resources
+        const resourcesResponse = await fetch('/api/resources')
+        
+        // Fetch media items
+        const mediaResponse = await fetch('/api/media')
+        
+        if (resourcesResponse.ok) {
+          const resourcesData = await resourcesResponse.json()
+          setResources(resourcesData)
+        }
+        
+        if (mediaResponse.ok) {
+          const mediaData = await mediaResponse.json()
+          setMediaItems(mediaData)
+        }
+      } catch (error) {
+        console.error('Error fetching data:', error)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchData()
+  }, [])
+
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString)
+    return date.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })
+  }
+
+  // Filter resources based on search query
+  const filteredResources = resources.filter(resource => {
+    if (!searchQuery) return true
+    const query = searchQuery.toLowerCase()
+    return (
+      resource.title.toLowerCase().includes(query) ||
+      resource.description.toLowerCase().includes(query) ||
+      resource.category.toLowerCase().includes(query) ||
+      resource.type.toLowerCase().includes(query)
+    )
+  })
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-muted-foreground">Loading findings...</div>
+      </div>
+    )
+  }
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
@@ -99,24 +100,25 @@ export default function FindingsPage() {
       </div>
 
       <div className="container mx-auto px-4 py-12">
-        {/* Filter Tabs (simplified) */}
-        <div className="flex flex-wrap gap-2 mb-8">
-          <Button variant="default">{t.findings.filterAll[language]}</Button>
-          <Button variant="outline" className="bg-transparent">
-            {t.findings.filterResearch[language]}
-          </Button>
-          <Button variant="outline" className="bg-transparent">
-            {t.findings.filterPolicy[language]}
-          </Button>
-          <Button variant="outline" className="bg-transparent">
-            {t.findings.filterTraining[language]}
-          </Button>
+        {/* Search Bar */}
+        <div className="mb-8 max-w-md">
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+            <input
+              type="text"
+              placeholder={language === "en" ? "Search resources..." : "ძიება რესურსებში..."}
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full pl-10 pr-4 py-3 rounded-lg border border-border bg-background focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+            />
+          </div>
         </div>
 
         {/* Resources Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-16">
-          {resources.map((resource, i) => (
-            <Card key={i} className="hover:shadow-lg transition-shadow flex flex-col">
+          {filteredResources.length > 0 ? (
+            filteredResources.map((resource) => (
+            <Card key={resource.id} className="hover:shadow-lg transition-shadow flex flex-col">
               <CardHeader>
                 <div className="w-full h-48 bg-slate-100 rounded-md mb-4 flex items-center justify-center">
                   <FileText className="h-16 w-16 text-slate-400" />
@@ -127,80 +129,49 @@ export default function FindingsPage() {
                   </Badge>
                   <div className="flex items-center gap-1 text-xs text-muted-foreground">
                     <Calendar className="h-3 w-3" />
-                    <span>{resource.date}</span>
+                    <span>{formatDate(resource.date)}</span>
                   </div>
                 </div>
                 <CardTitle className="text-lg text-balance">{resource.title}</CardTitle>
                 <CardDescription className="leading-relaxed">{resource.description}</CardDescription>
               </CardHeader>
               <CardContent className="mt-auto">
-                <div className="text-sm text-muted-foreground mb-4">
-                  {resource.type} • {resource.pages} pages
-                </div>
                 <div className="flex gap-2">
-                  <Button size="sm" className="flex-1">
-                    <Download className="h-4 w-4 mr-1" />
-                    {t.findings.download[language]}
-                  </Button>
-                  <Button size="sm" variant="outline" className="bg-transparent">
-                    <ExternalLink className="h-4 w-4" />
-                  </Button>
+                  {resource.fileUrl && (
+                    <Button size="sm" className="flex-1" asChild>
+                      <a href={resource.fileUrl} download>
+                        <Download className="h-4 w-4 mr-1" />
+                        {t.findings.download[language]}
+                      </a>
+                    </Button>
+                  )}
+                  {resource.externalUrl && (
+                    <Button size="sm" variant="outline" className="bg-transparent" asChild>
+                      <a href={resource.externalUrl} target="_blank" rel="noopener noreferrer">
+                        <ExternalLink className="h-4 w-4" />
+                      </a>
+                    </Button>
+                  )}
+                  {!resource.fileUrl && !resource.externalUrl && (
+                    <Button size="sm" className="flex-1" disabled>
+                      <Download className="h-4 w-4 mr-1" />
+                      {t.findings.download[language]}
+                    </Button>
+                  )}
                 </div>
               </CardContent>
             </Card>
-          ))}
-        </div>
-
-        {/* Media Coverage Section */}
-        <div className="border-t border-border pt-12">
-          <h2 className="text-2xl md:text-3xl font-bold mb-8">{t.findings.newsMedia[language]}</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {mediaItems.map((item, i) => (
-              <Card key={i}>
-                <CardHeader>
-                  <Badge variant="secondary" className="w-fit mb-2">
-                    {item.type}
-                  </Badge>
-                  <CardTitle className="text-lg text-balance">{item.title}</CardTitle>
-                  <CardDescription>
-                    <div className="flex flex-col gap-1 mt-2">
-                      <span className="font-medium">{item.outlet}</span>
-                      <span className="text-xs">{item.date}</span>
-                    </div>
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <Button asChild variant="outline" size="sm" className="w-full bg-transparent">
-                    <Link href="#">
-                      {t.findings.readArticle[language]}
-                      <ExternalLink className="h-3 w-3 ml-1" />
-                    </Link>
-                  </Button>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </div>
-
-        {/* Subscribe CTA */}
-        <div className="mt-16">
-          <Card className="bg-muted/50">
-            <CardContent className="py-12 text-center">
-              <h3 className="text-2xl font-bold mb-4">{t.findings.stayUpdated[language]}</h3>
-              <p className="text-muted-foreground mb-6 max-w-2xl mx-auto">
-                {t.findings.subscribeBody[language]}
+          ))
+          ) : (
+            <div className="col-span-full text-center py-16">
+              <FileText className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
+              <p className="text-lg text-muted-foreground">
+                {language === "en" ? "No resources found matching your search." : "თქვენს ძიებას არ შეესაბამება არცერთი რესურსი."}
               </p>
-              <div className="flex flex-col sm:flex-row gap-4 justify-center max-w-md mx-auto">
-                <input
-                  type="email"
-                  placeholder={t.findings.emailPlaceholder[language]}
-                  className="flex-1 px-4 py-2 rounded-md border border-border bg-background"
-                />
-                <Button>{t.common.subscribe[language]}</Button>
-              </div>
-            </CardContent>
-          </Card>
+            </div>
+          )}
         </div>
+
       </div>
     </div>
   )

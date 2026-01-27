@@ -20,6 +20,7 @@ interface ReportData {
   issueType: string
   description: string
   location: string
+  locationDesc: string
   lat: number
   lng: number
   photos?: File[]
@@ -40,6 +41,7 @@ export function MapClickReportModal({
     issueType: "",
     description: "",
     location: "",
+    locationDesc: "",
     lat: coordinates?.lat || 0,
     lng: coordinates?.lng || 0,
     reporterName: "",
@@ -55,6 +57,7 @@ export function MapClickReportModal({
         lat: coordinates.lat,
         lng: coordinates.lng,
         location: `${coordinates.lat.toFixed(6)}, ${coordinates.lng.toFixed(6)}`,
+        locationDesc: `${coordinates.lat.toFixed(6)}, ${coordinates.lng.toFixed(6)}`,
       }))
     }
   }, [coordinates])
@@ -73,6 +76,7 @@ export function MapClickReportModal({
         issueType: "",
         description: "",
         location: "",
+        locationDesc: "",
         lat: coordinates?.lat || 0,
         lng: coordinates?.lng || 0,
         reporterName: "",
@@ -134,7 +138,7 @@ export function MapClickReportModal({
                 placeholder={t.report.locationPlaceholder[language]}
                 required
                 value={formData.location}
-                onChange={(e) => setFormData({ ...formData, location: e.target.value })}
+                onChange={(e) => setFormData({ ...formData, location: e.target.value, locationDesc: e.target.value })}
               />
             </div>
 

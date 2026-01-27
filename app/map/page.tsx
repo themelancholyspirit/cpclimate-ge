@@ -1,26 +1,73 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { MapComponent } from "@/components/map-component"
-import { MapLegend } from "@/components/map-legend"
-import { MapDataModal } from "@/components/map-data-modal"
-import { AlertCircle, Layers } from "lucide-react"
-import Link from "next/link"
-import { useLanguage } from "@/contexts/language-context"
+import { useState, useEffect } from "react";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { MapComponent } from "@/components/map-component";
+import { MapLegend } from "@/components/map-legend";
+import { MapInstructions } from "@/components/map-instructions";
+import { MapDataModal } from "@/components/map-data-modal";
+import { AlertCircle, Layers } from "lucide-react";
+import Link from "next/link";
+import { useLanguage } from "@/contexts/language-context";
 
 export default function MapPage() {
-  const [activeLayer, setActiveLayer] = useState<string>("all")
-  const [selectedPoint, setSelectedPoint] = useState<any>(null)
-  const { t, language } = useLanguage()
+  const [activeLayer, setActiveLayer] = useState<string>("all");
+  const [selectedPoint, setSelectedPoint] = useState<any>(null);
+  const [stats, setStats] = useState({
+    normal: 0,
+    warning: 0,
+    problem: 0,
+    total: 0,
+  });
+  const { t, language } = useLanguage();
+
+  // Fetch stats from API
+  useEffect(() => {
+    async function fetchStats() {
+      try {
+        const response = await fetch("/api/map-points");
+        if (response.ok) {
+          const points = await response.json();
+          const normal = points.filter(
+            (p: any) => p.status === "normal",
+          ).length;
+          const warning = points.filter(
+            (p: any) => p.status === "warning",
+          ).length;
+          const problem = points.filter(
+            (p: any) => p.status === "problem",
+          ).length;
+
+          setStats({
+            normal,
+            warning,
+            problem,
+            total: points.length,
+          });
+        }
+      } catch (error) {
+        console.error("Error fetching stats:", error);
+      }
+    }
+
+    fetchStats();
+  }, []);
 
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
       <div className="border-b border-border bg-muted/30">
         <div className="container mx-auto px-4 py-8">
-          <h1 className="text-3xl md:text-4xl font-bold mb-4">{t.map.title[language]}</h1>
+          <h1 className="text-3xl md:text-4xl font-bold mb-4">
+            {t.map.title[language]}
+          </h1>
           {/* Optional: add a map description key in translations if needed */}
         </div>
       </div>
@@ -35,7 +82,9 @@ export default function MapPage() {
                   <Layers className="h-5 w-5" />
                   <CardTitle>{t.map.layersCardTitle[language]}</CardTitle>
                 </div>
-                <CardDescription>{t.map.layersCardDesc[language]}</CardDescription>
+                <CardDescription>
+                  {t.map.layersCardDesc[language]}
+                </CardDescription>
               </CardHeader>
               <CardContent className="space-y-2">
                 <Button
@@ -70,7 +119,9 @@ export default function MapPage() {
                   {t.map.layerRisk[language]}
                 </Button>
                 <Button
-                  variant={activeLayer === "infrastructure" ? "default" : "outline"}
+                  variant={
+                    activeLayer === "infrastructure" ? "default" : "outline"
+                  }
                   className="w-full justify-start"
                   onClick={() => setActiveLayer("infrastructure")}
                 >
@@ -78,29 +129,19 @@ export default function MapPage() {
                   {t.map.layerInfrastructure[language]}
                 </Button>
               </CardContent>
-            </Card>
 
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-sm">Legend</CardTitle>
-              </CardHeader>
               <CardContent>
                 <MapLegend />
               </CardContent>
             </Card>
 
-            <Card className="border-blue-200 bg-blue-50/50">
+            {/* Instructions Card */}
+            <Card>
               <CardHeader>
-                <CardTitle className="text-sm flex items-center gap-2">
-                  <AlertCircle className="h-4 w-4 text-blue-600" />
-                  {t.map.reportIssueTitle[language]}
-                </CardTitle>
+                <CardTitle>{t.map.instructionsTitle[language]}</CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-sm text-muted-foreground mb-3">{t.map.reportIssueHint[language]}</p>
-                <Button asChild className="w-full" size="sm">
-                  <Link href="/report">{t.auth.submitReport[language]}</Link>
-                </Button>
+                <MapInstructions />
               </CardContent>
             </Card>
           </div>
@@ -109,7 +150,10 @@ export default function MapPage() {
           <div className="lg:col-span-3">
             <Card className="overflow-hidden">
               <div className="relative h-[600px] lg:h-[700px]">
-                <MapComponent activeLayer={activeLayer} onPointClick={setSelectedPoint} />
+                <MapComponent
+                  activeLayer={activeLayer}
+                  onPointClick={setSelectedPoint}
+                />
               </div>
             </Card>
 
@@ -118,32 +162,46 @@ export default function MapPage() {
               <Card>
                 <CardContent className="pt-6">
                   <div className="text-center">
-                    <div className="text-2xl font-bold text-green-600">5</div>
-                    <div className="text-xs text-muted-foreground mt-1">{t.map.quickStatsNormal[language]}</div>
+                    <div className="text-2xl font-bold text-green-600">
+                      {stats.normal}
+                    </div>
+                    <div className="text-xs text-muted-foreground mt-1">
+                      {t.map.quickStatsNormal[language]}
+                    </div>
                   </div>
                 </CardContent>
               </Card>
               <Card>
                 <CardContent className="pt-6">
                   <div className="text-center">
-                    <div className="text-2xl font-bold text-yellow-600">3</div>
-                    <div className="text-xs text-muted-foreground mt-1">{t.map.quickStatsRisk[language]}</div>
+                    <div className="text-2xl font-bold text-yellow-600">
+                      {stats.warning}
+                    </div>
+                    <div className="text-xs text-muted-foreground mt-1">
+                      {t.map.quickStatsRisk[language]}
+                    </div>
                   </div>
                 </CardContent>
               </Card>
               <Card>
                 <CardContent className="pt-6">
                   <div className="text-center">
-                    <div className="text-2xl font-bold text-red-600">2</div>
-                    <div className="text-xs text-muted-foreground mt-1">{t.map.quickStatsProblem[language]}</div>
+                    <div className="text-2xl font-bold text-red-600">
+                      {stats.problem}
+                    </div>
+                    <div className="text-xs text-muted-foreground mt-1">
+                      {t.map.quickStatsProblem[language]}
+                    </div>
                   </div>
                 </CardContent>
               </Card>
               <Card>
                 <CardContent className="pt-6">
                   <div className="text-center">
-                    <div className="text-2xl font-bold">127</div>
-                    <div className="text-xs text-muted-foreground mt-1">{t.map.quickStatsReports[language]}</div>
+                    <div className="text-2xl font-bold">{stats.total}</div>
+                    <div className="text-xs text-muted-foreground mt-1">
+                      {t.map.quickStatsReports[language]}
+                    </div>
                   </div>
                 </CardContent>
               </Card>
@@ -153,7 +211,12 @@ export default function MapPage() {
       </div>
 
       {/* Modal for point details */}
-      {selectedPoint && <MapDataModal point={selectedPoint} onClose={() => setSelectedPoint(null)} />}
+      {selectedPoint && (
+        <MapDataModal
+          point={selectedPoint}
+          onClose={() => setSelectedPoint(null)}
+        />
+      )}
     </div>
-  )
+  );
 }

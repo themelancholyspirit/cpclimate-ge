@@ -9,8 +9,8 @@ import {
 } from "@react-google-maps/api";
 import { Badge } from "@/components/ui/badge";
 import { MapClickReportModal } from "./map-click-report-modal";
-import { Button } from "@/components/ui/button"; // Add this
-import { useLanguage } from "@/contexts/language-context"; // NEW
+import { Button } from "@/components/ui/button";
+import { useLanguage } from "@/contexts/language-context";
 
 interface MapPoint {
   id: string;
@@ -22,84 +22,47 @@ interface MapPoint {
   description: string;
 }
 
-const mockMapPoints: MapPoint[] = [
-  {
-    id: "w1",
-    type: "water",
-    lat: 42.15,
-    lng: 41.67,
-    status: "normal",
-    title: "Sampling Point A",
-    description: "Water quality: Normal",
-  },
-  {
-    id: "w2",
-    type: "water",
-    lat: 42.16,
-    lng: 41.68,
-    status: "warning",
-    title: "Sampling Point B",
-    description: "Elevated turbidity detected",
-  },
-  {
-    id: "w3",
-    type: "water",
-    lat: 42.14,
-    lng: 41.66,
-    status: "problem",
-    title: "Sampling Point C",
-    description: "High pollution levels",
-  },
-  {
-    id: "p1",
-    type: "pollution",
-    lat: 42.155,
-    lng: 41.675,
-    status: "problem",
-    title: "Waste Accumulation",
-    description: "Citizen report: Illegal dumping",
-  },
-  {
-    id: "r1",
-    type: "risk",
-    lat: 42.145,
-    lng: 41.665,
-    status: "warning",
-    title: "Flood Risk Zone",
-    description: "High risk during heavy rainfall",
-  },
-  {
-    id: "i1",
-    type: "infrastructure",
-    lat: 42.158,
-    lng: 41.672,
-    status: "problem",
-    title: "Blocked Drainage",
-    description: "Requires immediate maintenance",
-  },
-];
-
 interface MapComponentProps {
   activeLayer: string;
   onPointClick: (point: MapPoint | null) => void;
 }
 
+const riverOnlyStyle = [
+  {
+    featureType: "poi",
+    stylers: [{ visibility: "off" }],
+  },
+  {
+    featureType: "transit",
+    stylers: [{ visibility: "off" }],
+  },
+  {
+    featureType: "road",
+    stylers: [{ visibility: "off" }],
+  },
+  {
+    featureType: "administrative",
+    stylers: [{ visibility: "off" }],
+  },
+];
+
 // Define the bounds for Kaparchina River area, Poti, Georgia
 // Users will not be able to pan outside this area
+
 const mapRestriction = {
   latLngBounds: {
-    north: 42.17, // Northern boundary (covers river's full length)
-    south: 42.1, // Southern boundary
-    east: 41.72, // Eastern boundary
-    west: 41.65, // Western boundary
+    east: 41.73217031885423,
+    north: 42.14222187777025,
+    south: 42.11994330325824,
+    west: 41.684105133307355,
   },
-  strictBounds: true, // Strictly enforce bounds - users cannot pan outside
+  strictBounds: false,
 };
-
+ 
 // Default center for Kaparchina River, Poti, Georgia
 const defaultCenter = {
-  lat: 42.137, // Center based on Google Maps coordinates
-  lng: 41.688, // Center based on Google Maps coordinates
+  lat: 42.1589, // Center based on Google Maps coordinates
+  lng: 41.6712, // Center based on Google Maps coordinates
 };
 // Map container styles
 const mapContainerStyle = {
@@ -110,7 +73,8 @@ const mapContainerStyle = {
 export function MapComponent({ activeLayer, onPointClick }: MapComponentProps) {
   const [selectedPoint, setSelectedPoint] = useState<MapPoint | null>(null);
   const [map, setMap] = useState<google.maps.Map | null>(null);
-  const [componentTimesCalled, setComponentTimesCalled] = useState(0);
+  const [mapPoints, setMapPoints] = useState<MapPoint[]>([]);
+  const [loading, setLoading] = useState(true);
 
   const [clickedLocation, setClickedLocation] = useState<{
     lat: number;
@@ -119,24 +83,65 @@ export function MapComponent({ activeLayer, onPointClick }: MapComponentProps) {
   const [showReportModal, setShowReportModal] = useState(false);
   const { t, language } = useLanguage();
 
+  // Fetch map points from API
   useEffect(() => {
-    console.log("Map component mounted");
-  }, []); // run once per mount
+    async function fetchMapPoints() {
+      try {
+        setLoading(true);
+        const url =
+          activeLayer === "all"
+            ? "/api/map-points"
+            : `/api/map-points?type=${activeLayer}`;
+        const response = await fetch(url);
+        if (response.ok) {
+          const data = await response.json();
+          setMapPoints(data);
+        }
+      } catch (error) {
+        console.error("Error fetching map points:", error);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchMapPoints();
+  }, [activeLayer]);
 
   const handleMapClick = (e: google.maps.MapMouseEvent) => {
     if (e.latLng) {
       const lat = e.latLng.lat();
       const lng = e.latLng.lng();
       setClickedLocation({ lat, lng });
+
+      console.log(lat, lng);
       // Don't open modal immediately - just show the marker
       // setShowReportModal(true); // Remove this line
     }
   };
 
-  const handleReportSubmit = (data: any) => {
-    console.log("Report submitted:", data);
-    // TODO: Send to your backend API
-    // You can add a toast notification here
+  const handleReportSubmit = async (data: any) => {
+    try {
+      const response = await fetch("/api/reports", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          ...data,
+          lat: clickedLocation?.lat,
+          lng: clickedLocation?.lng,
+        }),
+      });
+
+      if (response.ok) {
+        console.log("Report submitted successfully");
+        // Optionally refresh map points to show new report
+        setClickedLocation(null);
+        setShowReportModal(false);
+      }
+    } catch (error) {
+      console.error("Error submitting report:", error);
+    }
   };
 
   const getRedMarkerIcon = useCallback((): google.maps.Symbol | undefined => {
@@ -155,10 +160,7 @@ export function MapComponent({ activeLayer, onPointClick }: MapComponentProps) {
     };
   }, []);
 
-  const filteredPoints =
-    activeLayer === "all"
-      ? mockMapPoints
-      : mockMapPoints.filter((p) => p.type === activeLayer);
+  const filteredPoints = mapPoints;
 
   // Get marker icon based on status
   // Callback when map loads
@@ -183,7 +185,7 @@ export function MapComponent({ activeLayer, onPointClick }: MapComponentProps) {
         }
       }
     },
-    [filteredPoints]
+    [filteredPoints],
   );
 
   // Callback when map unmounts
@@ -200,16 +202,22 @@ export function MapComponent({ activeLayer, onPointClick }: MapComponentProps) {
   // Map options with restriction
   const mapOptions = useMemo<google.maps.MapOptions>(
     () => ({
-      disableDefaultUI: false,
-      zoomControl: true,
+      disableDefaultUI: true,
+      zoomControl: false,
       streetViewControl: false,
       mapTypeControl: false,
-      fullscreenControl: true,
+      fullscreenControl: false,
       restriction: mapRestriction, // Restrict map to specific area
-      minZoom: 12, // Minimum zoom level
-      maxZoom: 18, // Maximum zoom level
+      minZoom: 13, // Lock zoom at 13
+      maxZoom: 13, // Lock zoom at 13
+      mapTypeId: "terrain",
+      draggable: true,
+      scrollwheel: false, // Fixed typo: was "scroolWheel"
+      gestureHandling: "none",
+      disableDoubleClickZoom: true, // Should be true
+      styles: riverOnlyStyle,
     }),
-    []
+    [],
   );
 
   const getMarkerIcon = useCallback(
@@ -223,8 +231,8 @@ export function MapComponent({ activeLayer, onPointClick }: MapComponentProps) {
         status === "normal"
           ? "#22c55e" // green
           : status === "warning"
-          ? "#eab308" // yellow
-          : "#ef4444"; // red
+            ? "#eab308" // yellow
+            : "#ef4444"; // red
 
       return {
         path: google.maps.SymbolPath.CIRCLE,
@@ -235,7 +243,7 @@ export function MapComponent({ activeLayer, onPointClick }: MapComponentProps) {
         strokeWeight: 2,
       };
     },
-    []
+    [],
   );
   // Get API key from environment variable
   const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
@@ -270,6 +278,10 @@ export function MapComponent({ activeLayer, onPointClick }: MapComponentProps) {
 
   if (!isLoaded) {
     return <div className="p-4 text-muted-foreground">Loading map…</div>;
+  }
+
+  if (loading) {
+    return <div className="p-4 text-muted-foreground">Loading map data…</div>;
   }
 
   return (

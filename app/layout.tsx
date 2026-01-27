@@ -44,7 +44,7 @@ export default function RootLayout({
       <body className={`font-sans antialiased`}>
        <LanguageProvider>
         <SiteHeader />
-        <main className="min-h-screen">{children}</main>
+        <main>{children}</main>
         <SiteFooter />
         <Analytics />
         </LanguageProvider>
