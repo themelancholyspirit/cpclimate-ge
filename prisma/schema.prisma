@@ -127,7 +127,7 @@ model Resource {
   description String
   pages       Int?
   category    ResourceCategory // Research, Policy, Training
-  fileUrl     String?
+  file        String?          @db.Uuid // File ID from directus_files
   externalUrl String?
   createdAt   DateTime         @default(now())
   updatedAt   DateTime         @updatedAt

@@ -17,7 +17,15 @@ export async function GET(request: NextRequest) {
       orderBy: { date: "desc" },
     });
 
-    return NextResponse.json(resources);
+    // Transform file (UUID) to full Directus file URL
+    const transformedResources = resources.map((resource) => ({
+      ...resource,
+      fileUrl: resource.file
+        ? `${process.env.NEXT_PUBLIC_DIRECTUS_URL}/assets/${resource.file}`
+        : null,
+    }));
+
+    return NextResponse.json(transformedResources);
   } catch (error) {
     console.error("Error fetching resources:", error);
     return NextResponse.json(
@@ -38,7 +46,7 @@ export async function POST(request: NextRequest) {
       description,
       pages,
       category,
-      fileUrl,
+      file,
       externalUrl,
     } = body;
 
@@ -57,7 +65,7 @@ export async function POST(request: NextRequest) {
         description,
         pages: pages ? parseInt(pages) : null,
         category,
-        fileUrl,
+        file,
         externalUrl,
       },
     });
