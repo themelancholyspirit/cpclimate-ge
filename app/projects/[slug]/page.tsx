@@ -197,7 +197,7 @@ export default function ProjectDetailPage() {
                   return (
                     <div
                       key={index}
-                      className="relative w-full h-[400px] rounded-lg overflow-hidden my-8"
+                      className="relative w-full h-[400px] rounded-lg overflow-hidden"
                     >
                       <Image
                         src={section.content}
@@ -230,7 +230,7 @@ export default function ProjectDetailPage() {
                     return (
                       <div
                         key={index}
-                        className="relative w-full h-[400px] rounded-lg overflow-hidden my-8"
+                        className="relative w-full h-[400px] rounded-lg overflow-hidden"
                       >
                         <Image
                           src={section.content}
@@ -244,11 +244,11 @@ export default function ProjectDetailPage() {
                     // Check for headings and format accordingly
                     const paragraphs = section.content.split("\n\n");
                     return (
-                      <div key={index} className="prose prose-slate dark:prose-invert max-w-none break-words overflow-hidden">
+                      <div key={index} className="space-y-6">
                         {paragraphs.map((paragraph, pIndex) => {
                           if (paragraph.startsWith("## ")) {
                             return (
-                              <h2 key={pIndex} className="text-2xl font-bold mt-12 mb-4 break-words">
+                              <h2 key={pIndex} className="text-2xl font-bold break-words">
                                 {paragraph.replace("## ", "")}
                               </h2>
                             );
@@ -256,7 +256,7 @@ export default function ProjectDetailPage() {
                           return (
                             <p
                               key={pIndex}
-                              className="text-lg leading-relaxed text-muted-foreground mb-6 break-words whitespace-pre-wrap"
+                              className="text-lg leading-relaxed text-muted-foreground break-words whitespace-pre-wrap"
                             >
                               {paragraph}
                             </p>
