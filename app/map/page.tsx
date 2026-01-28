@@ -13,13 +13,16 @@ import { MapComponent } from "@/components/map-component";
 import { MapLegend } from "@/components/map-legend";
 import { MapInstructions } from "@/components/map-instructions";
 import { MapDataModal } from "@/components/map-data-modal";
-import { AlertCircle, Layers } from "lucide-react";
+import { MapClickReportModal } from "@/components/map-click-report-modal";
+import { AlertCircle, Layers, FileWarning } from "lucide-react";
 import Link from "next/link";
 import { useLanguage } from "@/contexts/language-context";
 
 export default function MapPage() {
   const [activeLayer, setActiveLayer] = useState<string>("all");
   const [selectedPoint, setSelectedPoint] = useState<any>(null);
+  const [isReportModalOpen, setIsReportModalOpen] = useState(false);
+  const [reportCoordinates, setReportCoordinates] = useState<{ lat: number; lng: number } | null>(null);
   const [stats, setStats] = useState({
     normal: 0,
     warning: 0,
@@ -65,10 +68,23 @@ export default function MapPage() {
       {/* Header */}
       <div className="border-b border-border bg-muted/30">
         <div className="container mx-auto px-4 py-8">
-          <h1 className="text-3xl md:text-4xl font-bold mb-4">
-            {t.map.title[language]}
-          </h1>
-          {/* Optional: add a map description key in translations if needed */}
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+            <h1 className="text-3xl md:text-4xl font-bold">
+              {t.map.title[language]}
+            </h1>
+            <Button
+              size="lg"
+              onClick={() => {
+                // Set coordinates to center of Georgia (Tbilisi area) as default
+                setReportCoordinates({ lat: 41.7151, lng: 44.8271 });
+                setIsReportModalOpen(true);
+              }}
+              className="flex items-center gap-2"
+            >
+              <FileWarning className="h-5 w-5" />
+              {language === "en" ? "Report an Issue" : "პრობლემის მოხსენება"}
+            </Button>
+          </div>
         </div>
       </div>
 
@@ -217,6 +233,20 @@ export default function MapPage() {
           onClose={() => setSelectedPoint(null)}
         />
       )}
+
+      {/* Report Modal */}
+      <MapClickReportModal
+        isOpen={isReportModalOpen}
+        onClose={() => {
+          setIsReportModalOpen(false);
+          setReportCoordinates(null);
+        }}
+        coordinates={reportCoordinates}
+        onSubmit={(data) => {
+          console.log("Report submitted:", data);
+          // Handle the submission here
+        }}
+      />
     </div>
   );
 }
