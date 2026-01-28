@@ -136,10 +136,10 @@ export default function ProjectDetailPage() {
                 <span>{project.duration}</span>
               </div>
             </div>
-            <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4 text-balance">
+            <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4 text-balance break-words">
               {project.title}
             </h1>
-            <p className="text-lg md:text-xl text-muted-foreground leading-relaxed">
+            <p className="text-lg md:text-xl text-muted-foreground leading-relaxed break-words">
               {project.description}
             </p>
           </div>
@@ -148,7 +148,7 @@ export default function ProjectDetailPage() {
 
       {/* Project Content */}
       <div className="container mx-auto px-4 py-12">
-        <div className="max-w-4xl mx-auto">
+        <div className="max-w-4xl mx-auto overflow-hidden">
 
 
           {/* Main Content with Sections */}
@@ -173,9 +173,9 @@ export default function ProjectDetailPage() {
                   return (
                     <div
                       key={index}
-                      className="prose prose-slate dark:prose-invert max-w-none"
+                      className="prose prose-slate dark:prose-invert max-w-none break-words"
                     >
-                      <p className="text-lg leading-relaxed text-muted-foreground">
+                      <p className="text-lg leading-relaxed text-muted-foreground break-words whitespace-pre-wrap">
                         {section.content}
                       </p>
                     </div>
@@ -186,11 +186,11 @@ export default function ProjectDetailPage() {
           ) : (
             // Fallback to markdown-style content
             project.content && (
-              <div className="prose prose-slate dark:prose-invert max-w-none">
+              <div className="prose prose-slate dark:prose-invert max-w-none break-words overflow-hidden">
                 {project.content.split("\n\n").map((paragraph, index) => {
                   if (paragraph.startsWith("## ")) {
                     return (
-                      <h2 key={index} className="text-2xl font-bold mt-12 mb-4">
+                      <h2 key={index} className="text-2xl font-bold mt-12 mb-4 break-words">
                         {paragraph.replace("## ", "")}
                       </h2>
                     );
@@ -198,7 +198,7 @@ export default function ProjectDetailPage() {
                   return (
                     <p
                       key={index}
-                      className="text-lg leading-relaxed text-muted-foreground mb-6"
+                      className="text-lg leading-relaxed text-muted-foreground mb-6 break-words whitespace-pre-wrap"
                     >
                       {paragraph}
                     </p>
