@@ -113,7 +113,7 @@ export default function ProjectsPage() {
               {t.projects.activeTitle[language]}
             </h2>
           </div> */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {projects
               .filter((p) => p.status === "Active")
               .map((project) => {
@@ -123,31 +123,31 @@ export default function ProjectsPage() {
                     key={project.id}
                     className="hover:shadow-lg transition-shadow flex flex-col h-full"
                   >
-                    <CardHeader className="flex-grow">
-                      <div className="flex items-start justify-between mb-4">
+                    <CardHeader className="flex-grow pb-3">
+                      <div className="flex items-start justify-between mb-3">
                         <div
-                          className="w-12 h-12 rounded-lg flex items-center justify-center"
+                          className="w-9 h-9 rounded-lg flex items-center justify-center"
                           style={{ backgroundColor: project.color }}
                         >
-                          <IconComponent className="h-6 w-6" style={{ color: 'white' }} />
+                          <IconComponent className="h-5 w-5" style={{ color: 'white' }} />
                         </div>
-                        <Badge variant="default" className="bg-green-600">
+                        <Badge variant="default" className="bg-green-600 text-xs">
                           {project.status}
                         </Badge>
                       </div>
-                      <CardTitle className="text-xl mb-2 text-balance">
+                      <CardTitle className="text-lg mb-1.5 text-balance">
                         {project.title}
                       </CardTitle>
-                      <CardDescription className="leading-relaxed line-clamp-2">
+                      <CardDescription className="leading-relaxed line-clamp-2 text-sm">
                         {project.description}
                       </CardDescription>
                     </CardHeader>
-                    <CardContent className="pt-0">
-                      <div className="flex items-center gap-2 text-sm text-muted-foreground mb-4">
-                        <Calendar className="h-4 w-4" />
+                    <CardContent className="pt-0 pb-4">
+                      <div className="flex items-center gap-2 text-xs text-muted-foreground mb-3">
+                        <Calendar className="h-3.5 w-3.5" />
                         <span>{project.duration}</span>
                       </div>
-                      <Button asChild className="w-full">
+                      <Button asChild className="w-full h-9 text-sm">
                         <Link href={`/projects/${project.slug}`}>
                           {t.projects.viewDetails[language]}
                         </Link>
@@ -168,7 +168,7 @@ export default function ProjectsPage() {
                 {t.projects.inPlanningTitle[language]}
               </h2>
             </div>
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {projects
                 .filter((p) => p.status === "Planning")
                 .map((project) => {
@@ -178,38 +178,38 @@ export default function ProjectsPage() {
                       key={project.id}
                       className="hover:shadow-lg transition-shadow flex flex-col h-full"
                     >
-                      <CardHeader className="flex-grow">
-                        <div className="flex items-start justify-between mb-4">
+                      <CardHeader className="flex-grow pb-3">
+                        <div className="flex items-start justify-between mb-3">
                           <div
-                            className="w-12 h-12 rounded-lg flex items-center justify-center"
+                            className="w-9 h-9 rounded-lg flex items-center justify-center"
                             style={{ backgroundColor: project.color }}
                           >
-                            <IconComponent className="h-6 w-6" style={{ color: 'white' }} />
+                            <IconComponent className="h-5 w-5" style={{ color: 'white' }} />
                           </div>
-                          <Badge variant="secondary">{project.status}</Badge>
+                          <Badge variant="secondary" className="text-xs">{project.status}</Badge>
                         </div>
-                        <CardTitle className="text-xl mb-2 text-balance">
+                        <CardTitle className="text-lg mb-1.5 text-balance">
                           {project.title}
                         </CardTitle>
-                        <CardDescription className="leading-relaxed line-clamp-2">
+                        <CardDescription className="leading-relaxed line-clamp-2 text-sm">
                           {project.description}
                         </CardDescription>
                       </CardHeader>
-                      <CardContent className="pt-0">
-                        <div className="flex items-center gap-2 text-sm text-muted-foreground mb-4">
-                          <Calendar className="h-4 w-4" />
+                      <CardContent className="pt-0 pb-4">
+                        <div className="flex items-center gap-2 text-xs text-muted-foreground mb-3">
+                          <Calendar className="h-3.5 w-3.5" />
                           <span>{project.duration}</span>
                         </div>
-                        <div className="mb-4">
-                          <div className="text-sm font-semibold mb-2">
+                        <div className="mb-3">
+                          <div className="text-xs font-semibold mb-1.5">
                             {t.projects.keyGoals[language]}
                           </div>
-                          <div className="flex flex-wrap gap-2">
+                          <div className="flex flex-wrap gap-1.5">
                             {project.goals.map((goal, i) => (
                               <Badge
                                 key={i}
                                 variant="outline"
-                                className="bg-transparent"
+                                className="bg-transparent text-xs"
                               >
                                 {goal}
                               </Badge>
@@ -219,7 +219,7 @@ export default function ProjectsPage() {
                         <Button
                           asChild
                           variant="outline"
-                          className="w-full bg-transparent"
+                          className="w-full bg-transparent h-9 text-sm"
                         >
                           <Link href={`/projects/${project.slug}`}>
                             {t.projects.learnMore[language]}
