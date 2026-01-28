@@ -41,11 +41,11 @@ const iconMap: Record<string, any> = {
   "chart": BarChart3,
   "globe": Globe,
   "shield": Shield,
-  // Legacy support for old values
-  Droplet,
-  Users,
-  Shield,
-  Target,
+  // Legacy support for old values (string keys, not component values)
+  "Users": Users,
+  "Droplet": Droplet,
+  "Shield": Shield,
+  "Target": Target,
 };
 
 interface Project {
@@ -126,9 +126,10 @@ export default function ProjectsPage() {
                     <CardHeader className="flex-grow">
                       <div className="flex items-start justify-between mb-4">
                         <div
-                          className={`w-12 h-12 rounded-lg ${project.color} flex items-center justify-center`}
+                          className="w-12 h-12 rounded-lg flex items-center justify-center"
+                          style={{ backgroundColor: project.color }}
                         >
-                          <IconComponent className="h-6 w-6 text-white" />
+                          <IconComponent className="h-6 w-6" style={{ color: 'white' }} />
                         </div>
                         <Badge variant="default" className="bg-green-600">
                           {project.status}
@@ -180,9 +181,10 @@ export default function ProjectsPage() {
                       <CardHeader className="flex-grow">
                         <div className="flex items-start justify-between mb-4">
                           <div
-                            className={`w-12 h-12 rounded-lg ${project.color} flex items-center justify-center`}
+                            className="w-12 h-12 rounded-lg flex items-center justify-center"
+                            style={{ backgroundColor: project.color }}
                           >
-                            <IconComponent className="h-6 w-6 text-white" />
+                            <IconComponent className="h-6 w-6" style={{ color: 'white' }} />
                           </div>
                           <Badge variant="secondary">{project.status}</Badge>
                         </div>
