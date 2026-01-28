@@ -261,7 +261,7 @@ export default function HomePage() {
                 variant="outline"
                 className="bg-white/10 border-white/20 text-white hover:bg-white/20"
               >
-                <Link href="/report">{t.homePage.reportIssue[language]}</Link>
+                <Link href="/map">{t.homePage.reportIssue[language]}</Link>
               </Button>
             </div>
           </div>
@@ -281,129 +281,78 @@ export default function HomePage() {
           {/* Bento Grid Layout */}
           <div className="grid grid-cols-12 gap-3 md:gap-4 max-w-7xl mx-auto">
             {/* Large hero card - spans full width on mobile, 7 cols on desktop */}
-            <div className="col-span-12 md:col-span-7 row-span-1 md:row-span-2 group">
-              <div className="relative h-48 md:h-full min-h-[280px] bg-gradient-to-br from-blue-50 to-green-50 rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-500">
+            <div className="col-span-12 md:col-span-7 row-span-1 md:row-span-2">
+              <div className="relative h-48 md:h-full min-h-[280px] bg-gradient-to-br from-blue-50 to-green-50 rounded-2xl overflow-hidden shadow-sm">
                 <img
                   src="kaparcha_1.jpg"
                   alt="Community volunteers participating in river cleanup activities along Kaparchina River"
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                  className="w-full h-full object-cover"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/0 to-black/0 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                <div className="absolute bottom-0 left-0 right-0 p-6 translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
-                  <h3 className="text-white text-xl md:text-2xl font-semibold mb-2 opacity-0 group-hover:opacity-100 transition-opacity duration-500 delay-100">
-                    River Cleanup Initiative
-                  </h3>
-                  <p className="text-white/90 text-sm opacity-0 group-hover:opacity-100 transition-opacity duration-500 delay-150">
-                    Local volunteers working together to protect the Kaparchina ecosystem
-                  </p>
-                </div>
               </div>
             </div>
 
             {/* Medium card - top right */}
-            <div className="col-span-6 md:col-span-5 row-span-1 group">
-              <div className="relative h-40 md:h-full bg-gradient-to-br from-green-50 to-blue-50 rounded-2xl overflow-hidden shadow-sm hover:shadow-lg transition-all duration-500">
+            <div className="col-span-6 md:col-span-5 row-span-1">
+              <div className="relative h-40 md:h-full bg-gradient-to-br from-green-50 to-blue-50 rounded-2xl overflow-hidden shadow-sm">
                 <img
                   src="kaparcha_1.jpg"
                   alt="Youth environmental education and training workshop"
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                  className="w-full h-full object-cover"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-black/0 to-black/0 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                <div className="absolute bottom-0 left-0 right-0 p-4 translate-y-2 group-hover:translate-y-0 transition-transform duration-500">
-                  <h3 className="text-white text-base md:text-lg font-semibold opacity-0 group-hover:opacity-100 transition-opacity duration-500 delay-100">
-                    Youth Training
-                  </h3>
-                </div>
               </div>
             </div>
 
             {/* Small card - middle right */}
-            <div className="col-span-6 md:col-span-5 row-span-1 group">
-              <div className="relative h-40 md:h-full bg-gradient-to-br from-slate-50 to-blue-50 rounded-2xl overflow-hidden shadow-sm hover:shadow-lg transition-all duration-500">
+            <div className="col-span-6 md:col-span-5 row-span-1">
+              <div className="relative h-40 md:h-full bg-gradient-to-br from-slate-50 to-blue-50 rounded-2xl overflow-hidden shadow-sm">
                 <img
                   src="kaparcha_1.jpg"
                   alt="Community leaders and women participating in environmental decision-making"
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                  className="w-full h-full object-cover"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-black/0 to-black/0 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                <div className="absolute bottom-0 left-0 right-0 p-4 translate-y-2 group-hover:translate-y-0 transition-transform duration-500">
-                  <h3 className="text-white text-base md:text-lg font-semibold opacity-0 group-hover:opacity-100 transition-opacity duration-500 delay-100">
-                    Community Leaders
-                  </h3>
-                </div>
               </div>
             </div>
 
             {/* Wide card - bottom left */}
-            <div className="col-span-12 md:col-span-7 row-span-1 group">
-              <div className="relative h-44 md:h-48 bg-gradient-to-br from-blue-50 to-slate-50 rounded-2xl overflow-hidden shadow-sm hover:shadow-lg transition-all duration-500">
+            <div className="col-span-12 md:col-span-7 row-span-1">
+              <div className="relative h-44 md:h-48 bg-gradient-to-br from-blue-50 to-slate-50 rounded-2xl overflow-hidden shadow-sm">
                 <img
                   src="kaparcha_1.jpg"
                   alt="Field monitoring and environmental data collection by citizen scientists"
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                  className="w-full h-full object-cover"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-black/0 to-black/0 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                <div className="absolute bottom-0 left-0 right-0 p-5 translate-y-2 group-hover:translate-y-0 transition-transform duration-500">
-                  <h3 className="text-white text-lg md:text-xl font-semibold mb-1 opacity-0 group-hover:opacity-100 transition-opacity duration-500 delay-100">
-                    Field Monitoring
-                  </h3>
-                  <p className="text-white/90 text-sm opacity-0 group-hover:opacity-100 transition-opacity duration-500 delay-150">
-                    Citizen scientists collecting vital environmental data
-                  </p>
-                </div>
               </div>
             </div>
 
             {/* Vertical card - bottom right */}
-            <div className="col-span-12 md:col-span-5 row-span-1 md:row-span-2 group">
-              <div className="relative h-44 md:h-full md:min-h-[260px] bg-gradient-to-br from-green-50 to-slate-50 rounded-2xl overflow-hidden shadow-sm hover:shadow-lg transition-all duration-500">
+            <div className="col-span-12 md:col-span-5 row-span-1 md:row-span-2">
+              <div className="relative h-44 md:h-full md:min-h-[260px] bg-gradient-to-br from-green-50 to-slate-50 rounded-2xl overflow-hidden shadow-sm">
                 <img
                   src="kaparcha_1.jpg"
                   alt="Community engagement workshop and collaborative environmental planning"
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                  className="w-full h-full object-cover"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-black/0 to-black/0 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                <div className="absolute bottom-0 left-0 right-0 p-5 translate-y-2 group-hover:translate-y-0 transition-transform duration-500">
-                  <h3 className="text-white text-lg md:text-xl font-semibold mb-1 opacity-0 group-hover:opacity-100 transition-opacity duration-500 delay-100">
-                    Community Workshops
-                  </h3>
-                  <p className="text-white/90 text-sm opacity-0 group-hover:opacity-100 transition-opacity duration-500 delay-150">
-                    Building capacity through collaborative learning
-                  </p>
-                </div>
               </div>
             </div>
 
             {/* Small square cards - bottom */}
-            <div className="col-span-6 md:col-span-4 row-span-1 group">
-              <div className="relative h-40 md:h-44 bg-gradient-to-br from-blue-50 to-green-50 rounded-2xl overflow-hidden shadow-sm hover:shadow-lg transition-all duration-500">
+            <div className="col-span-6 md:col-span-4 row-span-1">
+              <div className="relative h-40 md:h-44 bg-gradient-to-br from-blue-50 to-green-50 rounded-2xl overflow-hidden shadow-sm">
                 <img
                   src="kaparcha_1.jpg"
                   alt="Water quality testing and environmental assessment by community monitors"
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                  className="w-full h-full object-cover"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-black/0 to-black/0 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                <div className="absolute bottom-0 left-0 right-0 p-4 translate-y-2 group-hover:translate-y-0 transition-transform duration-500">
-                  <h3 className="text-white text-base md:text-lg font-semibold opacity-0 group-hover:opacity-100 transition-opacity duration-500 delay-100">
-                    Water Testing
-                  </h3>
-                </div>
               </div>
             </div>
 
-            <div className="col-span-6 md:col-span-3 row-span-1 group">
-              <div className="relative h-40 md:h-44 bg-gradient-to-br from-slate-50 to-green-50 rounded-2xl overflow-hidden shadow-sm hover:shadow-lg transition-all duration-500">
+            <div className="col-span-6 md:col-span-3 row-span-1">
+              <div className="relative h-40 md:h-44 bg-gradient-to-br from-slate-50 to-green-50 rounded-2xl overflow-hidden shadow-sm">
                 <img
                   src="kaparcha_1.jpg"
                   alt="Public awareness campaign and environmental education outreach"
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                  className="w-full h-full object-cover"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-black/0 to-black/0 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                <div className="absolute bottom-0 left-0 right-0 p-4 translate-y-2 group-hover:translate-y-0 transition-transform duration-500">
-                  <h3 className="text-white text-base md:text-lg font-semibold opacity-0 group-hover:opacity-100 transition-opacity duration-500 delay-100">
-                    Awareness
-                  </h3>
-                </div>
               </div>
             </div>
           </div>

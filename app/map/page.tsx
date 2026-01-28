@@ -75,8 +75,8 @@ export default function MapPage() {
       <div className="container mx-auto px-4 py-8">
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
           {/* Sidebar - Layer Controls */}
-          <div className="lg:col-span-1 space-y-4">
-            <Card>
+          <div className="lg:col-span-1 flex flex-col gap-4">
+            <Card className="flex-1">
               <CardHeader>
                 <div className="flex items-center gap-2">
                   <Layers className="h-5 w-5" />
@@ -136,7 +136,7 @@ export default function MapPage() {
             </Card>
 
             {/* Instructions Card */}
-            <Card>
+            <Card className="flex-1">
               <CardHeader>
                 <CardTitle>{t.map.instructionsTitle[language]}</CardTitle>
               </CardHeader>
@@ -147,8 +147,8 @@ export default function MapPage() {
           </div>
 
           {/* Map Area */}
-          <div className="lg:col-span-3">
-            <Card className="overflow-hidden">
+          <div className="lg:col-span-3 flex flex-col gap-6">
+            <Card className="overflow-hidden flex-1">
               <div className="relative h-[600px] lg:h-[700px]">
                 <MapComponent
                   activeLayer={activeLayer}
@@ -158,7 +158,7 @@ export default function MapPage() {
             </Card>
 
             {/* Quick Stats */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               <Card>
                 <CardContent className="pt-6">
                   <div className="text-center">

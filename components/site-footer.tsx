@@ -47,7 +47,7 @@ export function SiteFooter() {
                 </Link>
               </li>
               <li>
-                <Link href="/report" className="text-muted-foreground hover:text-foreground transition-colors">
+                <Link href="/map" className="text-muted-foreground hover:text-foreground transition-colors">
                   {t.footer.reportIssue[language]}
                 </Link>
               </li>

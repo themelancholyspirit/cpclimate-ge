@@ -23,7 +23,6 @@ type NavKey =
 const NAV_ITEMS: { key: NavKey; href: string }[] = [
   { key: "home", href: "/" },
   { key: "interactiveMap", href: "/map" },
-  { key: "riskAlert", href: "/report" },
   { key: "projects", href: "/projects" },
   { key: "findings", href: "/findings" },
   { key: "news", href: "/news" },

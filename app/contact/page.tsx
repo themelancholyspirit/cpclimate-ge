@@ -98,10 +98,7 @@ export default function ContactPage() {
                     <h3 className="font-semibold mb-3 text-base">Quick Actions</h3>
                     <div className="space-y-2">
                       <Button variant="outline" className="w-full justify-start" asChild>
-                        <a href="/report">Report Environmental Issue</a>
-                      </Button>
-                      <Button variant="outline" className="w-full justify-start" asChild>
-                        <a href="/join">Become an Observer</a>
+                        <a href="/map">Report Environmental Issue</a>
                       </Button>
                       <Button variant="outline" className="w-full justify-start" asChild>
                         <a href="/projects">View Our Projects</a>
@@ -111,7 +108,7 @@ export default function ContactPage() {
                   
                   <div className="pt-4">
                     <p className="text-sm text-muted-foreground leading-relaxed">
-                      We typically respond to inquiries within 24-48 hours. For urgent environmental concerns, please use our <a href="/report" className="text-primary hover:underline">report system</a>.
+                      We typically respond to inquiries within 24-48 hours. For urgent environmental concerns, please use our <a href="/map" className="text-primary hover:underline">interactive map</a>.
                     </p>
                   </div>
                 </div>
