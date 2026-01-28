@@ -120,7 +120,7 @@ model Project {
 }
 
 model Resource {
-  id          String           @id @default(cuid())
+  id          String           @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   title       String
   type        ResourceType     // Technical Report, Policy Document, Training Material, Data Report
   date        DateTime
