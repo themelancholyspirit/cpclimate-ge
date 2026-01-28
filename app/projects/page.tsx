@@ -18,11 +18,30 @@ import {
   Target,
   TrendingUp,
   Calendar,
+  Waves,
+  TreeDeciduous,
+  Leaf,
+  Recycle,
+  Factory,
+  Microscope,
+  BarChart3,
+  Globe,
 } from "lucide-react";
 import { useLanguage } from "@/contexts/language-context";
 
-// Icon mapping
+// Icon mapping - maps Directus icon values to Lucide React components
 const iconMap: Record<string, any> = {
+  "water-drop": Droplet,
+  "waves": Waves,
+  "river": TreeDeciduous,
+  "leaf": Leaf,
+  "recycle": Recycle,
+  "factory": Factory,
+  "science": Microscope,
+  "chart": BarChart3,
+  "globe": Globe,
+  "shield": Shield,
+  // Legacy support for old values
   Droplet,
   Users,
   Shield,
