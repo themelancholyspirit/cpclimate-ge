@@ -5,6 +5,11 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge"
 import { FileText, Download, ExternalLink, Calendar, Search } from "lucide-react"
 import { useLanguage } from "@/contexts/language-context"
+import {
+  HoverCard,
+  HoverCardContent,
+  HoverCardTrigger,
+} from "@/components/ui/hover-card"
 
 interface Resource {
   id: string
@@ -133,7 +138,16 @@ export default function FindingsPage() {
                   </div>
                 </div>
                 <CardTitle className="text-lg text-balance">{resource.title}</CardTitle>
-                <CardDescription className="leading-relaxed">{resource.description}</CardDescription>
+                <HoverCard>
+                  <HoverCardTrigger asChild>
+                    <CardDescription className="leading-relaxed line-clamp-3 cursor-pointer hover:text-foreground transition-colors">
+                      {resource.description}
+                    </CardDescription>
+                  </HoverCardTrigger>
+                  <HoverCardContent className="w-80 max-h-96 overflow-y-auto">
+                    <p className="text-sm leading-relaxed">{resource.description}</p>
+                  </HoverCardContent>
+                </HoverCard>
               </CardHeader>
               <CardContent className="mt-auto">
                 <div className="flex gap-2">
