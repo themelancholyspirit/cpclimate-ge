@@ -142,7 +142,7 @@ export default function ProjectsPage() {
                         {project.description}
                       </CardDescription>
                     </CardHeader>
-                    <CardContent className="pt-0 pb-4">
+                    <CardContent className="pt-0 pb-0">
                       <div className="flex items-center gap-2 text-xs text-muted-foreground mb-3">
                         <Calendar className="h-3.5 w-3.5" />
                         <span>{project.duration}</span>
