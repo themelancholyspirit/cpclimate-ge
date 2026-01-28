@@ -122,13 +122,13 @@ export default function FindingsPage() {
                 <div className="w-full h-48 bg-slate-100 rounded-md mb-4 flex items-center justify-center">
                   <FileText className="h-16 w-16 text-slate-400" />
                 </div>
-                <div className="flex items-center justify-end mb-2">
-                  <div className="flex items-center gap-1 text-xs text-muted-foreground">
+                <div className="flex items-center justify-between mb-2 gap-4">
+                  <CardTitle className="text-lg text-balance">{resource.title}</CardTitle>
+                  <div className="flex items-center gap-1 text-xs text-muted-foreground whitespace-nowrap">
                     <Calendar className="h-3 w-3" />
                     <span>{formatDate(resource.date)}</span>
                   </div>
                 </div>
-                <CardTitle className="text-lg text-balance">{resource.title}</CardTitle>
                 <CardDescription className="leading-relaxed line-clamp-3">
                   {resource.description}
                 </CardDescription>
