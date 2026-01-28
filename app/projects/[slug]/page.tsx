@@ -64,24 +64,37 @@ export default function ProjectDetailPage() {
   // Helper function to parse content and extract text/image sections
   const parseContent = (content: string): ContentSection[] => {
     const sections: ContentSection[] = [];
-    const imageUrlRegex = /https?:\/\/[^\s]+\/assets\/[a-f0-9-]+/gi;
     
-    // Split content by image URLs while keeping the URLs
-    const parts = content.split(imageUrlRegex);
-    const imageUrls = content.match(imageUrlRegex) || [];
+    // Match both plain URLs and markdown image syntax: ![](url) or ![alt](url)
+    const imageUrlRegex = /!\[.*?\]\((https?:\/\/[^\s)]+\/assets\/[a-f0-9-]+)\)|(https?:\/\/[^\s]+\/assets\/[a-f0-9-]+)/gi;
     
-    parts.forEach((textPart, index) => {
-      // Add text section if not empty
-      const trimmedText = textPart.trim();
-      if (trimmedText) {
-        sections.push({ type: "text", content: trimmedText });
+    let lastIndex = 0;
+    let match;
+    
+    // Reset regex to start from beginning
+    imageUrlRegex.lastIndex = 0;
+    
+    while ((match = imageUrlRegex.exec(content)) !== null) {
+      // Add text before the image
+      const textBefore = content.substring(lastIndex, match.index).trim();
+      if (textBefore) {
+        sections.push({ type: "text", content: textBefore });
       }
       
-      // Add image section if there's a corresponding URL
-      if (imageUrls[index]) {
-        sections.push({ type: "image", content: imageUrls[index] });
+      // Extract URL from either markdown syntax or plain URL
+      const imageUrl = match[1] || match[2]; // match[1] is from markdown, match[2] is plain URL
+      if (imageUrl) {
+        sections.push({ type: "image", content: imageUrl });
       }
-    });
+      
+      lastIndex = imageUrlRegex.lastIndex;
+    }
+    
+    // Add remaining text after last image
+    const remainingText = content.substring(lastIndex).trim();
+    if (remainingText) {
+      sections.push({ type: "text", content: remainingText });
+    }
     
     return sections;
   };
