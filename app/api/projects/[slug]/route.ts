@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 
+const DIRECTUS_URL = process.env.NEXT_PUBLIC_DIRECTUS_URL || 'http://localhost:8055'
+
 // GET /api/projects/[slug] - Get a specific project by slug
 export async function GET(
   request: NextRequest,
@@ -19,7 +21,15 @@ export async function GET(
       )
     }
 
-    return NextResponse.json(project)
+    // Transform headerImage UUID to full Directus asset URL
+    const transformedProject = {
+      ...project,
+      headerImage: project.headerImage 
+        ? `${DIRECTUS_URL}/assets/${project.headerImage}`
+        : null,
+    }
+
+    return NextResponse.json(transformedProject)
   } catch (error) {
     console.error('Error fetching project:', error)
     return NextResponse.json(
