@@ -74,7 +74,7 @@ export default function HomePage() {
             </p>
             <div className="text-center">
               <Button asChild variant="outline">
-                <Link href="/about">
+                <Link href="/contact">
                   {t.homePage.aboutCPC[language]}
                   <ArrowRight className="ml-2 h-4 w-4" />
                 </Link>
@@ -129,7 +129,7 @@ export default function HomePage() {
           </div>
           <div className="text-center">
             <Button asChild variant="outline">
-              <Link href="/approach">
+              <Link href="/contact">
                 {t.homePage.aboutCPC[language]}
                 <ArrowRight className="ml-2 h-4 w-4" />
               </Link>
