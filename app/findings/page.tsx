@@ -2,14 +2,8 @@
 import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
 import { FileText, Download, ExternalLink, Calendar, Search } from "lucide-react"
 import { useLanguage } from "@/contexts/language-context"
-import {
-  HoverCard,
-  HoverCardContent,
-  HoverCardTrigger,
-} from "@/components/ui/hover-card"
 
 interface Resource {
   id: string
@@ -128,26 +122,16 @@ export default function FindingsPage() {
                 <div className="w-full h-48 bg-slate-100 rounded-md mb-4 flex items-center justify-center">
                   <FileText className="h-16 w-16 text-slate-400" />
                 </div>
-                <div className="flex items-center justify-between mb-2">
-                  <Badge variant="outline" className="bg-transparent">
-                    {resource.category}
-                  </Badge>
+                <div className="flex items-center justify-end mb-2">
                   <div className="flex items-center gap-1 text-xs text-muted-foreground">
                     <Calendar className="h-3 w-3" />
                     <span>{formatDate(resource.date)}</span>
                   </div>
                 </div>
                 <CardTitle className="text-lg text-balance">{resource.title}</CardTitle>
-                <HoverCard>
-                  <HoverCardTrigger asChild>
-                    <CardDescription className="leading-relaxed line-clamp-3 cursor-pointer hover:text-foreground transition-colors">
-                      {resource.description}
-                    </CardDescription>
-                  </HoverCardTrigger>
-                  <HoverCardContent className="w-80 max-h-96 overflow-y-auto">
-                    <p className="text-sm leading-relaxed">{resource.description}</p>
-                  </HoverCardContent>
-                </HoverCard>
+                <CardDescription className="leading-relaxed line-clamp-3">
+                  {resource.description}
+                </CardDescription>
               </CardHeader>
               <CardContent className="mt-auto">
                 <div className="flex gap-2">
