@@ -61,6 +61,31 @@ export default function ProjectDetailPage() {
     }
   }, [slug]);
 
+  // Helper function to parse content and extract text/image sections
+  const parseContent = (content: string): ContentSection[] => {
+    const sections: ContentSection[] = [];
+    const imageUrlRegex = /https?:\/\/[^\s]+\/assets\/[a-f0-9-]+/gi;
+    
+    // Split content by image URLs while keeping the URLs
+    const parts = content.split(imageUrlRegex);
+    const imageUrls = content.match(imageUrlRegex) || [];
+    
+    parts.forEach((textPart, index) => {
+      // Add text section if not empty
+      const trimmedText = textPart.trim();
+      if (trimmedText) {
+        sections.push({ type: "text", content: trimmedText });
+      }
+      
+      // Add image section if there's a corresponding URL
+      if (imageUrls[index]) {
+        sections.push({ type: "image", content: imageUrls[index] });
+      }
+    });
+    
+    return sections;
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
@@ -184,25 +209,49 @@ export default function ProjectDetailPage() {
               })}
             </div>
           ) : (
-            // Fallback to markdown-style content
+            // Fallback: Parse content field to extract images and text
             project.content && (
-              <div className="prose prose-slate dark:prose-invert max-w-none break-words overflow-hidden">
-                {project.content.split("\n\n").map((paragraph, index) => {
-                  if (paragraph.startsWith("## ")) {
+              <div className="space-y-8">
+                {parseContent(project.content).map((section, index) => {
+                  if (section.type === "image") {
                     return (
-                      <h2 key={index} className="text-2xl font-bold mt-12 mb-4 break-words">
-                        {paragraph.replace("## ", "")}
-                      </h2>
+                      <div
+                        key={index}
+                        className="relative w-full h-[400px] rounded-lg overflow-hidden my-8"
+                      >
+                        <Image
+                          src={section.content}
+                          alt={`Project image ${index + 1}`}
+                          fill
+                          className="object-cover"
+                        />
+                      </div>
+                    );
+                  } else {
+                    // Check for headings and format accordingly
+                    const paragraphs = section.content.split("\n\n");
+                    return (
+                      <div key={index} className="prose prose-slate dark:prose-invert max-w-none break-words overflow-hidden">
+                        {paragraphs.map((paragraph, pIndex) => {
+                          if (paragraph.startsWith("## ")) {
+                            return (
+                              <h2 key={pIndex} className="text-2xl font-bold mt-12 mb-4 break-words">
+                                {paragraph.replace("## ", "")}
+                              </h2>
+                            );
+                          }
+                          return (
+                            <p
+                              key={pIndex}
+                              className="text-lg leading-relaxed text-muted-foreground mb-6 break-words whitespace-pre-wrap"
+                            >
+                              {paragraph}
+                            </p>
+                          );
+                        })}
+                      </div>
                     );
                   }
-                  return (
-                    <p
-                      key={index}
-                      className="text-lg leading-relaxed text-muted-foreground mb-6 break-words whitespace-pre-wrap"
-                    >
-                      {paragraph}
-                    </p>
-                  );
                 })}
               </div>
             )
