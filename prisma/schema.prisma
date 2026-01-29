@@ -129,11 +129,10 @@ model Resource {
 }
 
 model MediaItem {
-  id        String    @id @default(cuid())
+  id        String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   title     String
   outlet    String
   date      DateTime
-  type      MediaType // Article, Interview, Feature
   url       String?
   createdAt DateTime  @default(now())
 
