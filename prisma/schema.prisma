@@ -74,7 +74,6 @@ model User {
   name      String?
   role      UserRole @default(citizen) // citizen, admin, observer
   createdAt DateTime @default(now())
-  updatedAt DateTime @default(now())
 
   reports   Report[]
   
@@ -91,7 +90,6 @@ model MapPoint {
   description String
   metadata    Json?           // Additional flexible data
   createdAt   DateTime        @default(now())
-  updatedAt   DateTime        @default(now())
 
   @@index([type])
   @@index([status])
@@ -113,7 +111,6 @@ model Project {
   content         String?        @db.Text // Full content/body text
   contentSections Json?          // Array of {type: 'text'|'image', content: string}
   createdAt       DateTime       @default(now())
-  updatedAt       DateTime       @default(now())
 
   @@index([status])
   @@map("projects")
@@ -122,15 +119,12 @@ model Project {
 model Resource {
   id          String           @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   title       String
-  type        ResourceType     // Technical Report, Policy Document, Training Material, Data Report
   date        DateTime
   description String
   pages       Int?
   category    ResourceCategory // Research, Policy, Training
   file        String?          @db.Uuid // File ID from directus_files
-  externalUrl String?
   createdAt   DateTime         @default(now())
-  updatedAt   DateTime         @updatedAt
 
   @@index([category])
   @@index([type])
@@ -145,7 +139,6 @@ model MediaItem {
   type      MediaType // Article, Interview, Feature
   url       String?
   createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
 
   @@map("media_items")
 }
@@ -168,7 +161,6 @@ model Report {
   notes         String?      // Admin notes
   userId        String?
   createdAt     DateTime     @default(now())
-  updatedAt     DateTime     @updatedAt
   user          User?        @relation(fields: [userId], references: [id])
 
   @@index([status])
