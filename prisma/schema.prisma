@@ -122,12 +122,9 @@ model Resource {
   date        DateTime
   description String
   pages       Int?
-  category    ResourceCategory // Research, Policy, Training
   file        String?          @db.Uuid // File ID from directus_files
   createdAt   DateTime         @default(now())
 
-  @@index([category])
-  @@index([type])
   @@map("resources")
 }
 
