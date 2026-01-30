@@ -52,6 +52,11 @@ export default function NewsDetailPage() {
 
   // Helper function to parse content and extract text/image sections
   const parseContent = (content: string) => {
+    // If content contains HTML tags, render it as HTML
+    if (content.includes('<')) {
+      return null; // Will use dangerouslySetInnerHTML instead
+    }
+    
     const sections: Array<{ type: "text" | "image"; content: string }> = [];
     
     // Match both plain URLs and markdown image syntax
@@ -167,56 +172,20 @@ export default function NewsDetailPage() {
       <div className="container mx-auto px-4 py-12">
         <div className="max-w-4xl mx-auto overflow-hidden">
           {article.content ? (
-            <div className="space-y-8">
-              {parseContent(article.content).map((section, index) => {
-                if (section.type === "image") {
-                  return (
-                    <div
-                      key={index}
-                      className="relative w-full h-[400px] rounded-lg overflow-hidden"
-                    >
-                      <Image
-                        src={section.content}
-                        alt={`Article image ${index + 1}`}
-                        fill
-                        className="object-cover"
-                      />
-                    </div>
-                  );
-                } else {
-                  const paragraphs = section.content.split("\n\n");
-                  return (
-                    <div key={index} className="space-y-6">
-                      {paragraphs.map((paragraph, pIndex) => {
-                        if (paragraph.startsWith("## ")) {
-                          return (
-                            <h2 key={pIndex} className="text-2xl font-bold break-words">
-                              {paragraph.replace("## ", "")}
-                            </h2>
-                          );
-                        } else if (paragraph.startsWith("### ")) {
-                          return (
-                            <h3 key={pIndex} className="text-xl font-semibold break-words">
-                              {paragraph.replace("### ", "")}
-                            </h3>
-                          );
-                        }
-                        return (
-                          <div
-                            key={pIndex}
-                            className="prose prose-slate dark:prose-invert max-w-none"
-                          >
-                            <p className="text-lg leading-relaxed text-foreground break-words whitespace-pre-wrap">
-                              {paragraph}
-                            </p>
-                          </div>
-                        );
-                      })}
-                    </div>
-                  );
-                }
-              })}
-            </div>
+            <div 
+              className="prose prose-slate dark:prose-invert prose-lg max-w-none
+                prose-headings:font-bold prose-headings:tracking-tight
+                prose-h1:text-4xl prose-h1:mb-4
+                prose-h2:text-3xl prose-h2:mb-3
+                prose-h3:text-2xl prose-h3:mb-2
+                prose-p:text-lg prose-p:leading-relaxed prose-p:mb-4
+                prose-strong:font-semibold prose-em:italic
+                prose-ul:list-disc prose-ul:ml-6 prose-ol:list-decimal prose-ol:ml-6
+                prose-li:mb-2
+                prose-img:rounded-lg prose-img:shadow-md prose-img:my-8
+                prose-a:text-primary prose-a:underline hover:prose-a:no-underline"
+              dangerouslySetInnerHTML={{ __html: article.content }}
+            />
           ) : (
             <div className="text-center text-muted-foreground">
               <p>No content available for this article.</p>
