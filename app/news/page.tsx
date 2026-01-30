@@ -95,6 +95,17 @@ export default function NewsPage() {
                   key={item.id}
                   className="hover:shadow-lg transition-shadow flex flex-col overflow-hidden"
                 >
+                  {item.imageUrl && (
+                    <div className="relative w-full aspect-[16/10] overflow-hidden">
+                      <Image
+                        src={item.imageUrl}
+                        alt={item.title}
+                        fill
+                        className="object-cover hover:scale-105 transition-transform duration-300"
+                      />
+                    </div>
+                  )}
+                  
                   <CardHeader>
                     <CardTitle className="text-lg mb-2 line-clamp-2 text-balance">
                       {item.title}
@@ -107,19 +118,8 @@ export default function NewsPage() {
                     </CardDescription>
                   </CardHeader>
                   
-                  {item.imageUrl && (
-                    <div className="relative w-full h-48 px-6">
-                      <Image
-                        src={item.imageUrl}
-                        alt={item.title}
-                        fill
-                        className="object-cover rounded-md"
-                      />
-                    </div>
-                  )}
-                  
                   {item.description && (
-                    <div className="px-6 py-3">
+                    <div className="px-6 pb-3">
                       <p className="text-sm text-muted-foreground line-clamp-3">
                         {item.description}
                       </p>
