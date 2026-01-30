@@ -169,7 +169,7 @@ export default function FindingsPage() {
                   <div className="flex gap-2">
                     {resource.fileUrl && (
                       <Button size="sm" className="flex-1" asChild>
-                        <a href={resource.fileUrl} download>
+                        <a href={resource.fileUrl} download target="_blank" rel="noopener noreferrer">
                           <Download className="h-4 w-4 mr-1" />
                           {t.findings.download[language]}
                         </a>
