@@ -173,19 +173,19 @@ export default function NewsDetailPage() {
         <div className="max-w-4xl mx-auto overflow-hidden">
           {article.content ? (
             <div 
-              className="prose prose-slate dark:prose-invert prose-lg max-w-none
-                prose-headings:font-bold prose-headings:tracking-tight
-                prose-h1:text-4xl prose-h1:mb-6 prose-h1:mt-8
-                prose-h2:text-3xl prose-h2:mb-4 prose-h2:mt-8
-                prose-h3:text-2xl prose-h3:mb-3 prose-h3:mt-6
-                prose-p:text-lg prose-p:leading-relaxed prose-p:mb-6
-                prose-strong:font-semibold prose-em:italic
-                prose-ul:list-disc prose-ul:ml-6 prose-ul:mb-6
-                prose-ol:list-decimal prose-ol:ml-6 prose-ol:mb-6
-                prose-li:mb-2
-                prose-img:rounded-lg prose-img:shadow-md prose-img:my-6
-                prose-a:text-primary prose-a:underline hover:prose-a:no-underline
-                prose-blockquote:border-l-4 prose-blockquote:border-primary prose-blockquote:pl-4 prose-blockquote:italic prose-blockquote:my-6"
+              className="prose prose-slate dark:prose-invert max-w-none
+                [&_h1]:text-4xl [&_h1]:font-bold [&_h1]:mb-4 [&_h1]:mt-2
+                [&_h2]:text-3xl [&_h2]:font-bold [&_h2]:mb-3 [&_h2]:mt-6
+                [&_h3]:text-2xl [&_h3]:font-bold [&_h3]:mb-2 [&_h3]:mt-4
+                [&_p]:text-lg [&_p]:leading-relaxed [&_p]:mb-2
+                [&_strong]:font-semibold [&_em]:italic
+                [&_ul]:list-disc [&_ul]:ml-6 [&_ul]:mb-2
+                [&_ol]:list-decimal [&_ol]:ml-6 [&_ol]:mb-2
+                [&_li]:mb-1
+                [&_img]:rounded-lg [&_img]:shadow-md [&_img]:my-2 [&_img]:w-full
+                [&_a]:text-primary [&_a]:underline hover:[&_a]:no-underline
+                [&_blockquote]:border-l-4 [&_blockquote]:border-primary [&_blockquote]:pl-4 [&_blockquote]:italic [&_blockquote]:my-2
+                [&>*]:mb-2"
               dangerouslySetInnerHTML={{ __html: article.content }}
             />
           ) : (
