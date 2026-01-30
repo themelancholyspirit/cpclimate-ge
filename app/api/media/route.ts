@@ -8,7 +8,15 @@ export async function GET(request: NextRequest) {
       orderBy: { date: 'desc' },
     })
 
-    return NextResponse.json(mediaItems)
+    // Transform the response to include the full Directus image URL if image exists
+    const transformedItems = mediaItems.map(item => ({
+      ...item,
+      imageUrl: item.image
+        ? `${process.env.NEXT_PUBLIC_DIRECTUS_URL || 'http://localhost:8055'}/assets/${item.image}`
+        : null,
+    }))
+
+    return NextResponse.json(transformedItems)
   } catch (error) {
     console.error('Error fetching media items:', error)
     return NextResponse.json(

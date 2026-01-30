@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -28,6 +29,8 @@ interface MediaItem {
   date: string;
   type: string;
   url: string | null;
+  description: string | null;
+  imageUrl: string | null;
 }
 
 export default function NewsPage() {
@@ -123,7 +126,7 @@ export default function NewsPage() {
               {mediaItems.map((item) => (
                 <Card
                   key={item.id}
-                  className="hover:shadow-lg transition-shadow flex flex-col"
+                  className="hover:shadow-lg transition-shadow flex flex-col overflow-hidden"
                 >
                   <CardHeader>
                     <CardTitle className="text-lg mb-2 line-clamp-2 text-balance">
@@ -136,24 +139,32 @@ export default function NewsPage() {
                       </div>
                     </CardDescription>
                   </CardHeader>
-                  <CardContent className="mt-auto space-y-2">
+                  
+                  {item.imageUrl && (
+                    <div className="relative w-full h-48 px-6">
+                      <Image
+                        src={item.imageUrl}
+                        alt={item.title}
+                        fill
+                        className="object-cover rounded-md"
+                      />
+                    </div>
+                  )}
+                  
+                  {item.description && (
+                    <div className="px-6 py-3">
+                      <p className="text-sm text-muted-foreground line-clamp-3">
+                        {item.description}
+                      </p>
+                    </div>
+                  )}
+                  
+                  <CardContent className="mt-auto space-y-2 pt-4">
                     <Button size="sm" className="w-full" asChild>
                       <a href={`/news/${item.slug}`}>
                         {t.news.readMore?.[language] || "Read More"}
                       </a>
                     </Button>
-                    {item.url && (
-                      <Button size="sm" variant="outline" className="w-full" asChild>
-                        <a
-                          href={item.url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                        >
-                          {t.news.viewArticle[language]}
-                          <ExternalLink className="h-4 w-4 ml-2" />
-                        </a>
-                      </Button>
-                    )}
                   </CardContent>
                 </Card>
               ))}

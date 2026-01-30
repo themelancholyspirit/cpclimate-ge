@@ -71,7 +71,8 @@ model MediaItem {
   date            DateTime
   url             String?
   createdAt       DateTime        @default(now())
-  content         String?
+  description     String?         @db.Text
+  content         String?         @db.Text
   contentSections Json?
   headerImage     String?         @db.Uuid
   slug            String          @unique @default("")

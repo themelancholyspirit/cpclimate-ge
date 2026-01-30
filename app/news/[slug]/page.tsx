@@ -16,6 +16,7 @@ interface NewsArticle {
   outlet: string;
   date: string;
   url?: string;
+  description?: string;
   content?: string;
   imageUrl?: string;
 }
@@ -170,6 +171,11 @@ export default function NewsDetailPage() {
             <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4 text-balance break-words">
               {article.title}
             </h1>
+            {article.description && (
+              <p className="text-lg text-muted-foreground leading-relaxed break-words">
+                {article.description}
+              </p>
+            )}
           </div>
         </div>
       </div>
