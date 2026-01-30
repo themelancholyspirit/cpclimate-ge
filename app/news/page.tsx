@@ -93,7 +93,7 @@ export default function NewsPage() {
               {mediaItems.map((item) => (
                 <Card
                   key={item.id}
-                  className="hover:shadow-lg transition-shadow flex flex-col overflow-hidden"
+                  className="hover:shadow-lg transition-shadow flex flex-col overflow-hidden py-3"
                 >
                   {item.imageUrl && (
                     <div className="p-3">
