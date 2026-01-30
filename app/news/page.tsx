@@ -96,7 +96,7 @@ export default function NewsPage() {
                   className="hover:shadow-lg transition-shadow flex flex-col overflow-hidden"
                 >
                   {item.imageUrl && (
-                    <div className="pt-3 px-3">
+                    <div className="pt-1.5 px-3">
                       <div className="relative w-full aspect-[16/10] overflow-hidden rounded-lg">
                         <Image
                           src={item.imageUrl}
