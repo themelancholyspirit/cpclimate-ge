@@ -175,15 +175,17 @@ export default function NewsDetailPage() {
             <div 
               className="prose prose-slate dark:prose-invert prose-lg max-w-none
                 prose-headings:font-bold prose-headings:tracking-tight
-                prose-h1:text-4xl prose-h1:mb-4
-                prose-h2:text-3xl prose-h2:mb-3
-                prose-h3:text-2xl prose-h3:mb-2
-                prose-p:text-lg prose-p:leading-relaxed prose-p:mb-4
+                prose-h1:text-4xl prose-h1:mb-6 prose-h1:mt-8
+                prose-h2:text-3xl prose-h2:mb-4 prose-h2:mt-8
+                prose-h3:text-2xl prose-h3:mb-3 prose-h3:mt-6
+                prose-p:text-lg prose-p:leading-relaxed prose-p:mb-6
                 prose-strong:font-semibold prose-em:italic
-                prose-ul:list-disc prose-ul:ml-6 prose-ol:list-decimal prose-ol:ml-6
+                prose-ul:list-disc prose-ul:ml-6 prose-ul:mb-6
+                prose-ol:list-decimal prose-ol:ml-6 prose-ol:mb-6
                 prose-li:mb-2
-                prose-img:rounded-lg prose-img:shadow-md prose-img:my-8
-                prose-a:text-primary prose-a:underline hover:prose-a:no-underline"
+                prose-img:rounded-lg prose-img:shadow-md prose-img:my-6
+                prose-a:text-primary prose-a:underline hover:prose-a:no-underline
+                prose-blockquote:border-l-4 prose-blockquote:border-primary prose-blockquote:pl-4 prose-blockquote:italic prose-blockquote:my-6"
               dangerouslySetInnerHTML={{ __html: article.content }}
             />
           ) : (
