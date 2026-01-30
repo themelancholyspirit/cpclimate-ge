@@ -66,18 +66,14 @@ model Resource {
 }
 
 model MediaItem {
-  title           String
-  outlet          String
-  date            DateTime
-  url             String?
-  createdAt       DateTime        @default(now())
-  description     String?         @db.Text
-  content         String?         @db.Text
-  contentSections Json?
-  headerImage     String?         @db.Uuid
-  slug            String          @unique @default("")
   id              String          @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  slug            String          @unique @default("")
+  title           String
+  description     String?         @db.Text
+  date            DateTime
   image           String?         @db.Uuid
+  content         String?         @db.Text
+  createdAt       DateTime        @default(now())
   directus_files  directus_files? @relation(fields: [image], references: [id], onUpdate: NoAction, map: "media_items_image_foreign")
 
   @@map("media_items")

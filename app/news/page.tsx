@@ -14,10 +14,6 @@ import { Badge } from "@/components/ui/badge";
 import {
   Newspaper,
   Calendar,
-  ExternalLink,
-  Mic,
-  FileText,
-  Radio,
 } from "lucide-react";
 import { useLanguage } from "@/contexts/language-context";
 
@@ -25,10 +21,7 @@ interface MediaItem {
   id: string;
   slug: string;
   title: string;
-  outlet: string;
   date: string;
-  type: string;
-  url: string | null;
   description: string | null;
   imageUrl: string | null;
 }
@@ -65,32 +58,6 @@ export default function NewsPage() {
       month: "long",
       day: "numeric",
     });
-  };
-
-  const getTypeIcon = (type: string) => {
-    switch (type.toLowerCase()) {
-      case "interview":
-        return <Mic className="h-5 w-5" />;
-      case "article":
-        return <FileText className="h-5 w-5" />;
-      case "feature":
-        return <Radio className="h-5 w-5" />;
-      default:
-        return <Newspaper className="h-5 w-5" />;
-    }
-  };
-
-  const getTypeColor = (type: string) => {
-    switch (type.toLowerCase()) {
-      case "interview":
-        return "bg-blue-100 text-blue-800 border-blue-200";
-      case "article":
-        return "bg-green-100 text-green-800 border-green-200";
-      case "feature":
-        return "bg-purple-100 text-purple-800 border-purple-200";
-      default:
-        return "bg-gray-100 text-gray-800 border-gray-200";
-    }
   };
 
   if (loading) {

@@ -13,9 +13,7 @@ interface NewsArticle {
   id: string;
   slug: string;
   title: string;
-  outlet: string;
   date: string;
-  url?: string;
   description?: string;
   content?: string;
   imageUrl?: string;
@@ -148,25 +146,10 @@ export default function NewsDetailPage() {
         <div className="container mx-auto px-4 py-12">
           <div className="max-w-4xl">
             <div className="flex flex-wrap items-center gap-3 mb-4">
-              <Badge variant="secondary" className="bg-blue-600 text-white">
-                {article.outlet}
-              </Badge>
               <div className="flex items-center gap-2 text-sm text-muted-foreground">
                 <Calendar className="h-4 w-4" />
                 <span>{new Date(article.date).toLocaleDateString()}</span>
               </div>
-              {article.url && (
-                <Button variant="outline" size="sm" asChild>
-                  <a
-                    href={article.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    <ExternalLink className="mr-2 h-4 w-4" />
-                    View Original
-                  </a>
-                </Button>
-              )}
             </div>
             <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4 text-balance break-words">
               {article.title}
@@ -237,17 +220,6 @@ export default function NewsDetailPage() {
           ) : (
             <div className="text-center text-muted-foreground">
               <p>No content available for this article.</p>
-              {article.url && (
-                <Button variant="link" asChild className="mt-4">
-                  <a
-                    href={article.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    Read the original article <ExternalLink className="ml-2 h-4 w-4" />
-                  </a>
-                </Button>
-              )}
             </div>
           )}
         </div>
