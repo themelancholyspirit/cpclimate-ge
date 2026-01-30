@@ -197,7 +197,7 @@ export const translations = {
     subscribeBody: { en: "Subscribe to receive our latest reports and findings.", ka: "გამოიწერეთ ჩვენი უახლესი ანგარიშებისა და შედეგების მისაღებად." },
     emailPlaceholder: { en: "Your email address", ka: "თქვენი ელ.ფოსტის მისამართი" },
     accessAll: { en: "Access All Resources", ka: "ყველა რესურსის ნახვა" },
-    download: { en: "Download", ka: "გარმეიწერე" },
+    download: { en: "Download", ka: "გადმოწერა" },
     readArticle: { en: "Read Article", ka: "სტატიის ნახვა" },
   },
   news: {
