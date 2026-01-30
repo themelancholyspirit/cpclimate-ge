@@ -22,6 +22,7 @@ import { useLanguage } from "@/contexts/language-context";
 
 interface MediaItem {
   id: string;
+  slug: string;
   title: string;
   outlet: string;
   date: string;
@@ -135,9 +136,14 @@ export default function NewsPage() {
                       </div>
                     </CardDescription>
                   </CardHeader>
-                  <CardContent className="mt-auto">
-                    {item.url ? (
-                      <Button size="sm" className="w-full" asChild>
+                  <CardContent className="mt-auto space-y-2">
+                    <Button size="sm" className="w-full" asChild>
+                      <a href={`/news/${item.slug}`}>
+                        {t.news.readMore?.[language] || "Read More"}
+                      </a>
+                    </Button>
+                    {item.url && (
+                      <Button size="sm" variant="outline" className="w-full" asChild>
                         <a
                           href={item.url}
                           target="_blank"
@@ -146,10 +152,6 @@ export default function NewsPage() {
                           {t.news.viewArticle[language]}
                           <ExternalLink className="h-4 w-4 ml-2" />
                         </a>
-                      </Button>
-                    ) : (
-                      <Button size="sm" className="w-full" disabled>
-                        {t.news.viewArticle[language]}
                       </Button>
                     )}
                   </CardContent>

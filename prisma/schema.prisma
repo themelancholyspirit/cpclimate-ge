@@ -6,90 +6,27 @@ datasource db {
   provider = "postgresql"
 }
 
-// Enums
-enum UserRole {
-  citizen
-  admin
-  observer
-}
-
-enum MapPointType {
-  water
-  pollution
-  risk
-  infrastructure
-}
-
-enum MapPointStatus {
-  normal
-  warning
-  problem
-}
-
-enum ProjectStatus {
-  Active
-  Planning
-  Completed
-}
-
-enum ResourceType {
-  TechnicalReport
-  PolicyDocument
-  TrainingMaterial
-  DataReport
-}
-
-enum ResourceCategory {
-  Research
-  Policy
-  Training
-}
-
-enum MediaType {
-  Article
-  Interview
-  Feature
-}
-
-enum IssueType {
-  water
-  waste
-  odor
-  drainage
-  flooding
-  other
-}
-
-enum ReportStatus {
-  pending
-  verified
-  resolved
-  rejected
-}
-
-// User model for reporting (no authentication)
 model User {
   id        String   @id @default(cuid())
   email     String   @unique
   name      String?
-  role      UserRole @default(citizen) // citizen, admin, observer
+  role      UserRole @default(citizen)
   createdAt DateTime @default(now())
-
   reports   Report[]
-  
+
   @@map("users")
 }
 
 model MapPoint {
-  id          String          @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  type        MapPointType    // water, pollution, risk, infrastructure
+  type        MapPointType
   lat         Float
   lng         Float
-  status      MapPointStatus  // normal, warning, problem
+  status      MapPointStatus
   title       String
   description String
-  metadata    Json?           // Additional flexible data
-  createdAt   DateTime        @default(now())
+  metadata    Json?
+  createdAt   DateTime       @default(now())
+  id          String         @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
 
   @@index([type])
   @@index([status])
@@ -98,63 +35,69 @@ model MapPoint {
 }
 
 model Project {
-  id              String         @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  slug            String         @unique @default("")
+  slug            String        @unique @default("")
   title           String
   description     String
-  status          ProjectStatus  // Active, Planning, Completed
+  status          ProjectStatus
   duration        String
   icon            String
   color           String
-  goals           String[]       // Array of goal strings
-  headerImage     String?        @db.Uuid // File ID from directus_files
-  content         String?        @db.Text // Full content/body text
-  contentSections Json?          // Array of {type: 'text'|'image', content: string}
-  createdAt       DateTime       @default(now())
+  goals           String[]
+  headerImage     String?       @db.Uuid
+  content         String?
+  contentSections Json?
+  createdAt       DateTime      @default(now())
+  id              String        @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
 
   @@index([status])
   @@map("projects")
 }
 
 model Resource {
-  id          String           @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   title       String
   date        DateTime
   description String
   pages       Int?
-  file        String?          @db.Uuid // File ID from directus_files
-  createdAt   DateTime         @default(now())
+  createdAt   DateTime @default(now())
+  file        String?  @db.Uuid
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
 
   @@map("resources")
 }
 
 model MediaItem {
-  id        String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  title     String
-  outlet    String
-  date      DateTime
-  url       String?
-  createdAt DateTime  @default(now())
+  title           String
+  outlet          String
+  date            DateTime
+  url             String?
+  createdAt       DateTime        @default(now())
+  content         String?
+  contentSections Json?
+  headerImage     String?         @db.Uuid
+  slug            String          @unique @default("")
+  id              String          @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  image           String?         @db.Uuid
+  directus_files  directus_files? @relation(fields: [image], references: [id], onUpdate: NoAction, map: "media_items_image_foreign")
 
   @@map("media_items")
 }
 
 model Report {
   id            String       @id @default(cuid())
-  issueType     IssueType    // water, waste, odor, drainage, flooding, other
+  issueType     IssueType
   location      String
   locationDesc  String
   lat           Float?
   lng           Float?
   description   String
-  photos        String[]     // Array of photo URLs
+  photos        String[]
   reporterName  String
   reporterEmail String
   reporterPhone String?
-  status        ReportStatus @default(pending) // pending, verified, resolved, rejected
+  status        ReportStatus @default(pending)
   verifiedAt    DateTime?
   resolvedAt    DateTime?
-  notes         String?      // Admin notes
+  notes         String?
   userId        String?
   createdAt     DateTime     @default(now())
   user          User?        @relation(fields: [userId], references: [id])
@@ -308,6 +251,7 @@ model directus_files {
   directus_settings_directus_settings_public_backgroundTodirectus_files directus_settings[] @relation("directus_settings_public_backgroundTodirectus_files")
   directus_settings_directus_settings_public_faviconTodirectus_files    directus_settings[] @relation("directus_settings_public_faviconTodirectus_files")
   directus_settings_directus_settings_public_foregroundTodirectus_files directus_settings[] @relation("directus_settings_public_foregroundTodirectus_files")
+  media_items                                                           MediaItem[]
 }
 
 model directus_flows {
@@ -646,4 +590,64 @@ model directus_versions {
   directus_collections                                          directus_collections @relation(fields: [collection], references: [collection], onDelete: Cascade, onUpdate: NoAction, map: "directus_versions_collection_foreign")
   directus_users_directus_versions_user_createdTodirectus_users directus_users?      @relation("directus_versions_user_createdTodirectus_users", fields: [user_created], references: [id], onUpdate: NoAction, map: "directus_versions_user_created_foreign")
   directus_users_directus_versions_user_updatedTodirectus_users directus_users?      @relation("directus_versions_user_updatedTodirectus_users", fields: [user_updated], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "directus_versions_user_updated_foreign")
+}
+
+enum UserRole {
+  citizen
+  admin
+  observer
+}
+
+enum MapPointType {
+  water
+  pollution
+  risk
+  infrastructure
+}
+
+enum MapPointStatus {
+  normal
+  warning
+  problem
+}
+
+enum ProjectStatus {
+  Active
+  Planning
+  Completed
+}
+
+enum ResourceType {
+  TechnicalReport
+  PolicyDocument
+  TrainingMaterial
+  DataReport
+}
+
+enum ResourceCategory {
+  Research
+  Policy
+  Training
+}
+
+enum MediaType {
+  Article
+  Interview
+  Feature
+}
+
+enum IssueType {
+  water
+  waste
+  odor
+  drainage
+  flooding
+  other
+}
+
+enum ReportStatus {
+  pending
+  verified
+  resolved
+  rejected
 }
