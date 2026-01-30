@@ -85,7 +85,7 @@ export default function NewsPage() {
         </div>
       </div>
 
-      <div className="container mx-auto px-4 py-12">
+      <div className="container mx-auto px-2 py-16">
         {mediaItems.length > 0 ? (
           <div className="mb-16">
 
@@ -96,7 +96,7 @@ export default function NewsPage() {
                   className="hover:shadow-lg transition-shadow flex flex-col overflow-hidden"
                 >
                   {item.imageUrl && (
-                    <div className="pt-1.5 px-3">
+                    <div className="p-3">
                       <div className="relative w-full aspect-[16/10] overflow-hidden rounded-lg">
                         <Image
                           src={item.imageUrl}
@@ -108,7 +108,7 @@ export default function NewsPage() {
                     </div>
                   )}
                   
-                  <CardHeader>
+                  <CardHeader className={item.imageUrl ? "pt-0" : ""}>
                     <CardTitle className="text-lg mb-2 line-clamp-2 text-balance">
                       {item.title}
                     </CardTitle>
