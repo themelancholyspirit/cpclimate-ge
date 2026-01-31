@@ -17,15 +17,6 @@ export async function GET(request: NextRequest) {
       where,
       orderBy: { createdAt: 'desc' },
       take: limit ? parseInt(limit) : undefined,
-      include: {
-        user: {
-          select: {
-            id: true,
-            name: true,
-            email: true,
-          },
-        },
-      },
     })
 
     return NextResponse.json(reports)
@@ -47,20 +38,16 @@ export async function POST(request: NextRequest) {
     const {
       issueType,
       location,
-      locationDesc,
-      lat,
-      lng,
       description,
       photos,
       reporterName,
       reporterEmail,
       reporterPhone,
-      userId,
     } = body
 
     // Validate required fields
-    if (!issueType || !location || !locationDesc || !description || !reporterName || !reporterEmail) {
-      console.error('Missing required fields:', { issueType, location, locationDesc, description, reporterName, reporterEmail })
+    if (!issueType || !location || !description || !reporterName || !reporterEmail) {
+      console.error('Missing required fields:', { issueType, location, description, reporterName, reporterEmail })
       return NextResponse.json(
         { error: 'Missing required fields' },
         { status: 400 }
@@ -72,15 +59,11 @@ export async function POST(request: NextRequest) {
       data: {
         issueType,
         location,
-        locationDesc,
-        lat: lat ? parseFloat(lat) : null,
-        lng: lng ? parseFloat(lng) : null,
         description,
         photos: photos || [],
         reporterName,
         reporterEmail,
         reporterPhone: reporterPhone || null,
-        userId: userId || null,
         status: 'pending',
       },
     })

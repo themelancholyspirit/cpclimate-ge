@@ -20,9 +20,6 @@ interface ReportData {
   issueType: string
   description: string
   location: string
-  locationDesc: string
-  lat: number
-  lng: number
   photos?: File[]
   reporterName: string
   reporterEmail: string
@@ -41,9 +38,6 @@ export function MapClickReportModal({
     issueType: "",
     description: "",
     location: "",
-    locationDesc: "",
-    lat: coordinates?.lat || 0,
-    lng: coordinates?.lng || 0,
     reporterName: "",
     reporterEmail: "",
     reporterPhone: "",
@@ -54,10 +48,7 @@ export function MapClickReportModal({
     if (coordinates) {
       setFormData((prev) => ({
         ...prev,
-        lat: coordinates.lat,
-        lng: coordinates.lng,
         location: `${coordinates.lat.toFixed(6)}, ${coordinates.lng.toFixed(6)}`,
-        locationDesc: `${coordinates.lat.toFixed(6)}, ${coordinates.lng.toFixed(6)}`,
       }))
     }
   }, [coordinates])
@@ -66,24 +57,22 @@ export function MapClickReportModal({
     e.preventDefault()
     setIsSubmitting(true)
 
-    // Simulate API call
-    setTimeout(() => {
-      onSubmit(formData)
-      setIsSubmitting(false)
-      onClose()
+    try {
+      await onSubmit(formData)
       // Reset form
       setFormData({
         issueType: "",
         description: "",
         location: "",
-        locationDesc: "",
-        lat: coordinates?.lat || 0,
-        lng: coordinates?.lng || 0,
         reporterName: "",
         reporterEmail: "",
         reporterPhone: "",
       })
-    }, 1000)
+    } catch (error) {
+      console.error('Error submitting report:', error)
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   if (!isOpen) return null
@@ -138,7 +127,7 @@ export function MapClickReportModal({
                 placeholder={t.report.locationPlaceholder[language]}
                 required
                 value={formData.location}
-                onChange={(e) => setFormData({ ...formData, location: e.target.value, locationDesc: e.target.value })}
+                onChange={(e) => setFormData({ ...formData, location: e.target.value })}
               />
             </div>
 
@@ -157,22 +146,47 @@ export function MapClickReportModal({
             {/* Photo Upload */}
             <div className="space-y-2">
               <Label htmlFor="photos">{t.report.photos[language]}</Label>
-              <div className="border-2 border-dashed border-border rounded-lg p-8 text-center hover:bg-muted/50 transition-colors cursor-pointer">
-                <Camera className="h-8 w-8 mx-auto mb-2 text-muted-foreground" />
-                <p className="text-sm text-muted-foreground mb-1">{t.report.clickToUpload[language]}</p>
-                <p className="text-xs text-muted-foreground">{t.report.uploadHint[language]}</p>
-                <input
-                  id="photos"
-                  type="file"
-                  multiple
-                  accept="image/*"
-                  className="hidden"
-                  onChange={(e) => {
-                    const files = Array.from(e.target.files || [])
-                    setFormData({ ...formData, photos: files })
-                  }}
-                />
-              </div>
+              <label htmlFor="photos" className="block cursor-pointer">
+                <div className="border-2 border-dashed border-border rounded-lg p-8 text-center hover:bg-muted/50 transition-colors">
+                  <Camera className="h-8 w-8 mx-auto mb-2 text-muted-foreground" />
+                  <p className="text-sm text-muted-foreground mb-1">{t.report.clickToUpload[language]}</p>
+                  <p className="text-xs text-muted-foreground">{t.report.uploadHint[language]}</p>
+                </div>
+              </label>
+              <input
+                id="photos"
+                type="file"
+                multiple
+                accept="image/*"
+                className="hidden"
+                onChange={(e) => {
+                  const files = Array.from(e.target.files || [])
+                  setFormData({ ...formData, photos: files })
+                }}
+              />
+              {formData.photos && formData.photos.length > 0 && (
+                <div className="grid grid-cols-2 gap-2 mt-2">
+                  {formData.photos.map((file, index) => (
+                    <div key={index} className="relative aspect-video rounded-lg overflow-hidden border border-border">
+                      <img
+                        src={URL.createObjectURL(file)}
+                        alt={`Upload ${index + 1}`}
+                        className="w-full h-full object-cover"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => {
+                          const newPhotos = formData.photos?.filter((_, i) => i !== index)
+                          setFormData({ ...formData, photos: newPhotos })
+                        }}
+                        className="absolute top-1 right-1 bg-destructive text-destructive-foreground rounded-full p-1 hover:bg-destructive/90"
+                      >
+                        <X className="h-3 w-3" />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
 
             {/* Contact Information */}

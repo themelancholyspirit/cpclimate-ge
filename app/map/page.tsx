@@ -242,9 +242,64 @@ export default function MapPage() {
           setReportCoordinates(null);
         }}
         coordinates={reportCoordinates}
-        onSubmit={(data) => {
-          console.log("Report submitted:", data);
-          // Handle the submission here
+        onSubmit={async (data) => {
+          try {
+            let photoIds: string[] = [];
+
+            // Upload photos to Directus if any
+            if (data.photos && data.photos.length > 0) {
+              const uploadFormData = new FormData();
+              data.photos.forEach((file) => {
+                uploadFormData.append('files', file);
+              });
+
+              const uploadResponse = await fetch('/api/upload', {
+                method: 'POST',
+                body: uploadFormData,
+              });
+
+              if (!uploadResponse.ok) {
+                throw new Error('Failed to upload photos');
+              }
+
+              const uploadData = await uploadResponse.json();
+              photoIds = uploadData.fileIds;
+            }
+
+            // Submit the report with photo IDs
+            const reportResponse = await fetch('/api/reports', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                issueType: data.issueType,
+                location: data.location,
+                description: data.description,
+                photos: photoIds,
+                reporterName: data.reporterName,
+                reporterEmail: data.reporterEmail,
+                reporterPhone: data.reporterPhone,
+              }),
+            });
+
+            if (!reportResponse.ok) {
+              throw new Error('Failed to submit report');
+            }
+
+            const report = await reportResponse.json();
+            console.log('Report submitted successfully:', report);
+
+            // Show success message (you can add a toast notification here)
+            alert(t.report.success?.[language] || 'Report submitted successfully!');
+            
+            // Close the modal
+            setIsReportModalOpen(false);
+            setReportCoordinates(null);
+          } catch (error) {
+            console.error('Error submitting report:', error);
+            alert(t.report.error?.[language] || 'Failed to submit report. Please try again.');
+          }
         }}
       />
     </div>

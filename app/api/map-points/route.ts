@@ -18,39 +18,10 @@ export async function GET(request: NextRequest) {
       orderBy: { createdAt: 'desc' },
     })
 
-    // Fetch verified and resolved reports that have coordinates
-    const verifiedReports = await prisma.report.findMany({
-      where: {
-        status: {
-          in: ['verified', 'resolved']
-        },
-        lat: { not: null },
-        lng: { not: null },
-      },
-      orderBy: { createdAt: 'desc' },
-    })
+    // Note: Reports no longer have lat/lng fields, so they are not displayed on the map
+    // Only dedicated map_points are shown
 
-    // Transform reports to match MapPoint structure
-    const reportPoints = verifiedReports.map(report => ({
-      id: report.id,
-      type: 'pollution', // Map issue types to map point types
-      lat: report.lat!,
-      lng: report.lng!,
-      status: report.status === 'resolved' ? 'normal' : 'warning',
-      title: report.issueType.charAt(0).toUpperCase() + report.issueType.slice(1) + ' Issue',
-      description: report.description,
-      metadata: {
-        source: 'report',
-        issueType: report.issueType,
-        reporterName: report.reporterName,
-        reportId: report.id,
-      }
-    }))
-
-    // Combine both arrays
-    const allPoints = [...mapPoints, ...reportPoints]
-
-    return NextResponse.json(allPoints)
+    return NextResponse.json(mapPoints)
   } catch (error) {
     console.error('Error fetching map points:', error)
     return NextResponse.json(
