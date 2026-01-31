@@ -12,7 +12,6 @@ model User {
   name      String?
   role      UserRole @default(citizen)
   createdAt DateTime @default(now())
-  reports   Report[]
 
   @@map("users")
 }
@@ -66,15 +65,17 @@ model Resource {
 }
 
 model MediaItem {
-  id              String          @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  slug            String          @unique @default("")
-  title           String
-  description     String?         @db.Text
-  date            DateTime
-  image           String?         @db.Uuid
-  content         String?         @db.Text
-  createdAt       DateTime        @default(now())
-  directus_files  directus_files? @relation(fields: [image], references: [id], onUpdate: NoAction, map: "media_items_image_foreign")
+  title          String
+  date           DateTime
+  createdAt      DateTime        @default(now())
+  content        String?
+  slug           String          @unique @default("")
+  id             String          @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  image          String?         @db.Uuid
+  description    String?
+  type           String?         @db.VarChar(255)
+  updatedAt      DateTime?       @default(now()) @db.Timestamp(6)
+  directus_files directus_files? @relation(fields: [image], references: [id], onUpdate: NoAction, map: "media_items_image_foreign")
 
   @@map("media_items")
 }
@@ -83,21 +84,13 @@ model Report {
   id            String       @id @default(cuid())
   issueType     IssueType
   location      String
-  locationDesc  String
-  lat           Float?
-  lng           Float?
   description   String
   photos        String[]
   reporterName  String
   reporterEmail String
   reporterPhone String?
   status        ReportStatus @default(pending)
-  verifiedAt    DateTime?
-  resolvedAt    DateTime?
-  notes         String?
-  userId        String?
   createdAt     DateTime     @default(now())
-  user          User?        @relation(fields: [userId], references: [id])
 
   @@index([status])
   @@index([issueType])
