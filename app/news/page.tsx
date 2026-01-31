@@ -93,7 +93,7 @@ export default function NewsPage() {
               {mediaItems.map((item) => (
                 <Card
                   key={item.id}
-                  className="hover:shadow-lg transition-shadow flex flex-col overflow-hidden py-3"
+                  className="hover:shadow-lg transition-shadow flex flex-col overflow-hidden py-0"
                 >
                   {item.imageUrl && (
                     <div className="p-3">
@@ -128,7 +128,7 @@ export default function NewsPage() {
                     </div>
                   )}
                   
-                  <CardContent className="mt-auto space-y-2 pt-4">
+                  <CardContent className="mt-auto space-y-2 pt-4 pb-4">
                     <Button size="sm" className="w-full" asChild>
                       <a href={`/news/${item.slug}`}>
                         {t.news.readMore?.[language] || "Read More"}
