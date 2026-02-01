@@ -5,6 +5,7 @@ import { Analytics } from "@vercel/analytics/next"
 import { SiteHeader } from "@/components/site-header"
 import { SiteFooter } from "@/components/site-footer"
 import { LanguageProvider } from "@/contexts/language-context";
+import { Toaster } from "@/components/ui/toaster"
 import "./globals.css"
 
 const _geist = Geist({ subsets: ["latin"] })
@@ -46,6 +47,7 @@ export default function RootLayout({
         <SiteHeader />
         <main>{children}</main>
         <SiteFooter />
+        <Toaster />
         <Analytics />
         </LanguageProvider>
       </body>
