@@ -53,8 +53,8 @@ export default function ContactPage() {
       }
 
       toast({
-        title: "Message sent!",
-        description: "Thank you for contacting us. We'll get back to you soon.",
+        title: t.toast.contactSuccess.title[language],
+        description: t.toast.contactSuccess.description[language],
       });
 
       // Reset form
@@ -69,8 +69,8 @@ export default function ContactPage() {
     } catch (error) {
       console.error("Error submitting contact form:", error);
       toast({
-        title: "Error",
-        description: "Failed to send message. Please try again.",
+        title: t.toast.contactError.title[language],
+        description: t.toast.contactError.description[language],
         variant: "destructive",
       });
     } finally {

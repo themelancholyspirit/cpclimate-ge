@@ -257,6 +257,24 @@ export const translations = {
     view: { en: "View", ka: "ნახვა" },
     download: { en: "Download", ka: "ჩამოტვირთვა" },
     subscribe: { en: "Subscribe", ka: "გამოწერა" },
+  },
+  toast: {
+    contactSuccess: {
+      title: { en: "Message sent!", ka: "შეტყობინება გაიგზავნა!" },
+      description: { en: "Thank you for contacting us. We'll get back to you soon.", ka: "გმადლობთ კონტაქტისთვის. მალე დაგიკავშირდებით." }
+    },
+    contactError: {
+      title: { en: "Error", ka: "შეცდომა" },
+      description: { en: "Failed to send message. Please try again.", ka: "შეტყობინების გაგზავნა ვერ მოხერხდა. გთხოვთ სცადოთ ხელახლა." }
+    },
+    reportSuccess: {
+      title: { en: "Report submitted!", ka: "რეპორტი გაიგზავნა!" },
+      description: { en: "Thank you for reporting. We'll review your submission.", ka: "გმადლობთ მოხსენებისთვის. განვიხილავთ თქვენს მოხსენებას." }
+    },
+    reportError: {
+      title: { en: "Error", ka: "შეცდომა" },
+      description: { en: "Failed to submit report. Please try again.", ka: "რეპორტის გაგზავნა ვერ მოხერხდა. გთხოვთ სცადოთ ხელახლა." }
+    }
   }
 } as const;
 

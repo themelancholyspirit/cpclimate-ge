@@ -8,6 +8,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
 import { X, MapPin, Camera } from "lucide-react"
 import { useLanguage } from "@/contexts/language-context"
+import { useToast } from "@/hooks/use-toast"
 
 interface MapClickReportModalProps {
   isOpen: boolean
@@ -33,6 +34,7 @@ export function MapClickReportModal({
   onSubmit,
 }: MapClickReportModalProps) {
   const { t, language } = useLanguage()
+  const { toast } = useToast()
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [formData, setFormData] = useState<ReportData>({
     issueType: "",
@@ -59,6 +61,11 @@ export function MapClickReportModal({
 
     try {
       await onSubmit(formData)
+      // Show success toast
+      toast({
+        title: t.toast.reportSuccess.title[language],
+        description: t.toast.reportSuccess.description[language],
+      })
       // Reset form
       setFormData({
         issueType: "",
@@ -70,6 +77,12 @@ export function MapClickReportModal({
       })
     } catch (error) {
       console.error('Error submitting report:', error)
+      // Show error toast
+      toast({
+        title: t.toast.reportError.title[language],
+        description: t.toast.reportError.description[language],
+        variant: "destructive",
+      })
     } finally {
       setIsSubmitting(false)
     }
