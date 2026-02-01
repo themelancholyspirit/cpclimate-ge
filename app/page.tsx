@@ -20,9 +20,46 @@ import {
 } from "lucide-react";
 import { Item } from "@radix-ui/react-dropdown-menu";
 import { useLanguage } from "@/contexts/language-context";
+import { useEffect, useState } from "react";
+
+// Icon mapping for dynamic projects
+const iconMap: Record<string, any> = {
+  droplet: Droplet,
+  users: Users,
+  shield: Shield,
+};
+
+interface Project {
+  id: string;
+  slug: string;
+  title: string;
+  description: string;
+  icon: string;
+  color: string;
+  headerImage: string | null;
+}
 
 export default function HomePage() {
   const { t, language } = useLanguage();
+  const [featuredProjects, setFeaturedProjects] = useState<Project[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchFeaturedProjects() {
+      try {
+        const response = await fetch("/api/projects/featured");
+        const data = await response.json();
+        setFeaturedProjects(data.projects || []);
+      } catch (error) {
+        console.error("Error fetching featured projects:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+
+    fetchFeaturedProjects();
+  }, []);
+
   return (
     <div className="flex flex-col">
       {/* Hero Section */}
@@ -145,83 +182,136 @@ export default function HomePage() {
             {t.homePage.featuredProjectsTitle[language]}
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-            <Card className="hover:shadow-lg transition-shadow">
-              <CardHeader>
-                <div className="w-full h-48 bg-blue-100 rounded-md mb-4 flex items-center justify-center">
-                  <Droplet className="h-16 w-16 text-blue-600" />
-                </div>
-                <CardTitle className="text-balance">
-                  Kaparchina River: Climate Resilience & Citizen Monitoring
-                </CardTitle>
-                <CardDescription className="leading-relaxed">
-                  Comprehensive environmental monitoring and community
-                  engagement for the Kaparchina River ecosystem
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <Button
-                  asChild
-                  variant="outline"
-                  className="w-full bg-transparent"
-                >
-                  <Link href="/projects/kaparchina">
-                    {t.projects.learnMore[language]}
-                  </Link>
-                </Button>
-              </CardContent>
-            </Card>
+            {isLoading ? (
+              // Loading skeleton
+              Array.from({ length: 3 }).map((_, i) => (
+                <Card key={i} className="hover:shadow-lg transition-shadow">
+                  <CardHeader>
+                    <div className="w-full h-48 bg-slate-200 rounded-md mb-4 animate-pulse" />
+                    <div className="h-6 bg-slate-200 rounded mb-2 animate-pulse" />
+                    <div className="h-4 bg-slate-200 rounded animate-pulse" />
+                  </CardHeader>
+                </Card>
+              ))
+            ) : featuredProjects.length > 0 ? (
+              // Dynamic featured projects
+              featuredProjects.map((project) => {
+                const IconComponent = iconMap[project.icon] || Droplet;
+                return (
+                  <Card key={project.id} className="hover:shadow-lg transition-shadow">
+                    <CardHeader>
+                      <div className="w-full h-48 bg-blue-100 rounded-md mb-4 flex items-center justify-center overflow-hidden">
+                        {project.headerImage ? (
+                          <img
+                            src={project.headerImage}
+                            alt={project.title}
+                            className="w-full h-full object-cover"
+                          />
+                        ) : (
+                          <IconComponent className={`h-16 w-16 ${project.color.includes('blue') ? 'text-blue-600' : project.color.includes('green') ? 'text-green-600' : 'text-slate-600'}`} />
+                        )}
+                      </div>
+                      <CardTitle className="text-balance">{project.title}</CardTitle>
+                      <CardDescription className="leading-relaxed">
+                        {project.description}
+                      </CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <Button
+                        asChild
+                        variant="outline"
+                        className="w-full bg-transparent"
+                      >
+                        <Link href={`/projects/${project.slug}`}>
+                          {t.projects.learnMore[language]}
+                        </Link>
+                      </Button>
+                    </CardContent>
+                  </Card>
+                );
+              })
+            ) : (
+              // Fallback if no featured projects
+              <>
+                <Card className="hover:shadow-lg transition-shadow">
+                  <CardHeader>
+                    <div className="w-full h-48 bg-blue-100 rounded-md mb-4 flex items-center justify-center">
+                      <Droplet className="h-16 w-16 text-blue-600" />
+                    </div>
+                    <CardTitle className="text-balance">
+                      Kaparchina River: Climate Resilience & Citizen Monitoring
+                    </CardTitle>
+                    <CardDescription className="leading-relaxed">
+                      Comprehensive environmental monitoring and community
+                      engagement for the Kaparchina River ecosystem
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <Button
+                      asChild
+                      variant="outline"
+                      className="w-full bg-transparent"
+                    >
+                      <Link href="/projects/kaparchina">
+                        {t.projects.learnMore[language]}
+                      </Link>
+                    </Button>
+                  </CardContent>
+                </Card>
 
-            <Card className="hover:shadow-lg transition-shadow">
-              <CardHeader>
-                <div className="w-full h-48 bg-green-100 rounded-md mb-4 flex items-center justify-center">
-                  <Users className="h-16 w-16 text-green-600" />
-                </div>
-                <CardTitle className="text-balance">
-                  Community River Observers Network (C-RON)
-                </CardTitle>
-                <CardDescription className="leading-relaxed">
-                  Training and empowering local citizens to become active
-                  environmental monitors
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <Button
-                  asChild
-                  variant="outline"
-                  className="w-full bg-transparent"
-                >
-                  <Link href="/projects/c-ron">
-                    {t.projects.learnMore[language]}
-                  </Link>
-                </Button>
-              </CardContent>
-            </Card>
+                <Card className="hover:shadow-lg transition-shadow">
+                  <CardHeader>
+                    <div className="w-full h-48 bg-green-100 rounded-md mb-4 flex items-center justify-center">
+                      <Users className="h-16 w-16 text-green-600" />
+                    </div>
+                    <CardTitle className="text-balance">
+                      Community River Observers Network (C-RON)
+                    </CardTitle>
+                    <CardDescription className="leading-relaxed">
+                      Training and empowering local citizens to become active
+                      environmental monitors
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <Button
+                      asChild
+                      variant="outline"
+                      className="w-full bg-transparent"
+                    >
+                      <Link href="/projects/c-ron">
+                        {t.projects.learnMore[language]}
+                      </Link>
+                    </Button>
+                  </CardContent>
+                </Card>
 
-            <Card className="hover:shadow-lg transition-shadow">
-              <CardHeader>
-                <div className="w-full h-48 bg-slate-100 rounded-md mb-4 flex items-center justify-center">
-                  <Shield className="h-16 w-16 text-slate-600" />
-                </div>
-                <CardTitle className="text-balance">
-                  Local Climate Governance Initiatives
-                </CardTitle>
-                <CardDescription className="leading-relaxed">
-                  Building capacity for climate action through evidence-based
-                  policy recommendations
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <Button
-                  asChild
-                  variant="outline"
-                  className="w-full bg-transparent"
-                >
-                  <Link href="/projects/governance">
-                    {t.projects.learnMore[language]}
-                  </Link>
-                </Button>
-              </CardContent>
-            </Card>
+                <Card className="hover:shadow-lg transition-shadow">
+                  <CardHeader>
+                    <div className="w-full h-48 bg-slate-100 rounded-md mb-4 flex items-center justify-center">
+                      <Shield className="h-16 w-16 text-slate-600" />
+                    </div>
+                    <CardTitle className="text-balance">
+                      Local Climate Governance Initiatives
+                    </CardTitle>
+                    <CardDescription className="leading-relaxed">
+                      Building capacity for climate action through evidence-based
+                      policy recommendations
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <Button
+                      asChild
+                      variant="outline"
+                      className="w-full bg-transparent"
+                    >
+                      <Link href="/projects/governance">
+                        {t.projects.learnMore[language]}
+                      </Link>
+                    </Button>
+                  </CardContent>
+                </Card>
+              </>
+            )}
           </div>
           <div className="text-center">
             <Button asChild>

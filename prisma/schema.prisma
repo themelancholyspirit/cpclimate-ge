@@ -45,10 +45,12 @@ model Project {
   headerImage     String?       @db.Uuid
   content         String?
   contentSections Json?
+  featured        Boolean       @default(false)
   createdAt       DateTime      @default(now())
   id              String        @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
 
   @@index([status])
+  @@index([featured])
   @@map("projects")
 }
 
