@@ -246,7 +246,7 @@ export default function HomePage() {
                         {project.description}
                       </CardDescription>
                     </CardHeader>
-                    <CardContent className="pt-0 pb-4">
+                    <CardContent className="pt-0 pb-0">
                       <div className="flex items-center gap-2 text-xs text-muted-foreground mb-3">
                         <Calendar className="h-3.5 w-3.5" />
                         <span>{project.duration}</span>
@@ -277,7 +277,7 @@ export default function HomePage() {
                       Mark projects as featured in Directus to display them here
                     </CardDescription>
                   </CardHeader>
-                  <CardContent className="pt-0 pb-4">
+                  <CardContent className="pt-0 pb-0">
                     <Button asChild variant="outline" className="w-full h-9 text-sm bg-transparent">
                       <Link href="/projects">
                         {t.projects.headerTitle[language]}
