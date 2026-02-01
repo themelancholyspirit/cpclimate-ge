@@ -112,6 +112,12 @@ export function MapComponent({ activeLayer, onPointClick }: MapComponentProps) {
     if (e.latLng) {
       const lat = e.latLng.lat();
       const lng = e.latLng.lng();
+      setSelectedPoint(null); // Close any hover InfoWindow
+      setShowReportModal(false); // Close report modal
+      if (hoverTimeout) {
+        clearTimeout(hoverTimeout);
+        setHoverTimeout(null);
+      }
       setClickedLocation({ lat, lng });
 
       console.log(lat, lng);
@@ -161,6 +167,8 @@ export function MapComponent({ activeLayer, onPointClick }: MapComponentProps) {
       clearTimeout(hoverTimeout);
       setHoverTimeout(null);
     }
+    setClickedLocation(null); // Close any clicked location InfoWindow
+    setShowReportModal(false); // Close report modal
     setSelectedPoint(point);
   }, [hoverTimeout]);
 
@@ -306,6 +314,12 @@ export function MapComponent({ activeLayer, onPointClick }: MapComponentProps) {
                   size="sm"
                   onClick={() => {
                     setShowReportModal(true);
+                    setClickedLocation(null); // Close the InfoWindow when modal opens
+                    setSelectedPoint(null); // Close any hover InfoWindow
+                    if (hoverTimeout) {
+                      clearTimeout(hoverTimeout);
+                      setHoverTimeout(null);
+                    }
                   }}
                   className="flex-1"
                 >
