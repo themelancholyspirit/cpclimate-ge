@@ -43,6 +43,8 @@ export async function POST(request: NextRequest) {
       reporterName,
       reporterEmail,
       reporterPhone,
+      lat,
+      lng,
     } = body
 
     // Validate required fields
@@ -69,6 +71,8 @@ export async function POST(request: NextRequest) {
         reporterName,
         reporterEmail,
         reporterPhone: reporterPhone || null,
+        lat: lat ? parseFloat(lat) : null,
+        lng: lng ? parseFloat(lng) : null,
         status: 'pending',
       },
     })

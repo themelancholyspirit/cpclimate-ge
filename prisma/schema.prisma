@@ -91,12 +91,15 @@ model Report {
   reporterName  String
   reporterEmail String
   reporterPhone String?
+  lat           Float?
+  lng           Float?
   status        ReportStatus @default(pending)
   createdAt     DateTime     @default(now())
 
   @@index([status])
   @@index([issueType])
   @@index([createdAt])
+  @@index([lat, lng])
   @@map("reports")
 }
 
