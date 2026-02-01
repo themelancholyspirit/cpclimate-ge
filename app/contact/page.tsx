@@ -13,9 +13,71 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Mail, Phone, MapPin, Send } from "lucide-react";
 import { useLanguage } from "@/contexts/language-context";
+import { useState } from "react";
+import { useToast } from "@/hooks/use-toast";
 
 export default function ContactPage() {
   const { t, language } = useLanguage();
+  const { toast } = useToast();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [formData, setFormData] = useState({
+    firstName: "",
+    lastName: "",
+    email: "",
+    phone: "",
+    subject: "",
+    message: "",
+  });
+
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    setFormData({ ...formData, [e.target.id]: e.target.value });
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+
+    try {
+      const response = await fetch("/api/contacts", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to submit form");
+      }
+
+      toast({
+        title: "Message sent!",
+        description: "Thank you for contacting us. We'll get back to you soon.",
+      });
+
+      // Reset form
+      setFormData({
+        firstName: "",
+        lastName: "",
+        email: "",
+        phone: "",
+        subject: "",
+        message: "",
+      });
+    } catch (error) {
+      console.error("Error submitting contact form:", error);
+      toast({
+        title: "Error",
+        description: "Failed to send message. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   return (
     <div className="bg-background">
       {/* Header */}
@@ -126,19 +188,31 @@ export default function ContactPage() {
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <form className="space-y-6">
+                <form onSubmit={handleSubmit} className="space-y-6">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="space-y-2">
                       <Label htmlFor="firstName">
                         {t.contact.firstName[language]}
                       </Label>
-                      <Input id="firstName" placeholder="John" />
+                      <Input
+                        id="firstName"
+                        placeholder="John"
+                        value={formData.firstName}
+                        onChange={handleChange}
+                        required
+                      />
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="lastName">
                         {t.contact.lastName[language]}
                       </Label>
-                      <Input id="lastName" placeholder="Doe" />
+                      <Input
+                        id="lastName"
+                        placeholder="Doe"
+                        value={formData.lastName}
+                        onChange={handleChange}
+                        required
+                      />
                     </div>
                   </div>
 
@@ -148,6 +222,9 @@ export default function ContactPage() {
                       id="email"
                       type="email"
                       placeholder="john.doe@example.com"
+                      value={formData.email}
+                      onChange={handleChange}
+                      required
                     />
                   </div>
 
@@ -159,6 +236,8 @@ export default function ContactPage() {
                       id="phone"
                       type="tel"
                       placeholder="+995 XXX XXX XXX"
+                      value={formData.phone}
+                      onChange={handleChange}
                     />
                   </div>
 
@@ -166,7 +245,13 @@ export default function ContactPage() {
                     <Label htmlFor="subject">
                       {t.contact.subject[language]}
                     </Label>
-                    <Input id="subject" placeholder="What is this about?" />
+                    <Input
+                      id="subject"
+                      placeholder="What is this about?"
+                      value={formData.subject}
+                      onChange={handleChange}
+                      required
+                    />
                   </div>
 
                   <div className="space-y-2">
@@ -177,6 +262,9 @@ export default function ContactPage() {
                       id="message"
                       placeholder="Tell us more..."
                       rows={6}
+                      value={formData.message}
+                      onChange={handleChange}
+                      required
                     />
                   </div>
 
@@ -184,12 +272,10 @@ export default function ContactPage() {
                     type="submit"
                     size="lg"
                     className="w-full md:w-auto"
-                    onClick={(e) => {
-                      console.log("submit button has been clicked", e);
-                    }}
+                    disabled={isSubmitting}
                   >
                     <Send className="h-4 w-4 mr-2" />
-                    {t.contact.sendMessage[language]}
+                    {isSubmitting ? "Sending..." : t.contact.sendMessage[language]}
                   </Button>
                 </form>
               </CardContent>

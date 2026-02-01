@@ -98,6 +98,22 @@ model Report {
   @@map("reports")
 }
 
+model Contact {
+  id        String   @id @default(cuid())
+  firstName String
+  lastName  String
+  email     String
+  phone     String?
+  subject   String
+  message   String
+  status    ContactStatus @default(new)
+  createdAt DateTime @default(now())
+
+  @@index([status])
+  @@index([createdAt])
+  @@map("contacts")
+}
+
 model directus_access {
   id                String            @id @db.Uuid
   role              String?           @db.Uuid
@@ -640,4 +656,11 @@ enum ReportStatus {
   verified
   resolved
   rejected
+}
+
+enum ContactStatus {
+  new
+  read
+  replied
+  archived
 }
