@@ -198,8 +198,8 @@ export default function HomePage() {
               featuredProjects.map((project) => {
                 const IconComponent = iconMap[project.icon] || Droplet;
                 return (
-                  <Card key={project.id} className="hover:shadow-lg transition-shadow">
-                    <CardHeader>
+                  <Card key={project.id} className="hover:shadow-lg transition-shadow flex flex-col">
+                    <CardHeader className="flex-grow">
                       <div className="w-full h-48 bg-blue-100 rounded-md mb-4 flex items-center justify-center overflow-hidden">
                         {project.headerImage ? (
                           <img
@@ -233,8 +233,8 @@ export default function HomePage() {
             ) : (
               // Fallback if no featured projects
               <>
-                <Card className="hover:shadow-lg transition-shadow">
-                  <CardHeader>
+                <Card className="hover:shadow-lg transition-shadow flex flex-col">
+                  <CardHeader className="flex-grow">
                     <div className="w-full h-48 bg-blue-100 rounded-md mb-4 flex items-center justify-center">
                       <Droplet className="h-16 w-16 text-blue-600" />
                     </div>
@@ -259,8 +259,8 @@ export default function HomePage() {
                   </CardContent>
                 </Card>
 
-                <Card className="hover:shadow-lg transition-shadow">
-                  <CardHeader>
+                <Card className="hover:shadow-lg transition-shadow flex flex-col">
+                  <CardHeader className="flex-grow">
                     <div className="w-full h-48 bg-green-100 rounded-md mb-4 flex items-center justify-center">
                       <Users className="h-16 w-16 text-green-600" />
                     </div>
@@ -285,8 +285,8 @@ export default function HomePage() {
                   </CardContent>
                 </Card>
 
-                <Card className="hover:shadow-lg transition-shadow">
-                  <CardHeader>
+                <Card className="hover:shadow-lg transition-shadow flex flex-col">
+                  <CardHeader className="flex-grow">
                     <div className="w-full h-48 bg-slate-100 rounded-md mb-4 flex items-center justify-center">
                       <Shield className="h-16 w-16 text-slate-600" />
                     </div>
