@@ -9,6 +9,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import {
   ArrowRight,
   Users,
@@ -17,16 +18,38 @@ import {
   TrendingUp,
   Droplet,
   Shield,
+  Calendar,
+  Target,
+  Waves,
+  TreeDeciduous,
+  Leaf,
+  Recycle,
+  Factory,
+  Microscope,
+  BarChart3,
+  Globe,
 } from "lucide-react";
 import { Item } from "@radix-ui/react-dropdown-menu";
 import { useLanguage } from "@/contexts/language-context";
 import { useEffect, useState } from "react";
 
-// Icon mapping for dynamic projects
+// Icon mapping for dynamic projects - matches /projects page
 const iconMap: Record<string, any> = {
-  droplet: Droplet,
-  users: Users,
-  shield: Shield,
+  "water-drop": Droplet,
+  "waves": Waves,
+  "river": TreeDeciduous,
+  "leaf": Leaf,
+  "recycle": Recycle,
+  "factory": Factory,
+  "science": Microscope,
+  "chart": BarChart3,
+  "globe": Globe,
+  "shield": Shield,
+  // Legacy support
+  "Users": Users,
+  "Droplet": Droplet,
+  "Shield": Shield,
+  "Target": Target,
 };
 
 interface Project {
@@ -34,6 +57,8 @@ interface Project {
   slug: string;
   title: string;
   description: string;
+  status: string;
+  duration: string;
   icon: string;
   color: string;
   headerImage: string | null;
@@ -181,7 +206,7 @@ export default function HomePage() {
           <h2 className="text-3xl md:text-4xl font-bold mb-12 text-center">
             {t.homePage.featuredProjectsTitle[language]}
           </h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
             {isLoading ? (
               // Loading skeleton
               Array.from({ length: 3 }).map((_, i) => (
@@ -194,36 +219,41 @@ export default function HomePage() {
                 </Card>
               ))
             ) : featuredProjects.length > 0 ? (
-              // Dynamic featured projects
+              // Dynamic featured projects - same style as /projects page
               featuredProjects.map((project) => {
-                const IconComponent = iconMap[project.icon] || Droplet;
+                const IconComponent = iconMap[project.icon] || Target;
                 return (
-                  <Card key={project.id} className="hover:shadow-lg transition-shadow flex flex-col">
-                    <CardHeader>
-                      <div className="w-full h-48 bg-blue-100 rounded-md mb-4 flex items-center justify-center overflow-hidden">
-                        {project.headerImage ? (
-                          <img
-                            src={project.headerImage}
-                            alt={project.title}
-                            className="w-full h-full object-cover"
-                          />
-                        ) : (
-                          <IconComponent className={`h-16 w-16 ${project.color.includes('blue') ? 'text-blue-600' : project.color.includes('green') ? 'text-green-600' : 'text-slate-600'}`} />
-                        )}
+                  <Card
+                    key={project.id}
+                    className="hover:shadow-lg transition-shadow flex flex-col h-full"
+                  >
+                    <CardHeader className="flex-grow pb-3">
+                      <div className="flex items-start justify-between mb-3">
+                        <div
+                          className="w-9 h-9 rounded-lg flex items-center justify-center"
+                          style={{ backgroundColor: project.color }}
+                        >
+                          <IconComponent className="h-5 w-5" style={{ color: 'white' }} />
+                        </div>
+                        <Badge variant="default" className="bg-green-600 text-xs">
+                          {project.status}
+                        </Badge>
                       </div>
-                      <CardTitle className="text-balance">{project.title}</CardTitle>
-                      <CardDescription className="leading-relaxed">
+                      <CardTitle className="text-lg mb-1.5 text-balance">
+                        {project.title}
+                      </CardTitle>
+                      <CardDescription className="leading-relaxed line-clamp-2 text-sm">
                         {project.description}
                       </CardDescription>
                     </CardHeader>
-                    <CardContent className="mt-auto">
-                      <Button
-                        asChild
-                        variant="outline"
-                        className="w-full bg-transparent"
-                      >
+                    <CardContent className="pt-0 pb-4">
+                      <div className="flex items-center gap-2 text-xs text-muted-foreground mb-3">
+                        <Calendar className="h-3.5 w-3.5" />
+                        <span>{project.duration}</span>
+                      </div>
+                      <Button asChild className="w-full h-9 text-sm">
                         <Link href={`/projects/${project.slug}`}>
-                          {t.projects.learnMore[language]}
+                          {t.projects.viewDetails[language]}
                         </Link>
                       </Button>
                     </CardContent>
@@ -232,85 +262,30 @@ export default function HomePage() {
               })
             ) : (
               // Fallback if no featured projects
-              <>
-                <Card className="hover:shadow-lg transition-shadow flex flex-col">
-                  <CardHeader>
-                    <div className="w-full h-48 bg-blue-100 rounded-md mb-4 flex items-center justify-center">
-                      <Droplet className="h-16 w-16 text-blue-600" />
+              Array.from({ length: 3 }).map((_, i) => (
+                <Card key={i} className="hover:shadow-lg transition-shadow flex flex-col h-full">
+                  <CardHeader className="flex-grow pb-3">
+                    <div className="flex items-start justify-between mb-3">
+                      <div className="w-9 h-9 rounded-lg bg-slate-200 flex items-center justify-center">
+                        <Target className="h-5 w-5 text-slate-400" />
+                      </div>
                     </div>
-                    <CardTitle className="text-balance">
-                      Kaparchina River: Climate Resilience & Citizen Monitoring
+                    <CardTitle className="text-lg mb-1.5">
+                      No featured projects yet
                     </CardTitle>
-                    <CardDescription className="leading-relaxed">
-                      Comprehensive environmental monitoring and community
-                      engagement for the Kaparchina River ecosystem
+                    <CardDescription className="text-sm">
+                      Mark projects as featured in Directus to display them here
                     </CardDescription>
                   </CardHeader>
-                  <CardContent className="mt-auto">
-                    <Button
-                      asChild
-                      variant="outline"
-                      className="w-full bg-transparent"
-                    >
-                      <Link href="/projects/kaparchina">
-                        {t.projects.learnMore[language]}
+                  <CardContent className="pt-0 pb-4">
+                    <Button asChild variant="outline" className="w-full h-9 text-sm bg-transparent">
+                      <Link href="/projects">
+                        {t.projects.headerTitle[language]}
                       </Link>
                     </Button>
                   </CardContent>
                 </Card>
-
-                <Card className="hover:shadow-lg transition-shadow flex flex-col">
-                  <CardHeader>
-                    <div className="w-full h-48 bg-green-100 rounded-md mb-4 flex items-center justify-center">
-                      <Users className="h-16 w-16 text-green-600" />
-                    </div>
-                    <CardTitle className="text-balance">
-                      Community River Observers Network (C-RON)
-                    </CardTitle>
-                    <CardDescription className="leading-relaxed">
-                      Training and empowering local citizens to become active
-                      environmental monitors
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent className="mt-auto">
-                    <Button
-                      asChild
-                      variant="outline"
-                      className="w-full bg-transparent"
-                    >
-                      <Link href="/projects/c-ron">
-                        {t.projects.learnMore[language]}
-                      </Link>
-                    </Button>
-                  </CardContent>
-                </Card>
-
-                <Card className="hover:shadow-lg transition-shadow flex flex-col">
-                  <CardHeader>
-                    <div className="w-full h-48 bg-slate-100 rounded-md mb-4 flex items-center justify-center">
-                      <Shield className="h-16 w-16 text-slate-600" />
-                    </div>
-                    <CardTitle className="text-balance">
-                      Local Climate Governance Initiatives
-                    </CardTitle>
-                    <CardDescription className="leading-relaxed">
-                      Building capacity for climate action through evidence-based
-                      policy recommendations
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent className="mt-auto">
-                    <Button
-                      asChild
-                      variant="outline"
-                      className="w-full bg-transparent"
-                    >
-                      <Link href="/projects/governance">
-                        {t.projects.learnMore[language]}
-                      </Link>
-                    </Button>
-                  </CardContent>
-                </Card>
-              </>
+              ))
             )}
           </div>
           <div className="text-center">
