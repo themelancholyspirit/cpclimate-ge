@@ -75,6 +75,7 @@ export function MapComponent({ activeLayer, onPointClick }: MapComponentProps) {
   const [map, setMap] = useState<google.maps.Map | null>(null);
   const [mapPoints, setMapPoints] = useState<MapPoint[]>([]);
   const [loading, setLoading] = useState(true);
+  const [hoverTimeout, setHoverTimeout] = useState<NodeJS.Timeout | null>(null);
 
   const [clickedLocation, setClickedLocation] = useState<{
     lat: number;
@@ -144,60 +145,37 @@ export function MapComponent({ activeLayer, onPointClick }: MapComponentProps) {
     }
   };
 
-  const getRedMarkerIcon = useCallback((): google.maps.Symbol | undefined => {
-    // Check if Google Maps API is loaded
-    if (typeof window === "undefined" || !window.google?.maps?.SymbolPath) {
-      return undefined;
-    }
-    return {
-      path: "M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z",
-      fillColor: "#ef4444", // red pin
-      fillOpacity: 1,
-      strokeColor: "#000000", // black outline
-      strokeWeight: 2,
-      scale: 1.5,
-      anchor: new google.maps.Point(12, 24),
-    };
-  }, []);
-
-  const filteredPoints = mapPoints;
-
-  // Get marker icon based on status
   // Callback when map loads
-  const onLoad = useCallback(
-    (map: google.maps.Map) => {
-      setMap(map);
-      // Optionally fit bounds to show all visible points
-      if (filteredPoints.length > 0) {
-        const bounds = new google.maps.LatLngBounds();
-        filteredPoints.forEach((point) => {
-          bounds.extend({ lat: point.lat, lng: point.lng });
-        });
-        // Only fit bounds if there are points, and don't override restriction
-        try {
-          map.fitBounds(bounds);
-        } catch (e) {
-          // If bounds conflict with restriction, just center on first point
-          map.setCenter({
-            lat: filteredPoints[0].lat,
-            lng: filteredPoints[0].lng,
-          });
-        }
-      }
-    },
-    [filteredPoints],
-  );
+  const onLoad = useCallback((map: google.maps.Map) => {
+    setMap(map);
+  }, []);
 
   // Callback when map unmounts
   const onUnmount = useCallback(() => {
     setMap(null);
   }, []);
 
-  // Handle marker click
-  const handleMarkerClick = (point: MapPoint) => {
+  // Handle marker hover
+  const handleMarkerHover = useCallback((point: MapPoint) => {
+    if (hoverTimeout) {
+      clearTimeout(hoverTimeout);
+      setHoverTimeout(null);
+    }
     setSelectedPoint(point);
+  }, [hoverTimeout]);
+
+  // Handle marker leave with delay
+  const handleMarkerLeave = useCallback(() => {
+    const timeout = setTimeout(() => {
+      setSelectedPoint(null);
+    }, 300); // 300ms delay before closing
+    setHoverTimeout(timeout);
+  }, []);
+
+  // Handle marker click
+  const handleMarkerClick = useCallback((point: MapPoint) => {
     onPointClick(point);
-  };
+  }, [onPointClick]);
 
   // Map options with restriction
   const mapOptions = useMemo<google.maps.MapOptions>(
@@ -297,12 +275,14 @@ export function MapComponent({ activeLayer, onPointClick }: MapComponentProps) {
         onClick={handleMapClick}
       >
         {/* Render markers for filtered points */}
-        {filteredPoints.map((point) => (
+        {mapPoints.map((point) => (
           <Marker
             key={point.id}
             position={{ lat: point.lat, lng: point.lng }}
             icon={getMarkerIcon(point.status)}
             onClick={() => handleMarkerClick(point)}
+            onMouseOver={() => handleMarkerHover(point)}
+            onMouseOut={handleMarkerLeave}
             title={point.title}
           />
         ))}
@@ -350,11 +330,31 @@ export function MapComponent({ activeLayer, onPointClick }: MapComponentProps) {
           <InfoWindow
             position={{ lat: selectedPoint.lat, lng: selectedPoint.lng }}
             onCloseClick={() => {
+              if (hoverTimeout) {
+                clearTimeout(hoverTimeout);
+                setHoverTimeout(null);
+              }
               setSelectedPoint(null);
-              onPointClick(null);
+            }}
+            options={{
+              pixelOffset: new google.maps.Size(0, -10)
             }}
           >
-            <div className="p-2 min-w-[200px]">
+            <div 
+              className="p-2 min-w-[200px]"
+              onMouseEnter={() => {
+                if (hoverTimeout) {
+                  clearTimeout(hoverTimeout);
+                  setHoverTimeout(null);
+                }
+              }}
+              onMouseLeave={() => {
+                const timeout = setTimeout(() => {
+                  setSelectedPoint(null);
+                }, 300);
+                setHoverTimeout(timeout);
+              }}
+            >
               <div className="font-semibold text-sm mb-1">
                 {selectedPoint.title}
               </div>
