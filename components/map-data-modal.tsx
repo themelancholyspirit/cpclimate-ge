@@ -23,7 +23,6 @@ export function MapDataModal({ point, onClose }: MapDataModalProps) {
     return {
       title: t.modals.dataModal.titles.pollution[language],
       details: [
-        { label: "Type", value: "Waste Accumulation" },
         {
           label: t.modals.dataModal.reportedBy[language],
           value: "Citizen Observer",
@@ -76,7 +75,6 @@ export function MapDataModal({ point, onClose }: MapDataModalProps) {
         </CardHeader>
         <CardContent className="space-y-4">
           <div>
-            <h4 className="font-semibold mb-3">{info.title}</h4>
             <div className="space-y-2">
               {info.details.map((detail, i) => (
                 <div key={i} className="flex justify-between text-sm">
