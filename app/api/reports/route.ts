@@ -17,15 +17,6 @@ export async function GET(request: NextRequest) {
       where,
       orderBy: { createdAt: 'desc' },
       take: limit ? parseInt(limit) : undefined,
-      include: {
-        user: {
-          select: {
-            id: true,
-            name: true,
-            email: true,
-          },
-        },
-      },
     })
 
     return NextResponse.json(reports)
@@ -47,45 +38,57 @@ export async function POST(request: NextRequest) {
     const {
       issueType,
       location,
-      locationDesc,
-      lat,
-      lng,
       description,
       photos,
       reporterName,
       reporterEmail,
       reporterPhone,
-      userId,
     } = body
 
     // Validate required fields
-    if (!issueType || !location || !locationDesc || !description || !reporterName || !reporterEmail) {
-      console.error('Missing required fields:', { issueType, location, locationDesc, description, reporterName, reporterEmail })
+    if (!issueType || !location || !description || !reporterName || !reporterEmail) {
+      console.error('Missing required fields:', { issueType, location, description, reporterName, reporterEmail })
       return NextResponse.json(
         { error: 'Missing required fields' },
         { status: 400 }
       )
     }
 
+    // Filter out empty photo objects and only keep valid file IDs
+    const validPhotos = Array.isArray(photos) 
+      ? photos.filter(p => p && typeof p === 'string' && p.length > 0)
+      : [];
+
     // Create the report
     const report = await prisma.report.create({
       data: {
         issueType,
         location,
-        locationDesc,
-        lat: lat ? parseFloat(lat) : null,
-        lng: lng ? parseFloat(lng) : null,
         description,
-        photos: photos || [],
+        photos: validPhotos,
         reporterName,
         reporterEmail,
         reporterPhone: reporterPhone || null,
-        userId: userId || null,
         status: 'pending',
       },
     })
 
     console.log('Report created successfully:', report.id)
+
+    // Populate junction table if photos exist
+    if (validPhotos.length > 0) {
+      try {
+        const values = validPhotos.map(photoId => `('${report.id}', '${photoId}')`).join(', ');
+        await prisma.$executeRawUnsafe(`
+          INSERT INTO reports_files (reports_id, directus_files_id)
+          VALUES ${values}
+        `);
+        console.log(`Linked ${validPhotos.length} photos to report ${report.id}`);
+      } catch (junctionError) {
+        console.error('Error populating junction table:', junctionError);
+        // Don't fail the entire request if junction table fails
+      }
+    }
 
     // TODO: Send email notification to admin
     // TODO: Send confirmation email to reporter
