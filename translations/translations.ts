@@ -73,7 +73,7 @@ export const translations = {
         risk: { en: "Climate Risk Zone", ka: "კლიმატის რისკის ზონა" },
         infrastructure: { en: "Infrastructure Point", ka: "ინფრასტრუქტურის პუნქტი" }
       },
-      whatThisMeans: { en: "What This Means for Citizens", ka: "რას ნიშნავს ეს მოქალაქეებისთვის" },
+      description: { en: "Description", ka: "აღწერა" },
       close: { en: "Close", ka: "დახურვა" },
       viewFullReport: { en: "View Full Report", ka: "სრული რეპორტის ნახვა" },
       reportedBy: { en: "Reported By", ka: "ავტორი" },

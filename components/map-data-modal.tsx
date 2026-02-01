@@ -118,8 +118,8 @@ export function MapDataModal({ point, onClose }: MapDataModalProps) {
           </div>
 
           <div className="pt-4 border-t border-border">
-            <h4 className="font-semibold mb-2 text-sm">{t.modals.dataModal.whatThisMeans[language]}</h4>
-            <p className="text-sm text-muted-foreground leading-relaxed">{info.explanation}</p>
+            <h4 className="font-semibold mb-2 text-sm">{t.modals.dataModal.description[language]}</h4>
+            <p className="text-sm text-muted-foreground leading-relaxed">{point.description}</p>
           </div>
 
           <div className="flex gap-2 pt-2">
