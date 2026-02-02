@@ -97,7 +97,7 @@ export const translations = {
       flooding: { en: "Flooding", ka: "ტყავება" },
       other: { en: "Other", ka: "სხვა" }
     },
-    locationDesc: { en: "Location Description *", ka: "ადგილის აღწერა *" },
+    locationDesc: { en: "Location Coordinates *", ka: "კოორდინატები *" },
     locationPlaceholder: { en: "Describe the location (e.g., near bridge, downstream area)", ka: "აღწერეთ მდებარეობა (მაგ., ხიდთან, დინების ქვემოთ)" },
     detailedDesc: { en: "Detailed Description *", ka: "დეტალური აღწერა *" },
     detailedPlaceholder: { en: "Describe what you observed, when it happened, and details...", ka: "აღწერეთ რასაც დააკვირდით, როდის მოხდა და დეტალები..." },

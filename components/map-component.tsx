@@ -72,6 +72,7 @@ const mapContainerStyle = {
 
 export function MapComponent({ activeLayer, onPointClick }: MapComponentProps) {
   const [selectedPoint, setSelectedPoint] = useState<MapPoint | null>(null);
+  const [hoveredMarkerId, setHoveredMarkerId] = useState<string | null>(null);
   const [map, setMap] = useState<google.maps.Map | null>(null);
   const [mapPoints, setMapPoints] = useState<MapPoint[]>([]);
   const [loading, setLoading] = useState(true);
@@ -169,14 +170,16 @@ export function MapComponent({ activeLayer, onPointClick }: MapComponentProps) {
     }
     setClickedLocation(null); // Close any clicked location InfoWindow
     setShowReportModal(false); // Close report modal
+    setHoveredMarkerId(point.id);
     setSelectedPoint(point);
   }, [hoverTimeout]);
 
   // Handle marker leave with delay
   const handleMarkerLeave = useCallback(() => {
+    setHoveredMarkerId(null);
     const timeout = setTimeout(() => {
       setSelectedPoint(null);
-    }, 300); // 300ms delay before closing
+    }, 1); 
     setHoverTimeout(timeout);
   }, []);
 
@@ -207,7 +210,7 @@ export function MapComponent({ activeLayer, onPointClick }: MapComponentProps) {
   );
 
   const getMarkerIcon = useCallback(
-    (status: string): google.maps.Symbol | undefined => {
+    (status: string, isHovered: boolean = false): google.maps.Symbol | undefined => {
       // Check if Google Maps API is loaded
       if (typeof window === "undefined" || !window.google?.maps?.SymbolPath) {
         return undefined;
@@ -222,7 +225,7 @@ export function MapComponent({ activeLayer, onPointClick }: MapComponentProps) {
 
       return {
         path: google.maps.SymbolPath.CIRCLE,
-        scale: 8,
+        scale: isHovered ? 11 : 8, // Larger scale on hover
         fillColor: color,
         fillOpacity: 1,
         strokeColor: "#ffffff",
@@ -287,7 +290,7 @@ export function MapComponent({ activeLayer, onPointClick }: MapComponentProps) {
           <Marker
             key={point.id}
             position={{ lat: point.lat, lng: point.lng }}
-            icon={getMarkerIcon(point.status)}
+            icon={getMarkerIcon(point.status, point.id === hoveredMarkerId)}
             onClick={() => handleMarkerClick(point)}
             onMouseOver={() => handleMarkerHover(point)}
             onMouseOut={handleMarkerLeave}
