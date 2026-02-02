@@ -116,7 +116,7 @@ export function MapComponent({ activeLayer, onPointClick }: MapComponentProps) {
   const [waterPoints, setWaterPoints] = useState<WaterSamplingPoint[]>([]);
   const [pollutionIndicators, setPollutionIndicators] = useState<PollutionIndicator[]>([]);
   const [riskLayers, setRiskLayers] = useState<RiskLayer[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [initialLoading, setInitialLoading] = useState(true);
   const [hoverTimeout, setHoverTimeout] = useState<NodeJS.Timeout | null>(null);
 
   const [clickedLocation, setClickedLocation] = useState<{
@@ -130,8 +130,6 @@ export function MapComponent({ activeLayer, onPointClick }: MapComponentProps) {
   useEffect(() => {
     async function fetchMapData() {
       try {
-        setLoading(true);
-        
         // Fetch water sampling points
         if (activeLayer === "all" || activeLayer === "water") {
           try {
@@ -228,7 +226,7 @@ export function MapComponent({ activeLayer, onPointClick }: MapComponentProps) {
         setPollutionIndicators([]);
         setRiskLayers([]);
       } finally {
-        setLoading(false);
+        setInitialLoading(false);
       }
     }
 
@@ -479,7 +477,7 @@ export function MapComponent({ activeLayer, onPointClick }: MapComponentProps) {
     return <div className="p-4 text-muted-foreground">Loading map…</div>;
   }
 
-  if (loading) {
+  if (initialLoading) {
     return <div className="p-4 text-muted-foreground">Loading map data…</div>;
   }
 

@@ -236,16 +236,6 @@ export function MapDataModal({ point, onClose }: MapDataModalProps) {
               </p>
             </div>
           )}
-
-          <div className="flex gap-2 pt-2">
-            <Button
-              className="flex-1 bg-transparent"
-              variant="outline"
-              onClick={onClose}
-            >
-              {t.modals.dataModal.close[language]}
-            </Button>
-          </div>
         </CardContent>
       </Card>
     </div>
