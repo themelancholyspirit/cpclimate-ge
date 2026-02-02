@@ -25,7 +25,7 @@ export function MapDataModal({ point, onClose }: MapDataModalProps) {
       details: [
         {
           label: t.modals.dataModal.reportedBy[language],
-          value: "Citizen Observer",
+          value: point.metadata?.reporterName || "Citizen Observer",
         },
         {
           label: t.modals.dataModal.dateReported[language],

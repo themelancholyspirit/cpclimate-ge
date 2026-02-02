@@ -449,14 +449,6 @@ export function MapComponent({ activeLayer, onPointClick }: MapComponentProps) {
                     <h3 className="font-semibold text-base mb-2 text-gray-900 leading-tight">
                       {selectedPoint.title}
                     </h3>
-                    <p className="text-sm text-gray-600 mb-2 leading-relaxed">
-                      {selectedPoint.description}
-                    </p>
-                    {selectedPoint.metadata?.reporterName && (
-                      <p className="text-xs text-gray-500 mb-2">
-                        Reported by: <span className="font-medium">{selectedPoint.metadata.reporterName}</span>
-                      </p>
-                    )}
                     <p className="text-xs text-gray-400 mb-3">
                       {new Date(selectedPoint.createdAt).toLocaleDateString(
                         "en-US",

@@ -45,6 +45,11 @@ export function MapClickReportModal({
     reporterPhone: "",
   })
 
+
+  useEffect(() => {
+    console.log(formData)
+  }, [formData])
+
   // Update coordinates when they change
   useEffect(() => {
     if (coordinates) {
