@@ -20,6 +20,14 @@ interface MapPoint {
   status: "normal" | "warning" | "problem";
   title: string;
   description: string;
+  createdAt: string;
+  metadata?: {
+    reportId?: string;
+    reporterName?: string;
+    reporterEmail?: string;
+    reportDate?: string;
+    issueType?: string;
+  };
 }
 
 interface MapComponentProps {
@@ -58,7 +66,7 @@ const mapRestriction = {
   },
   strictBounds: false,
 };
- 
+
 // Default center for Kaparchina River, Poti, Georgia
 const defaultCenter = {
   lat: 42.1589, // Center based on Google Maps coordinates
@@ -157,36 +165,95 @@ export function MapComponent({ activeLayer, onPointClick }: MapComponentProps) {
     setMap(map);
   }, []);
 
+  // Get pixel position for custom tooltip
+  const getPixelPosition = useCallback(
+    (lat: number, lng: number) => {
+      if (!map) return null;
+      const projection = map.getProjection();
+      if (!projection) return null;
+
+      const point = projection.fromLatLngToPoint(
+        new google.maps.LatLng(lat, lng),
+      );
+      if (!point) return null;
+
+      const scale = Math.pow(2, map.getZoom() || 13);
+      const worldPoint = new google.maps.Point(
+        point.x * scale,
+        point.y * scale,
+      );
+
+      const bounds = map.getBounds();
+      if (!bounds) return null;
+
+      const ne = bounds.getNorthEast();
+      const sw = bounds.getSouthWest();
+      const nePoint = projection.fromLatLngToPoint(ne);
+      const swPoint = projection.fromLatLngToPoint(sw);
+
+      if (!nePoint || !swPoint) return null;
+
+      const neWorldPoint = new google.maps.Point(
+        nePoint.x * scale,
+        nePoint.y * scale,
+      );
+      const swWorldPoint = new google.maps.Point(
+        swPoint.x * scale,
+        swPoint.y * scale,
+      );
+
+      const mapDiv = map.getDiv();
+      const mapWidth = mapDiv.offsetWidth;
+      const mapHeight = mapDiv.offsetHeight;
+
+      const x =
+        ((worldPoint.x - swWorldPoint.x) / (neWorldPoint.x - swWorldPoint.x)) *
+        mapWidth;
+      const y =
+        ((worldPoint.y - neWorldPoint.y) / (swWorldPoint.y - neWorldPoint.y)) *
+        mapHeight;
+
+      return { x, y };
+    },
+    [map],
+  );
+
   // Callback when map unmounts
   const onUnmount = useCallback(() => {
     setMap(null);
   }, []);
 
   // Handle marker hover
-  const handleMarkerHover = useCallback((point: MapPoint) => {
-    if (hoverTimeout) {
-      clearTimeout(hoverTimeout);
-      setHoverTimeout(null);
-    }
-    setClickedLocation(null); // Close any clicked location InfoWindow
-    setShowReportModal(false); // Close report modal
-    setHoveredMarkerId(point.id);
-    setSelectedPoint(point);
-  }, [hoverTimeout]);
+  const handleMarkerHover = useCallback(
+    (point: MapPoint) => {
+      if (hoverTimeout) {
+        clearTimeout(hoverTimeout);
+        setHoverTimeout(null);
+      }
+      setClickedLocation(null); // Close any clicked location InfoWindow
+      setShowReportModal(false); // Close report modal
+      setHoveredMarkerId(point.id);
+      setSelectedPoint(point);
+    },
+    [hoverTimeout],
+  );
 
   // Handle marker leave with delay
   const handleMarkerLeave = useCallback(() => {
     setHoveredMarkerId(null);
     const timeout = setTimeout(() => {
       setSelectedPoint(null);
-    }, 1); 
+    }, 1);
     setHoverTimeout(timeout);
   }, []);
 
   // Handle marker click
-  const handleMarkerClick = useCallback((point: MapPoint) => {
-    onPointClick(point);
-  }, [onPointClick]);
+  const handleMarkerClick = useCallback(
+    (point: MapPoint) => {
+      onPointClick(point);
+    },
+    [onPointClick],
+  );
 
   // Map options with restriction
   const mapOptions = useMemo<google.maps.MapOptions>(
@@ -210,7 +277,10 @@ export function MapComponent({ activeLayer, onPointClick }: MapComponentProps) {
   );
 
   const getMarkerIcon = useCallback(
-    (status: string, isHovered: boolean = false): google.maps.Symbol | undefined => {
+    (
+      status: string,
+      isHovered: boolean = false,
+    ): google.maps.Symbol | undefined => {
       // Check if Google Maps API is loaded
       if (typeof window === "undefined" || !window.google?.maps?.SymbolPath) {
         return undefined;
@@ -343,52 +413,77 @@ export function MapComponent({ activeLayer, onPointClick }: MapComponentProps) {
           </InfoWindow>
         )}
         {/* Info window for selected point */}
-        {selectedPoint && (
-          <InfoWindow
-            position={{ lat: selectedPoint.lat, lng: selectedPoint.lng }}
-            onCloseClick={() => {
-              if (hoverTimeout) {
-                clearTimeout(hoverTimeout);
-                setHoverTimeout(null);
-              }
-              setSelectedPoint(null);
-            }}
-            options={{
-              pixelOffset: new google.maps.Size(0, -10)
-            }}
-          >
-            <div 
-              className="p-2 min-w-[200px]"
-              onMouseEnter={() => {
-                if (hoverTimeout) {
-                  clearTimeout(hoverTimeout);
-                  setHoverTimeout(null);
-                }
-              }}
-              onMouseLeave={() => {
-                const timeout = setTimeout(() => {
-                  setSelectedPoint(null);
-                }, 300);
-                setHoverTimeout(timeout);
-              }}
-            >
-              <div className="font-semibold text-sm mb-1">
-                {selectedPoint.title}
-              </div>
-              <div className="text-xs text-muted-foreground mb-2">
-                {selectedPoint.description}
-              </div>
-              <Badge
-                variant={
-                  selectedPoint.status === "normal" ? "default" : "destructive"
-                }
-                className="text-xs"
+        {selectedPoint &&
+          (() => {
+            const position = getPixelPosition(
+              selectedPoint.lat,
+              selectedPoint.lng,
+            );
+            if (!position) return null;
+
+            return (
+              <div
+                style={{
+                  position: "absolute",
+                  left: `${position.x}px`,
+                  top: `${position.y - 10}px`,
+                  transform: "translate(-50%, -100%)",
+                  pointerEvents: "auto",
+                  zIndex: 1000,
+                }}
+                onMouseEnter={() => {
+                  if (hoverTimeout) {
+                    clearTimeout(hoverTimeout);
+                    setHoverTimeout(null);
+                  }
+                }}
+                onMouseLeave={() => {
+                  const timeout = setTimeout(() => {
+                    setSelectedPoint(null);
+                  }, 300);
+                  setHoverTimeout(timeout);
+                }}
               >
-                {t.map.status[selectedPoint.status][language]}
-              </Badge>
-            </div>
-          </InfoWindow>
-        )}
+                <div className="bg-white rounded-lg shadow-lg min-w-[220px] border border-gray-200 overflow-hidden">
+                  <div className="p-3">
+                    <h3 className="font-semibold text-base mb-2 text-gray-900 leading-tight">
+                      {selectedPoint.title}
+                    </h3>
+                    <p className="text-sm text-gray-600 mb-2 leading-relaxed">
+                      {selectedPoint.description}
+                    </p>
+                    {selectedPoint.metadata?.reporterName && (
+                      <p className="text-xs text-gray-500 mb-2">
+                        Reported by: <span className="font-medium">{selectedPoint.metadata.reporterName}</span>
+                      </p>
+                    )}
+                    <p className="text-xs text-gray-400 mb-3">
+                      {new Date(selectedPoint.createdAt).toLocaleDateString(
+                        "en-US",
+                        {
+                          month: "short",
+                          day: "2-digit",
+                          year: "numeric",
+                        },
+                      )}
+                    </p>
+                    <div className="flex items-center gap-2">
+                      <Badge
+                        variant={
+                          selectedPoint.status === "normal"
+                            ? "default"
+                            : "destructive"
+                        }
+                        className="text-xs font-medium"
+                      >
+                        {t.map.status[selectedPoint.status][language]}
+                      </Badge>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            );
+          })()}
       </GoogleMap>
 
       <MapClickReportModal

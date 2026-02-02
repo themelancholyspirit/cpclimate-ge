@@ -29,7 +29,11 @@ export function MapDataModal({ point, onClose }: MapDataModalProps) {
         },
         {
           label: t.modals.dataModal.dateReported[language],
-          value: "Dec 18, 2024",
+          value: new Date(point.createdAt).toLocaleDateString("en-US", {
+            month: "short",
+            day: "2-digit",
+            year: "numeric",
+          }),
         },
       ],
       explanation:
