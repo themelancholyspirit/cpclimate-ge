@@ -5,6 +5,8 @@ import {
   GoogleMap,
   Marker,
   InfoWindow,
+  Polygon,
+  Polyline,
   useJsApiLoader,
 } from "@react-google-maps/api";
 import { Badge } from "@/components/ui/badge";
@@ -12,27 +14,56 @@ import { MapClickReportModal } from "./map-click-report-modal";
 import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/contexts/language-context";
 
-interface MapPoint {
+// A. Water Sampling Points
+interface WaterSamplingPoint {
   id: string;
-  type: "water" | "pollution" | "risk" | "infrastructure";
+  locationName: string;
   lat: number;
   lng: number;
-  status: "normal" | "warning" | "problem";
+  status: "normal" | "risk" | "problematic";
+  summaryText: string;
+  testDate: string;
+  citizenImpactExplanation: string;
+  metadata?: any;
+  entityType: "water";
+}
+
+// B. Pollution Indicators
+interface PollutionIndicator {
+  id: string;
+  indicatorType: "waste_accumulation" | "illegal_discharge" | "odor_stagnation";
+  sourceType: "field_observation" | "citizen_report";
+  geometryType: "point" | "polygon";
+  lat?: number;
+  lng?: number;
+  polygon?: any;
   title: string;
   description: string;
-  createdAt: string;
-  metadata?: {
-    reportId?: string;
-    reporterName?: string;
-    reporterEmail?: string;
-    reportDate?: string;
-    issueType?: string;
-  };
+  severity: "low" | "medium" | "high" | "critical";
+  reportedAt: string;
+  metadata?: any;
+  entityType: "pollution";
 }
+
+// C. Risk Layers
+interface RiskLayer {
+  id: string;
+  riskType: "flood_zone" | "drainage_channel" | "sea_intrusion" | "erosion_section";
+  geometryType: "polygon" | "line";
+  polygon: any;
+  title: string;
+  description: string;
+  riskLevel: "low" | "medium" | "high" | "critical";
+  channelStatus?: "existing" | "blocked" | "damaged";
+  metadata?: any;
+  entityType: "risk";
+}
+
+type MapEntity = WaterSamplingPoint | PollutionIndicator | RiskLayer;
 
 interface MapComponentProps {
   activeLayer: string;
-  onPointClick: (point: MapPoint | null) => void;
+  onPointClick: (point: MapEntity | null) => void;
 }
 
 const riverOnlyStyle = [
@@ -79,10 +110,12 @@ const mapContainerStyle = {
 };
 
 export function MapComponent({ activeLayer, onPointClick }: MapComponentProps) {
-  const [selectedPoint, setSelectedPoint] = useState<MapPoint | null>(null);
+  const [selectedPoint, setSelectedPoint] = useState<MapEntity | null>(null);
   const [hoveredMarkerId, setHoveredMarkerId] = useState<string | null>(null);
   const [map, setMap] = useState<google.maps.Map | null>(null);
-  const [mapPoints, setMapPoints] = useState<MapPoint[]>([]);
+  const [waterPoints, setWaterPoints] = useState<WaterSamplingPoint[]>([]);
+  const [pollutionIndicators, setPollutionIndicators] = useState<PollutionIndicator[]>([]);
+  const [riskLayers, setRiskLayers] = useState<RiskLayer[]>([]);
   const [loading, setLoading] = useState(true);
   const [hoverTimeout, setHoverTimeout] = useState<NodeJS.Timeout | null>(null);
 
@@ -93,28 +126,113 @@ export function MapComponent({ activeLayer, onPointClick }: MapComponentProps) {
   const [showReportModal, setShowReportModal] = useState(false);
   const { t, language } = useLanguage();
 
-  // Fetch map points from API
+  // Fetch map entities from APIs
   useEffect(() => {
-    async function fetchMapPoints() {
+    async function fetchMapData() {
       try {
         setLoading(true);
-        const url =
-          activeLayer === "all"
-            ? "/api/map-points"
-            : `/api/map-points?type=${activeLayer}`;
-        const response = await fetch(url);
-        if (response.ok) {
-          const data = await response.json();
-          setMapPoints(data);
+        
+        // Fetch water sampling points
+        if (activeLayer === "all" || activeLayer === "water") {
+          try {
+            const waterRes = await fetch("/api/water-sampling-points");
+            if (waterRes.ok) {
+              const data = await waterRes.json();
+              if (Array.isArray(data)) {
+                setWaterPoints(data.map((p: any) => ({ ...p, entityType: "water" as const })));
+              } else {
+                console.error("Water sampling points response is not an array");
+                setWaterPoints([]);
+              }
+            } else {
+              console.error("Failed to fetch water sampling points", waterRes.status);
+              setWaterPoints([]);
+            }
+          } catch (err) {
+            console.error("Error fetching water sampling points:", err);
+            setWaterPoints([]);
+          }
+        } else {
+          setWaterPoints([]);
+        }
+
+        // Fetch pollution indicators
+        if (activeLayer === "all" || ["waste", "illegal_dump", "odor"].includes(activeLayer)) {
+          try {
+            const indicatorType = activeLayer === "waste" ? "waste_accumulation"
+              : activeLayer === "illegal_dump" ? "illegal_discharge"
+              : activeLayer === "odor" ? "odor_stagnation"
+              : undefined;
+            
+            const url = indicatorType
+              ? `/api/pollution-indicators?indicatorType=${indicatorType}`
+              : "/api/pollution-indicators";
+            
+            const pollutionRes = await fetch(url);
+            if (pollutionRes.ok) {
+              const data = await pollutionRes.json();
+              if (Array.isArray(data)) {
+                setPollutionIndicators(data.map((p: any) => ({ ...p, entityType: "pollution" as const })));
+              } else {
+                console.error("Pollution indicators response is not an array");
+                setPollutionIndicators([]);
+              }
+            } else {
+              console.error("Failed to fetch pollution indicators", pollutionRes.status);
+              setPollutionIndicators([]);
+            }
+          } catch (err) {
+            console.error("Error fetching pollution indicators:", err);
+            setPollutionIndicators([]);
+          }
+        } else {
+          setPollutionIndicators([]);
+        }
+
+        // Fetch risk layers
+        if (activeLayer === "all" || ["flood", "drainage", "sea_intrusion", "erosion", "risk"].includes(activeLayer)) {
+          try {
+            const riskType = activeLayer === "flood" ? "flood_zone"
+              : activeLayer === "drainage" ? "drainage_channel"
+              : activeLayer === "sea_intrusion" ? "sea_intrusion"
+              : activeLayer === "erosion" ? "erosion_section"
+              : undefined;
+            
+            const url = riskType
+              ? `/api/risk-layers?riskType=${riskType}&isActive=true`
+              : "/api/risk-layers?isActive=true";
+            
+            const riskRes = await fetch(url);
+            if (riskRes.ok) {
+              const data = await riskRes.json();
+              if (Array.isArray(data)) {
+                setRiskLayers(data.map((p: any) => ({ ...p, entityType: "risk" as const })));
+              } else {
+                console.error("Risk layers response is not an array");
+                setRiskLayers([]);
+              }
+            } else {
+              console.error("Failed to fetch risk layers", riskRes.status);
+              setRiskLayers([]);
+            }
+          } catch (err) {
+            console.error("Error fetching risk layers:", err);
+            setRiskLayers([]);
+          }
+        } else {
+          setRiskLayers([]);
         }
       } catch (error) {
-        console.error("Error fetching map points:", error);
+        console.error("Error fetching map data:", error);
+        setWaterPoints([]);
+        setPollutionIndicators([]);
+        setRiskLayers([]);
       } finally {
         setLoading(false);
       }
     }
 
-    fetchMapPoints();
+    fetchMapData();
   }, [activeLayer]);
 
   const handleMapClick = (e: google.maps.MapMouseEvent) => {
@@ -225,7 +343,7 @@ export function MapComponent({ activeLayer, onPointClick }: MapComponentProps) {
 
   // Handle marker hover
   const handleMarkerHover = useCallback(
-    (point: MapPoint) => {
+    (point: MapEntity) => {
       if (hoverTimeout) {
         clearTimeout(hoverTimeout);
         setHoverTimeout(null);
@@ -249,7 +367,7 @@ export function MapComponent({ activeLayer, onPointClick }: MapComponentProps) {
 
   // Handle marker click
   const handleMarkerClick = useCallback(
-    (point: MapPoint) => {
+    (point: MapEntity) => {
       onPointClick(point);
     },
     [onPointClick],
@@ -278,28 +396,50 @@ export function MapComponent({ activeLayer, onPointClick }: MapComponentProps) {
 
   const getMarkerIcon = useCallback(
     (
-      status: string,
+      entity: MapEntity,
       isHovered: boolean = false,
     ): google.maps.Symbol | undefined => {
       // Check if Google Maps API is loaded
-      if (typeof window === "undefined" || !window.google?.maps?.SymbolPath) {
+      if (typeof window === "undefined" || !window?.google?.maps?.SymbolPath) {
         return undefined;
       }
 
-      const color =
-        status === "normal"
-          ? "#22c55e" // green
-          : status === "warning"
-            ? "#eab308" // yellow
-            : "#ef4444"; // red
+      // Determine color based on entity type and status with safe defaults
+      let color = "#22c55e"; // default green
+      
+      try {
+        if (entity.entityType === "water") {
+          // Water points: color by status (normal/risk/problematic)
+          color = entity.status === "normal" ? "#22c55e"
+            : entity.status === "risk" ? "#eab308"
+            : entity.status === "problematic" ? "#ef4444"
+            : "#22c55e";
+        } else if (entity.entityType === "pollution") {
+          // Pollution indicators: color by type to match filter buttons
+          color = entity.indicatorType === "waste_accumulation" ? "#f97316" // orange-500
+            : entity.indicatorType === "illegal_discharge" ? "#b91c1c" // red-700
+            : entity.indicatorType === "odor_stagnation" ? "#f59e0b" // amber-500
+            : "#f97316"; // default to orange
+        } else if (entity.entityType === "risk") {
+          // Risk layers: color by type to match filter buttons  
+          color = entity.riskType === "flood_zone" ? "#06b6d4" // cyan-500
+            : entity.riskType === "drainage_channel" ? "#14b8a6" // teal-500
+            : entity.riskType === "sea_intrusion" ? "#6366f1" // indigo-500
+            : entity.riskType === "erosion_section" ? "#78716c" // stone-500
+            : "#64748b"; // default to slate
+        }
+      } catch (err) {
+        console.error("Error determining marker color:", err);
+        color = "#22c55e"; // fallback to green
+      }
 
       return {
         path: google.maps.SymbolPath.CIRCLE,
-        scale: isHovered ? 8.5 : 8, // Ultra-smooth micro scale increase
+        scale: isHovered ? 8.5 : 8,
         fillColor: color,
         fillOpacity: 1,
         strokeColor: "#ffffff",
-        strokeWeight: isHovered ? 2.3 : 2, // Minimal stroke increase
+        strokeWeight: isHovered ? 2.3 : 2,
       };
     },
     [],
@@ -355,18 +495,140 @@ export function MapComponent({ activeLayer, onPointClick }: MapComponentProps) {
         options={mapOptions}
         onClick={handleMapClick}
       >
-        {/* Render markers for filtered points */}
-        {mapPoints.map((point) => (
+        {/* Render markers for water sampling points */}
+        {waterPoints.filter(p => p.lat && p.lng).map((point) => (
           <Marker
             key={point.id}
             position={{ lat: point.lat, lng: point.lng }}
-            icon={getMarkerIcon(point.status, point.id === hoveredMarkerId)}
+            icon={getMarkerIcon(point, point.id === hoveredMarkerId)}
+            onClick={() => handleMarkerClick(point)}
+            onMouseOver={() => handleMarkerHover(point)}
+            onMouseOut={handleMarkerLeave}
+            title={point.locationName}
+          />
+        ))}
+
+        {/* Render markers for pollution indicators (point geometry only) */}
+        {pollutionIndicators.filter(p => p.geometryType === "point" && p.lat && p.lng).map((point) => (
+          <Marker
+            key={point.id}
+            position={{ lat: point.lat!, lng: point.lng! }}
+            icon={getMarkerIcon(point, point.id === hoveredMarkerId)}
             onClick={() => handleMarkerClick(point)}
             onMouseOver={() => handleMarkerHover(point)}
             onMouseOut={handleMarkerLeave}
             title={point.title}
           />
         ))}
+
+        {/* Render polygons for pollution indicators */}
+        {pollutionIndicators.filter(p => p.geometryType === "polygon" && p.polygon).map((indicator) => {
+          try {
+            const coords = indicator.polygon?.coordinates?.[0]?.map((coord: [number, number]) => ({
+              lat: coord?.[1] ?? 0,
+              lng: coord?.[0] ?? 0
+            })).filter((c: any) => c.lat !== 0 && c.lng !== 0) || [];
+            
+            if (coords.length < 3) return null;
+            
+            const color = indicator.severity === "low" ? "#fb923c"
+              : indicator.severity === "medium" ? "#f97316"
+              : indicator.severity === "high" ? "#dc2626"
+              : "#991b1b";
+
+            return (
+              <Polygon
+                key={indicator.id}
+                paths={coords}
+                options={{
+                  fillColor: color,
+                  fillOpacity: 0.35,
+                  strokeColor: color,
+                  strokeOpacity: 0.8,
+                  strokeWeight: 2,
+                  clickable: true,
+                }}
+                onClick={() => handleMarkerClick(indicator)}
+              />
+            );
+          } catch (err) {
+            console.error("Error rendering pollution polygon:", indicator.id, err);
+            return null;
+          }
+        })}
+
+        {/* Render risk layer polygons */}
+        {riskLayers.filter(r => r.geometryType === "polygon" && r.polygon).map((layer) => {
+          try {
+            const coords = layer.polygon?.coordinates?.[0]?.map((coord: [number, number]) => ({
+              lat: coord?.[1] ?? 0,
+              lng: coord?.[0] ?? 0
+            })).filter((c: any) => c.lat !== 0 && c.lng !== 0) || [];
+            
+            if (coords.length < 3) return null;
+            
+            const color = layer.riskType === "flood_zone" ? "#06b6d4"
+              : layer.riskType === "sea_intrusion" ? "#6366f1"
+              : "#64748b";
+
+            return (
+              <Polygon
+                key={layer.id}
+                paths={coords}
+                options={{
+                  fillColor: color,
+                  fillOpacity: 0.25,
+                  strokeColor: color,
+                  strokeOpacity: 0.6,
+                  strokeWeight: 2,
+                  clickable: true,
+                }}
+                onClick={() => handleMarkerClick(layer)}
+              />
+            );
+          } catch (err) {
+            console.error("Error rendering risk layer polygon:", layer.id, err);
+            return null;
+          }
+        })}
+
+        {/* Render risk layer lines (drainage channels, erosion sections) */}
+        {riskLayers.filter(r => r.geometryType === "line" && r.polygon).map((layer) => {
+          try {
+            const coords = layer.polygon?.coordinates?.map((coord: [number, number]) => ({
+              lat: coord?.[1] ?? 0,
+              lng: coord?.[0] ?? 0
+            })).filter((c: any) => c.lat !== 0 && c.lng !== 0) || [];
+            
+            if (coords.length < 2) return null;
+            
+            const color = layer.riskType === "drainage_channel" ? "#14b8a6"
+              : layer.riskType === "erosion_section" ? "#78716c"
+              : "#64748b";
+
+            const isDrainage = layer.riskType === "drainage_channel";
+            const channelColor = isDrainage && layer.channelStatus === "blocked" ? "#dc2626"
+              : isDrainage && layer.channelStatus === "damaged" ? "#f59e0b"
+              : color;
+
+            return (
+              <Polyline
+                key={layer.id}
+                path={coords}
+                options={{
+                  strokeColor: channelColor,
+                  strokeOpacity: 0.8,
+                  strokeWeight: 4,
+                  clickable: true,
+                }}
+                onClick={() => handleMarkerClick(layer)}
+              />
+            );
+          } catch (err) {
+            console.error("Error rendering risk layer line:", layer.id, err);
+            return null;
+          }
+        })}
 
         {clickedLocation && (
           <InfoWindow
@@ -415,11 +677,51 @@ export function MapComponent({ activeLayer, onPointClick }: MapComponentProps) {
         {/* Info window for selected point */}
         {selectedPoint &&
           (() => {
-            const position = getPixelPosition(
-              selectedPoint.lat,
-              selectedPoint.lng,
-            );
-            if (!position) return null;
+            try {
+              const lat = selectedPoint.entityType === "water" ? selectedPoint.lat
+                : selectedPoint.entityType === "pollution" && selectedPoint.geometryType === "point" ? selectedPoint.lat
+                : null;
+              const lng = selectedPoint.entityType === "water" ? selectedPoint.lng
+                : selectedPoint.entityType === "pollution" && selectedPoint.geometryType === "point" ? selectedPoint.lng
+                : null;
+              
+              if (!lat || !lng || typeof lat !== 'number' || typeof lng !== 'number') return null;
+              
+              const position = getPixelPosition(lat, lng);
+              if (!position) return null;
+
+              const title = selectedPoint.entityType === "water" ? (selectedPoint.locationName || "Water Point")
+                : (selectedPoint.title || "Map Point");
+              
+              const date = (() => {
+                try {
+                  if (selectedPoint.entityType === "water" && selectedPoint.testDate) {
+                    return new Date(selectedPoint.testDate).toLocaleDateString("en-US", { month: "short", day: "2-digit", year: "numeric" });
+                  } else if (selectedPoint.entityType === "pollution" && selectedPoint.reportedAt) {
+                    return new Date(selectedPoint.reportedAt).toLocaleDateString("en-US", { month: "short", day: "2-digit", year: "numeric" });
+                  }
+                  return new Date().toLocaleDateString("en-US", { month: "short", day: "2-digit", year: "numeric" });
+                } catch (err) {
+                  console.error("Error formatting date:", err);
+                  return "N/A";
+                }
+              })();
+
+              const statusBadge = (() => {
+                try {
+                  if (selectedPoint.entityType === "water" && selectedPoint.status) {
+                    return t?.map?.status?.[selectedPoint.status]?.[language] || selectedPoint.status;
+                  } else if (selectedPoint.entityType === "pollution" && selectedPoint.severity) {
+                    return selectedPoint.severity.charAt(0).toUpperCase() + selectedPoint.severity.slice(1);
+                  } else if (selectedPoint.entityType === "risk" && selectedPoint.riskLevel) {
+                    return selectedPoint.riskLevel.charAt(0).toUpperCase() + selectedPoint.riskLevel.slice(1);
+                  }
+                  return "Unknown";
+                } catch (err) {
+                  console.error("Error determining status badge:", err);
+                  return "Unknown";
+                }
+              })();
 
             return (
               <div
@@ -447,34 +749,27 @@ export function MapComponent({ activeLayer, onPointClick }: MapComponentProps) {
                 <div className="bg-white rounded-lg shadow-lg min-w-[220px] border border-gray-200 overflow-hidden">
                   <div className="p-3">
                     <h3 className="font-semibold text-base mb-2 text-gray-900 leading-tight">
-                      {selectedPoint.title}
+                      {title}
                     </h3>
                     <p className="text-xs text-gray-400 mb-3">
-                      {new Date(selectedPoint.createdAt).toLocaleDateString(
-                        "en-US",
-                        {
-                          month: "short",
-                          day: "2-digit",
-                          year: "numeric",
-                        },
-                      )}
+                      {date}
                     </p>
                     <div className="flex items-center gap-2">
                       <Badge
-                        variant={
-                          selectedPoint.status === "normal"
-                            ? "default"
-                            : "destructive"
-                        }
+                        variant="default"
                         className="text-xs font-medium"
                       >
-                        {t.map.status[selectedPoint.status][language]}
+                        {statusBadge}
                       </Badge>
                     </div>
                   </div>
                 </div>
               </div>
             );
+            } catch (err) {
+              console.error("Error rendering tooltip:", err);
+              return null;
+            }
           })()}
       </GoogleMap>
 

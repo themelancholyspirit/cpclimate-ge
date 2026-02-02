@@ -38,22 +38,28 @@ export default function MapPage() {
         const response = await fetch("/api/map-points");
         if (response.ok) {
           const points = await response.json();
-          const normal = points.filter(
-            (p: any) => p.status === "normal",
-          ).length;
-          const warning = points.filter(
-            (p: any) => p.status === "warning",
-          ).length;
-          const problem = points.filter(
-            (p: any) => p.status === "problem",
-          ).length;
+          if (Array.isArray(points)) {
+            const normal = points.filter(
+              (p: any) => p?.status === "normal",
+            ).length;
+            const warning = points.filter(
+              (p: any) => p?.status === "warning",
+            ).length;
+            const problem = points.filter(
+              (p: any) => p?.status === "problem",
+            ).length;
 
-          setStats({
-            normal,
-            warning,
-            problem,
-            total: points.length,
-          });
+            setStats({
+              normal,
+              warning,
+              problem,
+              total: points.length,
+            });
+          } else {
+            console.error("Map points response is not an array");
+          }
+        } else {
+          console.error("Failed to fetch map points stats", response.status);
         }
       } catch (error) {
         console.error("Error fetching stats:", error);
@@ -75,8 +81,8 @@ export default function MapPage() {
             <Button
               size="lg"
               onClick={() => {
-                // Set coordinates to center of Georgia (Tbilisi area) as default
-                setReportCoordinates({ lat: 41.7151, lng: 44.8271 });
+                // General issue without specific location
+                setReportCoordinates(null);
                 setIsReportModalOpen(true);
               }}
               className="flex items-center gap-2"
@@ -89,9 +95,9 @@ export default function MapPage() {
       </div>
 
       <div className="container mx-auto px-4 py-8">
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 lg:h-[1000px]">
           {/* Sidebar - Layer Controls */}
-          <div className="lg:col-span-1 flex flex-col gap-4">
+          <div className="lg:col-span-1 flex flex-col gap-4 lg:h-full lg:overflow-y-auto">
             <Card className="flex-1">
               <CardHeader>
                 <div className="flex items-center gap-2">
@@ -110,40 +116,95 @@ export default function MapPage() {
                 >
                   {t.map.layerAll[language]}
                 </Button>
-                <Button
-                  variant={activeLayer === "water" ? "default" : "outline"}
-                  className="w-full justify-start"
-                  onClick={() => setActiveLayer("water")}
-                >
-                  <span className="w-3 h-3 rounded-full bg-blue-500 mr-2"></span>
-                  {t.map.layerWater[language]}
-                </Button>
-                <Button
-                  variant={activeLayer === "pollution" ? "default" : "outline"}
-                  className="w-full justify-start"
-                  onClick={() => setActiveLayer("pollution")}
-                >
-                  <span className="w-3 h-3 rounded-full bg-red-500 mr-2"></span>
-                  {t.map.layerPollution[language]}
-                </Button>
-                <Button
-                  variant={activeLayer === "risk" ? "default" : "outline"}
-                  className="w-full justify-start"
-                  onClick={() => setActiveLayer("risk")}
-                >
-                  <span className="w-3 h-3 rounded-full bg-yellow-500 mr-2"></span>
-                  {t.map.layerRisk[language]}
-                </Button>
-                <Button
-                  variant={
-                    activeLayer === "infrastructure" ? "default" : "outline"
-                  }
-                  className="w-full justify-start"
-                  onClick={() => setActiveLayer("infrastructure")}
-                >
-                  <span className="w-3 h-3 rounded-full bg-slate-500 mr-2"></span>
-                  {t.map.layerInfrastructure[language]}
-                </Button>
+                
+                {/* A. Water Quality Section */}
+                <div className="pt-2">
+                  <div className="text-xs font-semibold text-muted-foreground mb-1 px-2">
+                    {language === "en" ? "Water Quality" : "წყლის ხარისხი"}
+                  </div>
+                  <Button
+                    variant={activeLayer === "water" ? "default" : "outline"}
+                    className="w-full justify-start"
+                    onClick={() => setActiveLayer("water")}
+                  >
+                    <span className="w-3 h-3 rounded-full bg-blue-500 mr-2"></span>
+                    {t.map.layerWater[language]}
+                  </Button>
+                </div>
+
+                {/* B. Pollution Indicators Section */}
+                <div className="pt-2">
+                  <div className="text-xs font-semibold text-muted-foreground mb-1 px-2">
+                    {language === "en" ? "Pollution Indicators" : "დაბინძურების ინდიკატორები"}
+                  </div>
+                  <div className="pl-2 space-y-1 border-l-2 border-muted">
+                    <Button
+                      variant={activeLayer === "waste" ? "default" : "outline"}
+                      className="w-full justify-start text-sm"
+                      onClick={() => setActiveLayer("waste")}
+                    >
+                      <span className="w-3 h-3 rounded-full bg-orange-500 mr-2"></span>
+                      {t.map.layerWaste[language]}
+                    </Button>
+                    <Button
+                      variant={activeLayer === "illegal_dump" ? "default" : "outline"}
+                      className="w-full justify-start text-sm"
+                      onClick={() => setActiveLayer("illegal_dump")}
+                    >
+                      <span className="w-3 h-3 rounded-full bg-red-700 mr-2"></span>
+                      {t.map.layerIllegalDump[language]}
+                    </Button>
+                    <Button
+                      variant={activeLayer === "odor" ? "default" : "outline"}
+                      className="w-full justify-start text-sm"
+                      onClick={() => setActiveLayer("odor")}
+                    >
+                      <span className="w-3 h-3 rounded-full bg-amber-500 mr-2"></span>
+                      {t.map.layerOdor[language]}
+                    </Button>
+                  </div>
+                </div>
+
+                {/* C. Climate & Infrastructure Risks Section */}
+                <div className="pt-2">
+                  <div className="text-xs font-semibold text-muted-foreground mb-1 px-2">
+                    {language === "en" ? "Risk Layers" : "რისკის ფენები"}
+                  </div>
+                  <div className="pl-2 space-y-1 border-l-2 border-muted">
+                    <Button
+                      variant={activeLayer === "flood" ? "default" : "outline"}
+                      className="w-full justify-start text-sm"
+                      onClick={() => setActiveLayer("flood")}
+                    >
+                      <span className="w-3 h-3 rounded-full bg-cyan-500 mr-2"></span>
+                      {t.map.layerFlood[language]}
+                    </Button>
+                    <Button
+                      variant={activeLayer === "drainage" ? "default" : "outline"}
+                      className="w-full justify-start text-sm"
+                      onClick={() => setActiveLayer("drainage")}
+                    >
+                      <span className="w-3 h-3 rounded-full bg-teal-500 mr-2"></span>
+                      {t.map.layerDrainage[language]}
+                    </Button>
+                    <Button
+                      variant={activeLayer === "sea_intrusion" ? "default" : "outline"}
+                      className="w-full justify-start text-sm"
+                      onClick={() => setActiveLayer("sea_intrusion")}
+                    >
+                      <span className="w-3 h-3 rounded-full bg-indigo-500 mr-2"></span>
+                      {t.map.layerSeaIntrusion[language]}
+                    </Button>
+                    <Button
+                      variant={activeLayer === "erosion" ? "default" : "outline"}
+                      className="w-full justify-start text-sm"
+                      onClick={() => setActiveLayer("erosion")}
+                    >
+                      <span className="w-3 h-3 rounded-full bg-stone-500 mr-2"></span>
+                      {t.map.layerErosion[language]}
+                    </Button>
+                  </div>
+                </div>
               </CardContent>
 
               <CardContent>
@@ -164,8 +225,8 @@ export default function MapPage() {
 
           {/* Map Area */}
           <div className="lg:col-span-3 flex flex-col gap-6">
-            <Card className="overflow-hidden flex-1">
-              <div className="relative h-[600px] lg:h-[700px]">
+            <Card className="overflow-hidden p-0 flex-1">
+              <div className="relative w-full h-[500px] md:h-[600px] lg:h-full">
                 <MapComponent
                   activeLayer={activeLayer}
                   onPointClick={setSelectedPoint}

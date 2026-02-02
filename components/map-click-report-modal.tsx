@@ -52,7 +52,7 @@ export function MapClickReportModal({
 
   // Update coordinates when they change
   useEffect(() => {
-    if (coordinates) {
+    if (coordinates?.lat !== undefined && coordinates?.lng !== undefined) {
       setFormData((prev) => ({
         ...prev,
         location: `${coordinates.lat.toFixed(6)}, ${coordinates.lng.toFixed(6)}`,
@@ -144,6 +144,7 @@ export function MapClickReportModal({
                 id="location"
                 placeholder={t.report.locationPlaceholder[language]}
                 required
+                readOnly
                 value={formData.location}
                 onChange={(e) => setFormData({ ...formData, location: e.target.value })}
               />

@@ -16,16 +16,84 @@ model User {
   @@map("users")
 }
 
+// A. Water Sampling Points (3-5 fixed locations for lab testing)
+model WaterSamplingPoint {
+  id                        String            @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  locationName              String            @db.VarChar(100)
+  lat                       Float
+  lng                       Float
+  status                    WaterQualityStatus
+  summaryText               String            @db.Text
+  testDate                  DateTime
+  citizenImpactExplanation  String            @db.Text
+  metadata                  Json?
+  createdAt                 DateTime          @default(now())
+  updatedAt                 DateTime          @updatedAt
+
+  @@index([status])
+  @@index([lat, lng])
+  @@index([testDate])
+  @@map("water_sampling_points")
+}
+
+// B. Pollution Indicators (observational, mixed geometry)
+model PollutionIndicator {
+  id            String                @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  indicatorType PollutionIndicatorType
+  sourceType    DataSourceType
+  geometryType  GeometryType
+  lat           Float?                // For points
+  lng           Float?                // For points
+  polygon       Json?                 // GeoJSON for polygons
+  title         String                @db.VarChar(200)
+  description   String                @db.Text
+  severity      SeverityLevel         @default(medium)
+  reportedAt    DateTime              @default(now())
+  metadata      Json?
+  createdAt     DateTime              @default(now())
+
+  @@index([indicatorType])
+  @@index([sourceType])
+  @@index([severity])
+  @@index([reportedAt])
+  @@map("pollution_indicators")
+}
+
+// C. Climate & Infrastructure Risk Layers (admin-managed, polygon overlays)
+model RiskLayer {
+  id                   String          @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  riskType             RiskLayerType
+  geometryType         GeometryType
+  polygon              Json            // GeoJSON polygon/multipolygon
+  title                String          @db.VarChar(200)
+  description          String          @db.Text
+  riskLevel            SeverityLevel   @default(medium)
+  channelStatus        DrainageChannelStatus? // For drainage channels only
+  adminNotes           String?         @db.Text
+  isActive             Boolean         @default(true)
+  metadata             Json?
+  createdAt            DateTime        @default(now())
+  updatedAt            DateTime        @updatedAt
+
+  @@index([riskType])
+  @@index([riskLevel])
+  @@index([isActive])
+  @@map("risk_layers")
+}
+
+// Legacy model - keeping for backwards compatibility
 model MapPoint {
-  type        MapPointType
-  lat         Float
-  lng         Float
-  status      MapPointStatus
-  title       String
-  description String
-  metadata    Json?
-  createdAt   DateTime       @default(now())
-  id          String         @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  type                 MapPointType
+  lat                  Float
+  lng                  Float
+  status               MapPointStatus
+  title                String
+  description          String
+  metadata             Json?
+  dataSource           String?        @db.VarChar(50)
+  infrastructureStatus String?        @db.VarChar(50)
+  createdAt            DateTime       @default(now())
+  id                   String         @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
 
   @@index([type])
   @@index([status])
@@ -609,9 +677,62 @@ enum UserRole {
   observer
 }
 
+// New enums for refactored entities
+
+enum WaterQualityStatus {
+  normal
+  risk
+  problematic
+}
+
+enum PollutionIndicatorType {
+  waste_accumulation
+  illegal_discharge
+  odor_stagnation
+}
+
+enum RiskLayerType {
+  flood_zone
+  drainage_channel
+  sea_intrusion
+  erosion_section
+}
+
+enum DataSourceType {
+  field_observation
+  citizen_report
+}
+
+enum GeometryType {
+  point
+  polygon
+  line
+}
+
+enum SeverityLevel {
+  low
+  medium
+  high
+  critical
+}
+
+enum DrainageChannelStatus {
+  existing
+  blocked
+  damaged
+}
+
+// Legacy enums - keeping for backwards compatibility
 enum MapPointType {
   water
   pollution
+  waste
+  illegal_dump
+  odor
+  flood
+  drainage
+  sea_intrusion
+  erosion
   risk
   infrastructure
 }
