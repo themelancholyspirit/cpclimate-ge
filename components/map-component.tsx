@@ -225,11 +225,11 @@ export function MapComponent({ activeLayer, onPointClick }: MapComponentProps) {
 
       return {
         path: google.maps.SymbolPath.CIRCLE,
-        scale: isHovered ? 11 : 8, // Larger scale on hover
+        scale: isHovered ? 8.5 : 8, // Ultra-smooth micro scale increase
         fillColor: color,
         fillOpacity: 1,
         strokeColor: "#ffffff",
-        strokeWeight: 2,
+        strokeWeight: isHovered ? 2.3 : 2, // Minimal stroke increase
       };
     },
     [],
