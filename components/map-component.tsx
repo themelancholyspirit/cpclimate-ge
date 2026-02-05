@@ -49,8 +49,10 @@ interface PollutionIndicator {
 interface RiskLayer {
   id: string;
   riskType: "flood_zone" | "drainage_channel" | "sea_intrusion" | "erosion_section";
-  geometryType: "polygon" | "line";
-  polygon: any;
+  geometryType: "point" | "polygon" | "line";
+  lat?: number;
+  lng?: number;
+  polygon?: any;
   title: string;
   description: string;
   riskLevel: "low" | "medium" | "high" | "critical";
@@ -187,8 +189,11 @@ export function MapComponent({ activeLayer, onPointClick }: MapComponentProps) {
           setPollutionIndicators([]);
         }
 
-        // Fetch risk layers
+        // Fetch risk layers - MUST clear immediately before fetch
         if (activeLayer === "all" || ["flood", "drainage", "sea_intrusion", "erosion", "risk"].includes(activeLayer)) {
+          // Clear risk layers BEFORE fetching new data
+          setRiskLayers([]);
+          
           try {
             const riskType = activeLayer === "flood" ? "flood_zone"
               : activeLayer === "drainage" ? "drainage_channel"
@@ -200,9 +205,12 @@ export function MapComponent({ activeLayer, onPointClick }: MapComponentProps) {
               ? `/api/risk-layers?riskType=${riskType}&isActive=true`
               : "/api/risk-layers?isActive=true";
             
+            console.log("Fetching risk layers:", url, "for activeLayer:", activeLayer);
             const riskRes = await fetch(url);
             if (riskRes.ok) {
               const data = await riskRes.json();
+              console.log("Risk layers received:", data.length, "items");
+              data.forEach((d: any) => console.log("  -", d.riskType, d.title));
               if (Array.isArray(data)) {
                 setRiskLayers(data.map((p: any) => ({ ...p, entityType: "risk" as const })));
               } else {
@@ -485,6 +493,7 @@ export function MapComponent({ activeLayer, onPointClick }: MapComponentProps) {
     <div className="relative w-full h-full">
       {/* Removed <LoadScript>; render map only when isLoaded */}
       <GoogleMap
+        key={`map-${activeLayer}`}
         mapContainerStyle={mapContainerStyle}
         center={defaultCenter}
         zoom={13}
@@ -518,6 +527,58 @@ export function MapComponent({ activeLayer, onPointClick }: MapComponentProps) {
             title={point.title}
           />
         ))}
+
+        {/* Render markers for risk layers - calculate center point for polygons/lines */}
+        {riskLayers.map((layer) => {
+          try {
+            let lat: number | undefined;
+            let lng: number | undefined;
+
+            if (layer.geometryType === "point" && layer.lat && layer.lng) {
+              // Direct point geometry (if lat/lng fields exist)
+              lat = layer.lat;
+              lng = layer.lng;
+            } else if (layer.geometryType === "polygon" && layer.polygon?.coordinates?.[0]) {
+              // Calculate center of polygon
+              const coords = layer.polygon.coordinates[0];
+              const lats = coords.map((c: [number, number]) => c[1]).filter((v: number) => v);
+              const lngs = coords.map((c: [number, number]) => c[0]).filter((v: number) => v);
+              if (lats.length > 0 && lngs.length > 0) {
+                lat = lats.reduce((a: number, b: number) => a + b, 0) / lats.length;
+                lng = lngs.reduce((a: number, b: number) => a + b, 0) / lngs.length;
+              }
+            } else if (layer.geometryType === "line" && layer.polygon?.coordinates) {
+              // Calculate center of line
+              const coords = layer.polygon.coordinates;
+              const lats = coords.map((c: [number, number]) => c[1]).filter((v: number) => v);
+              const lngs = coords.map((c: [number, number]) => c[0]).filter((v: number) => v);
+              if (lats.length > 0 && lngs.length > 0) {
+                lat = lats.reduce((a: number, b: number) => a + b, 0) / lats.length;
+                lng = lngs.reduce((a: number, b: number) => a + b, 0) / lngs.length;
+              }
+            }
+
+            if (!lat || !lng || typeof lat !== 'number' || typeof lng !== 'number') {
+              console.log(`Skipping risk layer ${layer.riskType} - no valid coordinates`);
+              return null;
+            }
+
+            return (
+              <Marker
+                key={layer.id}
+                position={{ lat, lng }}
+                icon={getMarkerIcon(layer, layer.id === hoveredMarkerId)}
+                onClick={() => handleMarkerClick(layer)}
+                onMouseOver={() => handleMarkerHover(layer)}
+                onMouseOut={handleMarkerLeave}
+                title={layer.title}
+              />
+            );
+          } catch (err) {
+            console.error("Error rendering risk layer marker:", layer.id, err);
+            return null;
+          }
+        })}
 
         {/* Render polygons for pollution indicators */}
         {pollutionIndicators.filter(p => p.geometryType === "polygon" && p.polygon).map((indicator) => {
@@ -555,78 +616,7 @@ export function MapComponent({ activeLayer, onPointClick }: MapComponentProps) {
           }
         })}
 
-        {/* Render risk layer polygons */}
-        {riskLayers.filter(r => r.geometryType === "polygon" && r.polygon).map((layer) => {
-          try {
-            const coords = layer.polygon?.coordinates?.[0]?.map((coord: [number, number]) => ({
-              lat: coord?.[1] ?? 0,
-              lng: coord?.[0] ?? 0
-            })).filter((c: any) => c.lat !== 0 && c.lng !== 0) || [];
-            
-            if (coords.length < 3) return null;
-            
-            const color = layer.riskType === "flood_zone" ? "#06b6d4"
-              : layer.riskType === "sea_intrusion" ? "#6366f1"
-              : "#64748b";
 
-            return (
-              <Polygon
-                key={layer.id}
-                paths={coords}
-                options={{
-                  fillColor: color,
-                  fillOpacity: 0.25,
-                  strokeColor: color,
-                  strokeOpacity: 0.6,
-                  strokeWeight: 2,
-                  clickable: true,
-                }}
-                onClick={() => handleMarkerClick(layer)}
-              />
-            );
-          } catch (err) {
-            console.error("Error rendering risk layer polygon:", layer.id, err);
-            return null;
-          }
-        })}
-
-        {/* Render risk layer lines (drainage channels, erosion sections) */}
-        {riskLayers.filter(r => r.geometryType === "line" && r.polygon).map((layer) => {
-          try {
-            const coords = layer.polygon?.coordinates?.map((coord: [number, number]) => ({
-              lat: coord?.[1] ?? 0,
-              lng: coord?.[0] ?? 0
-            })).filter((c: any) => c.lat !== 0 && c.lng !== 0) || [];
-            
-            if (coords.length < 2) return null;
-            
-            const color = layer.riskType === "drainage_channel" ? "#14b8a6"
-              : layer.riskType === "erosion_section" ? "#78716c"
-              : "#64748b";
-
-            const isDrainage = layer.riskType === "drainage_channel";
-            const channelColor = isDrainage && layer.channelStatus === "blocked" ? "#dc2626"
-              : isDrainage && layer.channelStatus === "damaged" ? "#f59e0b"
-              : color;
-
-            return (
-              <Polyline
-                key={layer.id}
-                path={coords}
-                options={{
-                  strokeColor: channelColor,
-                  strokeOpacity: 0.8,
-                  strokeWeight: 4,
-                  clickable: true,
-                }}
-                onClick={() => handleMarkerClick(layer)}
-              />
-            );
-          } catch (err) {
-            console.error("Error rendering risk layer line:", layer.id, err);
-            return null;
-          }
-        })}
 
         {clickedLocation && (
           <InfoWindow
@@ -678,9 +668,11 @@ export function MapComponent({ activeLayer, onPointClick }: MapComponentProps) {
             try {
               const lat = selectedPoint.entityType === "water" ? selectedPoint.lat
                 : selectedPoint.entityType === "pollution" && selectedPoint.geometryType === "point" ? selectedPoint.lat
+                : selectedPoint.entityType === "risk" && selectedPoint.geometryType === "point" ? selectedPoint.lat
                 : null;
               const lng = selectedPoint.entityType === "water" ? selectedPoint.lng
                 : selectedPoint.entityType === "pollution" && selectedPoint.geometryType === "point" ? selectedPoint.lng
+                : selectedPoint.entityType === "risk" && selectedPoint.geometryType === "point" ? selectedPoint.lng
                 : null;
               
               if (!lat || !lng || typeof lat !== 'number' || typeof lng !== 'number') return null;
