@@ -134,7 +134,9 @@ export function MapClickReportModal({
                 <option value="odor">{t.report.issueTypeOptions.odor[language]}</option>
                 <option value="drainage">{t.report.issueTypeOptions.drainage[language]}</option>
                 <option value="flooding">{t.report.issueTypeOptions.flooding[language]}</option>
-                <option value="other">{t.report.issueTypeOptions.other[language]}</option>
+                <option value="channels">{t.report.issueTypeOptions.channels[language]}</option>
+                <option value="sea">{t.report.issueTypeOptions.sea[language]}</option>
+                <option value="erosion">{t.report.issueTypeOptions.erosion[language]}</option>
               </select>
             </div>
 
