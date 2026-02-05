@@ -39,10 +39,19 @@ export default function NewsPage() {
 
         if (mediaResponse.ok) {
           const mediaData = await mediaResponse.json();
-          setMediaItems(mediaData);
+          if (Array.isArray(mediaData)) {
+            setMediaItems(mediaData);
+          } else {
+            console.error("Media items response is not an array");
+            setMediaItems([]);
+          }
+        } else {
+          console.error("Failed to fetch media items:", mediaResponse.status);
+          setMediaItems([]);
         }
       } catch (error) {
         console.error("Error fetching media items:", error);
+        setMediaItems([]);
       } finally {
         setLoading(false);
       }
@@ -52,12 +61,19 @@ export default function NewsPage() {
   }, []);
 
   const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    return date.toLocaleDateString(language === "en" ? "en-US" : "ka-GE", {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    });
+    try {
+      if (!dateString) return "N/A";
+      const date = new Date(dateString);
+      if (isNaN(date.getTime())) return "N/A";
+      return date.toLocaleDateString(language === "en" ? "en-US" : "ka-GE", {
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+      });
+    } catch (error) {
+      console.error("Error formatting date:", error);
+      return "N/A";
+    }
   };
 
   if (loading) {

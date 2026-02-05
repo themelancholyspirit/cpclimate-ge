@@ -71,10 +71,19 @@ export default function ProjectsPage() {
         const response = await fetch("/api/projects");
         if (response.ok) {
           const data = await response.json();
-          setProjects(data);
+          if (Array.isArray(data)) {
+            setProjects(data);
+          } else {
+            console.error("Projects response is not an array");
+            setProjects([]);
+          }
+        } else {
+          console.error("Failed to fetch projects:", response.status);
+          setProjects([]);
         }
       } catch (error) {
         console.error("Error fetching projects:", error);
+        setProjects([]);
       } finally {
         setLoading(false);
       }
@@ -115,9 +124,9 @@ export default function ProjectsPage() {
           </div> */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {projects
-              .filter((p) => p.status === "Active")
+              .filter((p) => p?.status === "Active")
               .map((project) => {
-                const IconComponent = iconMap[project.icon] || Target;
+                const IconComponent = (project?.icon && iconMap[project.icon]) || Target;
                 return (
                   <Card
                     key={project.id}
@@ -170,9 +179,9 @@ export default function ProjectsPage() {
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {projects
-                .filter((p) => p.status === "Planning")
+                .filter((p) => p?.status === "Planning")
                 .map((project) => {
-                  const IconComponent = iconMap[project.icon] || Target;
+                  const IconComponent = (project?.icon && iconMap[project.icon]) || Target;
                   return (
                     <Card
                       key={project.id}
@@ -205,7 +214,7 @@ export default function ProjectsPage() {
                             {t.projects.keyGoals[language]}
                           </div>
                           <div className="flex flex-wrap gap-1.5">
-                            {project.goals.map((goal, i) => (
+                            {(Array.isArray(project?.goals) ? project.goals : []).map((goal, i) => (
                               <Badge
                                 key={i}
                                 variant="outline"

@@ -12,6 +12,12 @@ import { Badge } from "@/components/ui/badge";
 import { X, MapPin } from "lucide-react";
 import { useLanguage } from "@/contexts/language-context";
 
+// Safe capitalize helper
+const capitalize = (str: string | undefined | null): string => {
+  if (!str || typeof str !== 'string' || str.length === 0) return "Unknown";
+  return str.charAt(0).toUpperCase() + str.slice(1);
+};
+
 interface MapDataModalProps {
   point: {
     entityType: "water" | "pollution" | "risk";
@@ -54,19 +60,24 @@ export function MapDataModal({ point, onClose }: MapDataModalProps) {
         details: [
           {
             label: "Test Date",
-            value: point.testDate 
-              ? new Date(point.testDate).toLocaleDateString("en-US", {
+            value: (() => {
+              try {
+                if (!point.testDate) return "N/A";
+                const date = new Date(point.testDate);
+                if (isNaN(date.getTime())) return "N/A";
+                return date.toLocaleDateString("en-US", {
                   month: "short",
                   day: "2-digit",
                   year: "numeric",
-                })
-              : "N/A",
+                });
+              } catch {
+                return "N/A";
+              }
+            })(),
           },
           {
             label: "Status",
-            value: point.status 
-              ? point.status.charAt(0).toUpperCase() + point.status.slice(1)
-              : "Unknown",
+            value: capitalize(point.status),
           },
         ],
         summaryText: point.summaryText || "",
@@ -80,25 +91,35 @@ export function MapDataModal({ point, onClose }: MapDataModalProps) {
         details: [
           {
             label: "Reported At",
-            value: point.reportedAt
-              ? new Date(point.reportedAt).toLocaleDateString("en-US", {
+            value: (() => {
+              try {
+                if (!point.reportedAt) return "N/A";
+                const date = new Date(point.reportedAt);
+                if (isNaN(date.getTime())) return "N/A";
+                return date.toLocaleDateString("en-US", {
                   month: "short",
                   day: "2-digit",
                   year: "numeric",
-                })
-              : "N/A",
+                });
+              } catch {
+                return "N/A";
+              }
+            })(),
           },
           {
             label: "Source",
-            value: point.sourceType
-              ? point.sourceType.replace("_", " ").replace(/\b\w/g, (c: string) => c.toUpperCase())
-              : "Unknown",
+            value: (() => {
+              try {
+                if (!point.sourceType) return "Unknown";
+                return String(point.sourceType).replace(/_/g, " ").replace(/\b\w/g, (c: string) => c.toUpperCase());
+              } catch {
+                return "Unknown";
+              }
+            })(),
           },
           {
             label: "Severity",
-            value: point.severity
-              ? point.severity.charAt(0).toUpperCase() + point.severity.slice(1)
-              : "Unknown",
+            value: capitalize(point.severity),
           },
         ],
         description: point.description || "",
@@ -111,13 +132,11 @@ export function MapDataModal({ point, onClose }: MapDataModalProps) {
         details: [
           {
             label: "Risk Level",
-            value: point.riskLevel
-              ? point.riskLevel.charAt(0).toUpperCase() + point.riskLevel.slice(1)
-              : "Unknown",
+            value: capitalize(point.riskLevel),
           },
           ...(point.channelStatus ? [{
             label: "Channel Status",
-            value: point.channelStatus.charAt(0).toUpperCase() + point.channelStatus.slice(1),
+            value: capitalize(point.channelStatus),
           }] : []),
         ],
         description: point.description || "",
@@ -147,7 +166,7 @@ export function MapDataModal({ point, onClose }: MapDataModalProps) {
                 <MapPin className="h-4 w-4" />
                 {point.geometryType === "point" 
                   ? `Lat: ${point.lat?.toFixed(4)}, Lng: ${point.lng?.toFixed(4)}`
-                  : `${point.geometryType.charAt(0).toUpperCase() + point.geometryType.slice(1)} overlay`}
+                  : `${capitalize(point.geometryType)} overlay`}
               </CardDescription>
             </div>
             <Button variant="ghost" size="icon" onClick={onClose}>
@@ -176,8 +195,8 @@ export function MapDataModal({ point, onClose }: MapDataModalProps) {
               }
             >
               {isWaterPoint 
-                ? (point.status ? point.status.charAt(0).toUpperCase() + point.status.slice(1) : "Unknown")
-                : (point.severity ? point.severity.charAt(0).toUpperCase() + point.severity.slice(1) : "Unknown")}
+                ? capitalize(point.status)
+                : capitalize(point.severity)}
             </Badge>
           )}
           {isRiskLayer && point.riskLevel && (
@@ -189,7 +208,7 @@ export function MapDataModal({ point, onClose }: MapDataModalProps) {
                   : "bg-red-600 w-fit"
               }
             >
-              {point.riskLevel.charAt(0).toUpperCase() + point.riskLevel.slice(1)} Risk
+              {capitalize(point.riskLevel)} Risk
             </Badge>
           )}
         </CardHeader>

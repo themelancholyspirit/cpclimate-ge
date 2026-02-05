@@ -52,11 +52,16 @@ export function MapClickReportModal({
 
   // Update coordinates when they change
   useEffect(() => {
-    if (coordinates?.lat !== undefined && coordinates?.lng !== undefined) {
-      setFormData((prev) => ({
-        ...prev,
-        location: `${coordinates.lat.toFixed(6)}, ${coordinates.lng.toFixed(6)}`,
-      }))
+    try {
+      if (coordinates?.lat !== undefined && coordinates?.lng !== undefined && 
+          typeof coordinates.lat === 'number' && typeof coordinates.lng === 'number') {
+        setFormData((prev) => ({
+          ...prev,
+          location: `${coordinates.lat.toFixed(6)}, ${coordinates.lng.toFixed(6)}`,
+        }))
+      }
+    } catch (error) {
+      console.error("Error updating coordinates:", error);
     }
   }, [coordinates])
 
@@ -68,8 +73,8 @@ export function MapClickReportModal({
       await onSubmit(formData)
       // Show success toast
       toast({
-        title: t.toast.reportSuccess.title[language],
-        description: t.toast.reportSuccess.description[language],
+        title: t?.toast?.reportSuccess?.title?.[language] || "Success",
+        description: t?.toast?.reportSuccess?.description?.[language] || "Report submitted successfully",
       })
       // Reset form
       setFormData({
@@ -84,8 +89,8 @@ export function MapClickReportModal({
       console.error('Error submitting report:', error)
       // Show error toast
       toast({
-        title: t.toast.reportError.title[language],
-        description: t.toast.reportError.description[language],
+        title: t?.toast?.reportError?.title?.[language] || "Error",
+        description: t?.toast?.reportError?.description?.[language] || "Failed to submit report",
         variant: "destructive",
       })
     } finally {
@@ -101,16 +106,16 @@ export function MapClickReportModal({
         <CardHeader>
           <div className="flex items-start justify-between">
             <div>
-              <CardTitle>{t.modals.clickReport.title[language]}</CardTitle>
+              <CardTitle>{t?.modals?.clickReport?.title?.[language] || "Report an Issue"}</CardTitle>
               <CardDescription>
-                {t.modals.clickReport.body[language]}
+                {t?.modals?.clickReport?.body?.[language] || "Please provide details about the issue"}
               </CardDescription>
             </div>
             <Button variant="ghost" size="icon" onClick={onClose}>
               <X className="h-4 w-4" />
             </Button>
           </div>
-          {coordinates && (
+          {coordinates && typeof coordinates.lat === 'number' && typeof coordinates.lng === 'number' && (
             <div className="flex items-center gap-2 text-sm text-muted-foreground mt-2">
               <MapPin className="h-4 w-4" />
               <span>Lat: {coordinates.lat.toFixed(6)}, Lng: {coordinates.lng.toFixed(6)}</span>
@@ -120,7 +125,7 @@ export function MapClickReportModal({
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-6">
             <div className="space-y-2">
-              <Label htmlFor="issueType">{t.report.issueType[language]}</Label>
+              <Label htmlFor="issueType">{t?.report?.issueType?.[language] || "Issue Type"}</Label>
               <select
                 id="issueType"
                 className="w-full px-3 py-2 rounded-md border border-border bg-background"
@@ -128,23 +133,23 @@ export function MapClickReportModal({
                 value={formData.issueType}
                 onChange={(e) => setFormData({ ...formData, issueType: e.target.value })}
               >
-                <option value="">{t.report.issueTypeSelect[language]}</option>
-                <option value="water">{t.report.issueTypeOptions.water[language]}</option>
-                <option value="waste">{t.report.issueTypeOptions.waste[language]}</option>
-                <option value="odor">{t.report.issueTypeOptions.odor[language]}</option>
-                <option value="drainage">{t.report.issueTypeOptions.drainage[language]}</option>
-                <option value="flooding">{t.report.issueTypeOptions.flooding[language]}</option>
-                <option value="channels">{t.report.issueTypeOptions.channels[language]}</option>
-                <option value="sea">{t.report.issueTypeOptions.sea[language]}</option>
-                <option value="erosion">{t.report.issueTypeOptions.erosion[language]}</option>
+                <option value="">{t?.report?.issueTypeSelect?.[language] || "Select issue type"}</option>
+                <option value="water">{t?.report?.issueTypeOptions?.water?.[language] || "Water Quality"}</option>
+                <option value="waste">{t?.report?.issueTypeOptions?.waste?.[language] || "Waste"}</option>
+                <option value="odor">{t?.report?.issueTypeOptions?.odor?.[language] || "Odor"}</option>
+                <option value="drainage">{t?.report?.issueTypeOptions?.drainage?.[language] || "Drainage"}</option>
+                <option value="flooding">{t?.report?.issueTypeOptions?.flooding?.[language] || "Flooding"}</option>
+                <option value="channels">{t?.report?.issueTypeOptions?.channels?.[language] || "Channels"}</option>
+                <option value="sea">{t?.report?.issueTypeOptions?.sea?.[language] || "Sea Intrusion"}</option>
+                <option value="erosion">{t?.report?.issueTypeOptions?.erosion?.[language] || "Erosion"}</option>
               </select>
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="location">{t.report.locationDesc[language]}</Label>
+              <Label htmlFor="location">{t?.report?.locationDesc?.[language] || "Location"}</Label>
               <Input
                 id="location"
-                placeholder={t.report.locationPlaceholder[language]}
+                placeholder={t?.report?.locationPlaceholder?.[language] || "Location description"}
                 required
                 readOnly
                 value={formData.location}
@@ -153,10 +158,10 @@ export function MapClickReportModal({
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="description">{t.report.detailedDesc[language]}</Label>
+              <Label htmlFor="description">{t?.report?.detailedDesc?.[language] || "Description"}</Label>
               <Textarea
                 id="description"
-                placeholder={t.report.detailedPlaceholder[language]}
+                placeholder={t?.report?.detailedPlaceholder?.[language] || "Describe the issue"}
                 rows={6}
                 required
                 value={formData.description}
@@ -166,12 +171,12 @@ export function MapClickReportModal({
 
             {/* Photo Upload */}
             <div className="space-y-2">
-              <Label htmlFor="photos">{t.report.photos[language]}</Label>
+              <Label htmlFor="photos">{t?.report?.photos?.[language] || "Photos"}</Label>
               <label htmlFor="photos" className="block cursor-pointer">
                 <div className="border-2 border-dashed border-border rounded-lg p-8 text-center hover:bg-muted/50 transition-colors">
                   <Camera className="h-8 w-8 mx-auto mb-2 text-muted-foreground" />
-                  <p className="text-sm text-muted-foreground mb-1">{t.report.clickToUpload[language]}</p>
-                  <p className="text-xs text-muted-foreground">{t.report.uploadHint[language]}</p>
+                  <p className="text-sm text-muted-foreground mb-1">{t?.report?.clickToUpload?.[language] || "Click to upload photos"}</p>
+                  <p className="text-xs text-muted-foreground">{t?.report?.uploadHint?.[language] || "PNG, JPG up to 10MB"}</p>
                 </div>
               </label>
               <input
@@ -181,55 +186,71 @@ export function MapClickReportModal({
                 accept="image/*"
                 className="hidden"
                 onChange={(e) => {
-                  const files = Array.from(e.target.files || [])
-                  setFormData({ ...formData, photos: files })
+                  try {
+                    const files = Array.from(e?.target?.files || [])
+                    setFormData({ ...formData, photos: files })
+                  } catch (error) {
+                    console.error("Error handling photo upload:", error);
+                  }
                 }}
               />
               {formData.photos && formData.photos.length > 0 && (
                 <div className="grid grid-cols-2 gap-2 mt-2">
-                  {formData.photos.map((file, index) => (
-                    <div key={index} className="relative aspect-video rounded-lg overflow-hidden border border-border">
-                      <img
-                        src={URL.createObjectURL(file)}
-                        alt={`Upload ${index + 1}`}
-                        className="w-full h-full object-cover"
-                      />
-                      <button
-                        type="button"
-                        onClick={() => {
-                          const newPhotos = formData.photos?.filter((_, i) => i !== index)
-                          setFormData({ ...formData, photos: newPhotos })
-                        }}
-                        className="absolute top-1 right-1 bg-destructive text-destructive-foreground rounded-full p-1 hover:bg-destructive/90"
-                      >
-                        <X className="h-3 w-3" />
-                      </button>
-                    </div>
-                  ))}
+                  {formData.photos.map((file, index) => {
+                    try {
+                      if (!file) return null;
+                      return (
+                        <div key={index} className="relative aspect-video rounded-lg overflow-hidden border border-border">
+                          <img
+                            src={URL.createObjectURL(file)}
+                            alt={`Upload ${index + 1}`}
+                            className="w-full h-full object-cover"
+                          />
+                          <button
+                            type="button"
+                            onClick={() => {
+                              try {
+                                const newPhotos = formData.photos?.filter((_, i) => i !== index)
+                                setFormData({ ...formData, photos: newPhotos })
+                              } catch (error) {
+                                console.error("Error removing photo:", error);
+                              }
+                            }}
+                            className="absolute top-1 right-1 bg-destructive text-destructive-foreground rounded-full p-1 hover:bg-destructive/90"
+                          >
+                            <X className="h-3 w-3" />
+                          </button>
+                        </div>
+                      );
+                    } catch (error) {
+                      console.error("Error rendering photo preview:", error);
+                      return null;
+                    }
+                  })}
                 </div>
               )}
             </div>
 
             {/* Contact Information */}
             <div className="border-t border-border pt-6">
-              <h3 className="font-semibold mb-4">{t.report.contactInfo[language]}</h3>
+              <h3 className="font-semibold mb-4">{t?.report?.contactInfo?.[language] || "Contact Information"}</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="reporterName">{t.report.nameLabel[language]}</Label>
+                  <Label htmlFor="reporterName">{t?.report?.nameLabel?.[language] || "Name"}</Label>
                   <Input
                     id="reporterName"
-                    placeholder={t.report.namePlaceholder[language]}
+                    placeholder={t?.report?.namePlaceholder?.[language] || "Your name"}
                     required
                     value={formData.reporterName}
                     onChange={(e) => setFormData({ ...formData, reporterName: e.target.value })}
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="reporterEmail">{t.report.emailLabel[language]}</Label>
+                  <Label htmlFor="reporterEmail">{t?.report?.emailLabel?.[language] || "Email"}</Label>
                   <Input
                     id="reporterEmail"
                     type="email"
-                    placeholder={t.report.emailPlaceholder[language]}
+                    placeholder={t?.report?.emailPlaceholder?.[language] || "your.email@example.com"}
                     required
                     value={formData.reporterEmail}
                     onChange={(e) => setFormData({ ...formData, reporterEmail: e.target.value })}
@@ -237,7 +258,7 @@ export function MapClickReportModal({
                 </div>
               </div>
               <div className="space-y-2 mt-4">
-                <Label htmlFor="reporterPhone">{t.report.phoneLabel[language]}</Label>
+                <Label htmlFor="reporterPhone">{t?.report?.phoneLabel?.[language] || "Phone"}</Label>
                 <Input
                   id="reporterPhone"
                   type="tel"
@@ -250,10 +271,10 @@ export function MapClickReportModal({
 
             <div className="flex gap-3 pt-4">
               <Button type="submit" size="lg" className="flex-1" disabled={isSubmitting}>
-                {isSubmitting ? t.modals.clickReport.submitting[language] : t.report.submit[language]}
+                {isSubmitting ? (t?.modals?.clickReport?.submitting?.[language] || "Submitting...") : (t?.report?.submit?.[language] || "Submit Report")}
               </Button>
               <Button type="button" variant="outline" size="lg" onClick={onClose} disabled={isSubmitting}>
-                {t.report.cancel[language]}
+                {t?.report?.cancel?.[language] || "Cancel"}
               </Button>
             </div>
           </form>

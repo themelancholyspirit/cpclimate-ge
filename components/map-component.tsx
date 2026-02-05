@@ -702,9 +702,15 @@ export function MapComponent({ activeLayer, onPointClick }: MapComponentProps) {
                   if (selectedPoint.entityType === "water" && selectedPoint.status) {
                     return t?.map?.status?.[selectedPoint.status]?.[language] || selectedPoint.status;
                   } else if (selectedPoint.entityType === "pollution" && selectedPoint.severity) {
-                    return selectedPoint.severity.charAt(0).toUpperCase() + selectedPoint.severity.slice(1);
+                    const sev = selectedPoint.severity;
+                    return (sev && typeof sev === 'string' && sev.length > 0) 
+                      ? sev.charAt(0).toUpperCase() + sev.slice(1) 
+                      : "Unknown";
                   } else if (selectedPoint.entityType === "risk" && selectedPoint.riskLevel) {
-                    return selectedPoint.riskLevel.charAt(0).toUpperCase() + selectedPoint.riskLevel.slice(1);
+                    const level = selectedPoint.riskLevel;
+                    return (level && typeof level === 'string' && level.length > 0)
+                      ? level.charAt(0).toUpperCase() + level.slice(1)
+                      : "Unknown";
                   }
                   return "Unknown";
                 } catch (err) {

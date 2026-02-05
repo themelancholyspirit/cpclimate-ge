@@ -57,15 +57,33 @@ export default function FindingsPage() {
 
         if (resourcesResponse.ok) {
           const resourcesData = await resourcesResponse.json();
-          setResources(resourcesData);
+          if (Array.isArray(resourcesData)) {
+            setResources(resourcesData);
+          } else {
+            console.error("Resources response is not an array");
+            setResources([]);
+          }
+        } else {
+          console.error("Failed to fetch resources:", resourcesResponse.status);
+          setResources([]);
         }
 
         if (mediaResponse.ok) {
           const mediaData = await mediaResponse.json();
-          setMediaItems(mediaData);
+          if (Array.isArray(mediaData)) {
+            setMediaItems(mediaData);
+          } else {
+            console.error("Media items response is not an array");
+            setMediaItems([]);
+          }
+        } else {
+          console.error("Failed to fetch media items:", mediaResponse.status);
+          setMediaItems([]);
         }
       } catch (error) {
         console.error("Error fetching data:", error);
+        setResources([]);
+        setMediaItems([]);
       } finally {
         setLoading(false);
       }
@@ -79,12 +97,19 @@ export default function FindingsPage() {
   }, [searchQuery]);
 
   const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    return date.toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    });
+    try {
+      if (!dateString) return "N/A";
+      const date = new Date(dateString);
+      if (isNaN(date.getTime())) return "N/A";
+      return date.toLocaleDateString("en-US", {
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+      });
+    } catch (error) {
+      console.error("Error formatting date:", error);
+      return "N/A";
+    }
   };
 
   // Filter resources based on search query

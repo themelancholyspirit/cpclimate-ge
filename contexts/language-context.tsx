@@ -16,19 +16,30 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
   const [language, setLanguageState] = useState<Language>("en");
 
   useEffect(() => {
-    const saved = (typeof window !== "undefined" && localStorage.getItem("language")) as Language | null;
-    if (saved === "en" || saved === "ka") {
-      setLanguageState(saved);
-    } else {
-      // Optional: auto-detect browser language
-      const navLang = navigator.language?.toLowerCase().startsWith("ka") ? "ka" : "en";
-      setLanguageState(navLang as Language);
+    try {
+      const saved = (typeof window !== "undefined" && localStorage.getItem("language")) as Language | null;
+      if (saved === "en" || saved === "ka") {
+        setLanguageState(saved);
+      } else {
+        // Optional: auto-detect browser language
+        const navLang = (typeof navigator !== "undefined" && navigator?.language?.toLowerCase()?.startsWith("ka")) ? "ka" : "en";
+        setLanguageState(navLang as Language);
+      }
+    } catch (error) {
+      console.error("Error loading language preference:", error);
+      setLanguageState("en");
     }
   }, []);
 
   const setLanguage = (lang: Language) => {
-    setLanguageState(lang);
-    if (typeof window !== "undefined") localStorage.setItem("language", lang);
+    try {
+      setLanguageState(lang);
+      if (typeof window !== "undefined") {
+        localStorage.setItem("language", lang);
+      }
+    } catch (error) {
+      console.error("Error saving language preference:", error);
+    }
   };
 
   const getText = (obj: { en: string; ka: string }) => obj[language];

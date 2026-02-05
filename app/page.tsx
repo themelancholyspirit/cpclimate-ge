@@ -73,10 +73,21 @@ export default function HomePage() {
     async function fetchFeaturedProjects() {
       try {
         const response = await fetch("/api/projects/featured");
-        const data = await response.json();
-        setFeaturedProjects(data.projects || []);
+        if (response.ok) {
+          const data = await response.json();
+          if (data && Array.isArray(data.projects)) {
+            setFeaturedProjects(data.projects);
+          } else {
+            console.error("Featured projects response invalid format");
+            setFeaturedProjects([]);
+          }
+        } else {
+          console.error("Failed to fetch featured projects:", response.status);
+          setFeaturedProjects([]);
+        }
       } catch (error) {
         console.error("Error fetching featured projects:", error);
+        setFeaturedProjects([]);
       } finally {
         setIsLoading(false);
       }
@@ -221,7 +232,7 @@ export default function HomePage() {
             ) : featuredProjects.length > 0 ? (
               // Dynamic featured projects - same style as /projects page
               featuredProjects.map((project) => {
-                const IconComponent = iconMap[project.icon] || Target;
+                const IconComponent = (project?.icon && iconMap[project.icon]) || Target;
                 return (
                   <Card
                     key={project.id}
