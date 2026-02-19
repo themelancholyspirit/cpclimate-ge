@@ -102,16 +102,20 @@ model MapPoint {
 }
 
 model Project {
-  slug            String        @unique @default("")
-  title           String
-  description     String
+  slug            String          @unique @default(cuid())
+  title_en        String
+  title_ka        String
+  description_en  String
+  description_ka  String
+  content_en      String?
+  content_ka      String?
   status          ProjectStatus
   duration        String
   icon            String
   color           String
-  goals           String[]
+  goals_en        String[]
+  goals_ka        String[]
   headerImage     String?       @db.Uuid
-  content         String?
   contentSections Json?
   featured        Boolean       @default(false)
   createdAt       DateTime      @default(now())
@@ -123,29 +127,34 @@ model Project {
 }
 
 model Resource {
-  title       String
-  date        DateTime
-  description String
-  pages       Int?
-  createdAt   DateTime @default(now())
-  file        String?  @db.Uuid
-  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  title_en        String
+  title_ka        String
+  description_en  String
+  description_ka  String
+  date            DateTime
+  pages           Int?
+  createdAt       DateTime @default(now())
+  file            String?  @db.Uuid
+  id              String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
 
   @@map("resources")
 }
 
 model MediaItem {
-  title          String
-  date           DateTime
-  createdAt      DateTime        @default(now())
-  content        String?
-  slug           String          @unique @default("")
-  id             String          @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  image          String?         @db.Uuid
-  description    String?
-  type           String?         @db.VarChar(255)
-  updatedAt      DateTime?       @default(now()) @db.Timestamp(6)
-  directus_files directus_files? @relation(fields: [image], references: [id], onUpdate: NoAction, map: "media_items_image_foreign")
+  title_en        String
+  title_ka        String
+  description_en  String?
+  description_ka  String?
+  content_en      String?
+  content_ka      String?
+  date            DateTime
+  createdAt       DateTime        @default(now())
+  slug            String          @unique @default(cuid())
+  id              String          @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  image           String?         @db.Uuid
+  type            String?         @db.VarChar(255)
+  updatedAt       DateTime?       @default(now()) @db.Timestamp(6)
+  directus_files  directus_files? @relation(fields: [image], references: [id], onUpdate: NoAction, map: "media_items_image_foreign")
 
   @@map("media_items")
 }
@@ -649,8 +658,8 @@ model directus_users {
   directus_sessions                                                       directus_sessions[]
   directus_shares                                                         directus_shares[]
   directus_roles                                                          directus_roles?          @relation(fields: [role], references: [id], onUpdate: NoAction, map: "directus_users_role_foreign")
-  directus_versions_directus_versions_user_createdTodirectus_users        directus_versions[]      @relation("directus_versions_user_createdTodirectus_users")
-  directus_versions_directus_versions_user_updatedTodirectus_users        directus_versions[]      @relation("directus_versions_user_updatedTodirectus_users")
+  directus_versions_directus_versions_user_createdTodirectus_users        directus_versions[]      @relation("directus_versions_user_createdTodirectus_users", fields: [user_created], references: [id], onUpdate: NoAction, map: "directus_versions_user_created_foreign")
+  directus_versions_directus_versions_user_updatedTodirectus_users        directus_versions[]      @relation("directus_versions_user_updatedTodirectus_users", fields: [user_updated], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "directus_versions_user_updated_foreign")
 }
 
 model directus_versions {
@@ -726,7 +735,7 @@ enum DrainageChannelStatus {
 enum MapPointType {
   water
   pollution
-  waste
+  wasteIssueType
   illegal_dump
   odor
   flood

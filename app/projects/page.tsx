@@ -116,12 +116,12 @@ export default function ProjectsPage() {
       <div className="container mx-auto px-4 py-12">
         {/* Active Projects */}
         <div className="mb-16">
-          {/* <div className="flex items-center gap-3 mb-8">
-            <TrendingUp className="h-6 w-6 text-primary" />
-            <h2 className="text-2xl md:text-3xl font-bold">
-              {t.projects.activeTitle[language]}
-            </h2>
-          </div> */}
+
+
+          {projects.length === 0 && ( 
+           <div className="text-muted-foreground">{language === "en" ? "No projects available at the moment." : "ამჟამად პროექტები არ არის ხელმისაწვდომი."}</div>
+          )}
+
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {projects
               .filter((p) => p?.status === "Active")

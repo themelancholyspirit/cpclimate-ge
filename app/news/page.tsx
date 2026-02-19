@@ -11,10 +11,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import {
-  Newspaper,
-  Calendar,
-} from "lucide-react";
+import { Newspaper, Calendar } from "lucide-react";
 import { useLanguage } from "@/contexts/language-context";
 
 interface MediaItem {
@@ -104,7 +101,6 @@ export default function NewsPage() {
       <div className="container mx-auto px-2 py-16">
         {mediaItems.length > 0 ? (
           <div className="mb-16">
-
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {mediaItems.map((item) => (
                 <Card
@@ -123,7 +119,7 @@ export default function NewsPage() {
                       </div>
                     </div>
                   )}
-                  
+
                   <CardHeader className={item.imageUrl ? "pt-0" : ""}>
                     <CardTitle className="text-lg mb-2 line-clamp-2 text-balance">
                       {item.title}
@@ -135,7 +131,7 @@ export default function NewsPage() {
                       </div>
                     </CardDescription>
                   </CardHeader>
-                  
+
                   {item.description && (
                     <div className="px-6 pb-3">
                       <p className="text-sm text-muted-foreground line-clamp-3">
@@ -143,7 +139,7 @@ export default function NewsPage() {
                       </p>
                     </div>
                   )}
-                  
+
                   <CardContent className="mt-auto space-y-2 pt-4 pb-4">
                     <Button size="sm" className="w-full" asChild>
                       <a href={`/news/${item.slug}`}>
@@ -159,7 +155,9 @@ export default function NewsPage() {
           <div className="text-center py-16">
             <Newspaper className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
             <p className="text-lg text-muted-foreground">
-              {t.news.noNews[language]}
+              {language === "en"
+                ? "No news available at the moment."
+                : "ამჟამად სიახლეები არ არის ხელმისაწვდომი."}
             </p>
           </div>
         )}
