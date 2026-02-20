@@ -102,7 +102,7 @@ model MapPoint {
 }
 
 model Project {
-  slug              String?        @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  slug            String?         @unique @default(cuid())
   title_en        String
   title_ka        String
   description_en  String
@@ -149,7 +149,7 @@ model MediaItem {
   content_ka      String?
   date            DateTime
   createdAt       DateTime        @default(now())
-  slug              String?        @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  slug            String?         @unique @default(cuid())
   id              String          @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   image           String?         @db.Uuid
   type            String?         @db.VarChar(255)
