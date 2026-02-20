@@ -51,8 +51,10 @@ const iconMap: Record<string, any> = {
 interface Project {
   id: string;
   slug: string;
-  title: string;
-  description: string;
+  title_en: string;
+  title_ka: string;
+  description_en: string;
+  description_ka: string;
   status: string;
   duration: string;
   icon: string;
@@ -145,10 +147,10 @@ export default function ProjectsPage() {
                         </Badge>
                       </div>
                       <CardTitle className="text-lg mb-1.5 text-balance">
-                        {project.title}
+                        {language === "en" ? project.title_en : project.title_ka}
                       </CardTitle>
                       <CardDescription className="leading-relaxed line-clamp-2 text-sm">
-                        {project.description}
+                        {language === "en" ? project.description_en : project.description_ka}
                       </CardDescription>
                     </CardHeader>
                     <CardContent className="pt-0 pb-0">
@@ -198,10 +200,10 @@ export default function ProjectsPage() {
                           <Badge variant="secondary" className="text-xs">{project.status}</Badge>
                         </div>
                         <CardTitle className="text-lg mb-1.5 text-balance">
-                          {project.title}
+                          {language === "en" ? project.title_en : project.title_ka}
                         </CardTitle>
                         <CardDescription className="leading-relaxed line-clamp-2 text-sm">
-                          {project.description}
+                          {language === "en" ? project.description_en : project.description_ka}
                         </CardDescription>
                       </CardHeader>
                       <CardContent className="pt-0 pb-4">
