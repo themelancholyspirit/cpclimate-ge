@@ -113,8 +113,7 @@ model Project {
   duration        String
   icon            String
   color           String
-  goals_en        String[]
-  goals_ka        String[]
+
   headerImage     String?       @db.Uuid
   contentSections Json?
   featured        Boolean       @default(false)
