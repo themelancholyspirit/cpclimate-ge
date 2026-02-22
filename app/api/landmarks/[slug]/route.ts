@@ -6,9 +6,10 @@ const DIRECTUS_URL = process.env.NEXT_PUBLIC_DIRECTUS_URL || 'http://localhost:8
 // GET /api/landmarks/[slug] - Get a single landmark by slug
 export async function GET(
   request: NextRequest,
-  { params }: { params: { slug: string } }
+  context: { params: Promise<{ slug: string }> }
 ) {
   try {
+    const params = await context.params
     const { slug } = params
 
     const landmark = await prisma.landmark.findUnique({
