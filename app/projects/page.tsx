@@ -34,20 +34,20 @@ import { useLanguage } from "@/contexts/language-context";
 // Icon mapping - maps Directus icon values to Lucide React components
 const iconMap: Record<string, any> = {
   "water-drop": Droplet,
-  "waves": Waves,
-  "river": TreeDeciduous,
-  "leaf": Leaf,
-  "recycle": Recycle,
-  "factory": Factory,
-  "science": Microscope,
-  "chart": BarChart3,
-  "globe": Globe,
-  "shield": Shield,
+  waves: Waves,
+  river: TreeDeciduous,
+  leaf: Leaf,
+  recycle: Recycle,
+  factory: Factory,
+  science: Microscope,
+  chart: BarChart3,
+  globe: Globe,
+  shield: Shield,
   // Legacy support for old values (string keys, not component values)
-  "Users": Users,
-  "Droplet": Droplet,
-  "Shield": Shield,
-  "Target": Target,
+  Users: Users,
+  Droplet: Droplet,
+  Shield: Shield,
+  Target: Target,
 };
 
 interface Project {
@@ -136,131 +136,63 @@ export default function ProjectsPage() {
       <div className="container mx-auto px-4 py-12">
         {/* Active Projects */}
         <div className="mb-16">
-
-
-          {projects.length === 0 && ( 
-           <div className="text-muted-foreground">{language === "en" ? "No projects available at the moment." : "ამჟამად პროექტები არ არის ხელმისაწვდომი."}</div>
+          {projects.length === 0 && (
+            <div className="text-muted-foreground">
+              {language === "en"
+                ? "No projects available at the moment."
+                : "ამჟამად პროექტები არ არის ხელმისაწვდომი."}
+            </div>
           )}
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {projects
-              .filter((p) => p?.status === "Active")
-              .map((project) => {
-                const IconComponent = (project?.icon && iconMap[project.icon]) || Target;
-                return (
-                  <Card
-                    key={project.id}
-                    className="hover:shadow-lg transition-shadow flex flex-col h-full"
-                  >
-                    <CardHeader className="flex-grow pb-3">
-                      <div className="flex items-start justify-between mb-3">
-                        <div
-                          className="w-9 h-9 rounded-lg flex items-center justify-center"
-                          style={{ backgroundColor: project.color }}
-                        >
-                          <IconComponent className="h-5 w-5" style={{ color: 'white' }} />
-                        </div>
-                        <Badge variant="default" className="bg-green-600 text-xs">
-                          {project.status}
-                        </Badge>
+            {projects.map((project) => {
+              const IconComponent =
+                (project?.icon && iconMap[project.icon]) || Target;
+              return (
+                <Card
+                  key={project.id}
+                  className="hover:shadow-lg transition-shadow flex flex-col h-full"
+                >
+                  <CardHeader className="flex-grow pb-3">
+                    <div className="flex items-start justify-between mb-3">
+                      <div
+                        className="w-9 h-9 rounded-lg flex items-center justify-center"
+                        style={{ backgroundColor: project.color }}
+                      >
+                        <IconComponent
+                          className="h-5 w-5"
+                          style={{ color: "white" }}
+                        />
                       </div>
-                      <CardTitle className="text-lg mb-1.5 text-balance">
-                        {language === "en" ? project.title_en : project.title_ka}
-                      </CardTitle>
-                      <CardDescription className="leading-relaxed line-clamp-2 text-sm">
-                        {language === "en" ? project.description_en : project.description_ka}
-                      </CardDescription>
-                    </CardHeader>
-                    <CardContent className="pt-0 pb-0">
-                      <div className="flex items-center gap-2 text-xs text-muted-foreground mb-3">
-                        <Calendar className="h-3.5 w-3.5" />
-                        <span>{project.duration}</span>
-                      </div>
-                      <Button asChild className="w-full h-9 text-sm">
-                        <Link href={`/projects/${project.slug}`}>
-                          {t.projects.viewDetails[language]}
-                        </Link>
-                      </Button>
-                    </CardContent>
-                  </Card>
-                );
-              })}
+                      <Badge variant="default" className="bg-green-600 text-xs">
+                        {project.status}
+                      </Badge>
+                    </div>
+                    <CardTitle className="text-lg mb-1.5 text-balance">
+                      {language === "en" ? project.title_en : project.title_ka}
+                    </CardTitle>
+                    <CardDescription className="leading-relaxed line-clamp-2 text-sm">
+                      {language === "en"
+                        ? project.description_en
+                        : project.description_ka}
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent className="pt-0 pb-0">
+                    <div className="flex items-center gap-2 text-xs text-muted-foreground mb-3">
+                      <Calendar className="h-3.5 w-3.5" />
+                      <span>{project.duration}</span>
+                    </div>
+                    <Button asChild className="w-full h-9 text-sm">
+                      <Link href={`/projects/${project.slug}`}>
+                        {t.projects.viewDetails[language]}
+                      </Link>
+                    </Button>
+                  </CardContent>
+                </Card>
+              );
+            })}
           </div>
         </div>
-
-        {/* Planning Phase z*/}
-        {projects.filter((p) => p.status === "Planning").length > 0 && (
-          <div>
-            <div className="flex items-center gap-3 mb-8">
-              <Target className="h-6 w-6 text-primary" />
-              <h2 className="text-2xl md:text-3xl font-bold">
-                {t.projects.inPlanningTitle[language]}
-              </h2>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {projects
-                .filter((p) => p?.status === "Planning")
-                .map((project) => {
-                  const IconComponent = (project?.icon && iconMap[project.icon]) || Target;
-                  return (
-                    <Card
-                      key={project.id}
-                      className="hover:shadow-lg transition-shadow flex flex-col h-full"
-                    >
-                      <CardHeader className="flex-grow pb-3">
-                        <div className="flex items-start justify-between mb-3">
-                          <div
-                            className="w-9 h-9 rounded-lg flex items-center justify-center"
-                            style={{ backgroundColor: project.color }}
-                          >
-                            <IconComponent className="h-5 w-5" style={{ color: 'white' }} />
-                          </div>
-                          <Badge variant="secondary" className="text-xs">{project.status}</Badge>
-                        </div>
-                        <CardTitle className="text-lg mb-1.5 text-balance">
-                          {language === "en" ? project.title_en : project.title_ka}
-                        </CardTitle>
-                        <CardDescription className="leading-relaxed line-clamp-2 text-sm">
-                          {language === "en" ? project.description_en : project.description_ka}
-                        </CardDescription>
-                      </CardHeader>
-                      <CardContent className="pt-0 pb-4">
-                        <div className="flex items-center gap-2 text-xs text-muted-foreground mb-3">
-                          <Calendar className="h-3.5 w-3.5" />
-                          <span>{project.duration}</span>
-                        </div>
-                        <div className="mb-3">
-                          <div className="text-xs font-semibold mb-1.5">
-                            {t.projects.keyGoals[language]}
-                          </div>
-                          <div className="flex flex-wrap gap-1.5">
-                            {(Array.isArray(project?.goals) ? project.goals : []).map((goal, i) => (
-                              <Badge
-                                key={i}
-                                variant="outline"
-                                className="bg-transparent text-xs"
-                              >
-                                {goal}
-                              </Badge>
-                            ))}
-                          </div>
-                        </div>
-                        <Button
-                          asChild
-                          variant="outline"
-                          className="w-full bg-transparent h-9 text-sm"
-                        >
-                          <Link href={`/projects/${project.slug}`}>
-                            {t.projects.learnMore[language]}
-                          </Link>
-                        </Button>
-                      </CardContent>
-                    </Card>
-                  );
-                })}
-            </div>
-          </div>
-        )}
       </div>
     </div>
   );
