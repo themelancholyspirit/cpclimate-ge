@@ -65,17 +65,13 @@ export default function ContactPage() {
         variant: "success",
         duration: 5000,
         title: (
-          <div className="flex items-center gap-3">
-            <div className="flex-shrink-0 w-12 h-12 rounded-full bg-green-500 flex items-center justify-center">
-              <CheckCircle2 className="h-7 w-7 text-white" strokeWidth={2.5} />
+          <div className="flex flex-col items-center gap-3 text-center">
+            <div className="w-14 h-14 rounded-full bg-green-500 flex items-center justify-center">
+              <CheckCircle2 className="h-8 w-8 text-white" strokeWidth={2.5} />
             </div>
             <span className="text-green-900 font-semibold text-xl">
               {t.toast.contactSuccess.title[language]}
             </span>
-          </div>
-        ),
-        description: (
-          <div className="text-center mt-2">
             <span className="text-green-800 text-base">
               {t.toast.contactSuccess.description[language]}
             </span>
