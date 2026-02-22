@@ -66,11 +66,11 @@ export default function ContactPage() {
         duration: 5000,
         title: (
           <div className="flex gap-3">
-            <div className="mt-0.5 flex-shrink-0 w-10 h-10 rounded-full bg-green-500 flex items-center justify-center">
+            <div className="mt-0.5 flex-shrink-0 w-12 h-12 rounded-full bg-green-500 flex items-center justify-center">
               <CheckCircle2 className="h-6 w-6 text-white" strokeWidth={2.5} />
             </div>
 
-            <div className="flex flex-col">
+            <div className="flex flex-row items-center gap-2">
               <span className="text-green-900 font-semibold leading-tight">
                 {t.toast.contactSuccess.title[language]}
               </span>
@@ -78,7 +78,7 @@ export default function ContactPage() {
           </div>
         ),
         description: (
-          <span className="text-green-800 ml-[52px]">
+          <span className="text-green-800">
             {t.toast.contactSuccess.description[language]}
           </span>
         ),
