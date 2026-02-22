@@ -191,21 +191,9 @@ model Report {
   status          ReportStatus @default(pending)
   createdAt       DateTime     @default(now())
 
-  photos          ReportPhoto[]
-
   @@map("reports")
 }
 
-model ReportPhoto {
-  id        String           @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  reportId  String           @db.Uuid
-  fileId    String           @db.Uuid
-
-  report    Report           @relation(fields: [reportId], references: [id], onDelete: Cascade)
-  file      directus_files   @relation(fields: [fileId], references: [id])
-
-  @@map("report_photos")
-}
 
 model Contact {
   id              String        @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
@@ -369,7 +357,6 @@ model directus_files {
   media_items                                                           MediaItem[]
   resources                                                             Resource[]
   landmarks                                                             Landmark[]
-  report_photos                                                         ReportPhoto[]
 }
 
 model directus_flows {

@@ -280,7 +280,6 @@ export function MapComponent({ activeLayer, onPointClick }: MapComponentProps) {
           lng: clickedLocation?.lng,
         }),
       });
-
       if (response.ok) {
         console.log("Report submitted successfully");
         // Optionally refresh map points to show new report

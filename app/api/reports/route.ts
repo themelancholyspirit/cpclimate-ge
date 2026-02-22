@@ -47,6 +47,9 @@ export async function POST(request: NextRequest) {
 
     const [lat, lng] = location.split(",").map((s: string) => parseFloat(s.trim()));
 
+
+    // if (isNaN(lat) || isNaN(lng)) {}
+
     // Validate required fields
     if (
       !issueType ||

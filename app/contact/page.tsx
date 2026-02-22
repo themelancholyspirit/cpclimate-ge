@@ -172,23 +172,7 @@ export default function ContactPage() {
                     </a>
                   </div>
                 </div>
-
-                <div className="flex items-start gap-3">
-                  <div className="w-10 h-10 rounded-lg bg-slate-100 flex items-center justify-center flex-shrink-0">
-                    <MapPin className="h-5 w-5 text-slate-600" />
-                  </div>
-                  <div>
-                    <div className="font-medium mb-1">
-                      {t.contact.office[language]}
-                    </div>
-                    <p className="text-sm text-muted-foreground">
-                      Poti, Georgia
-                      <br />
-                      [Address Details]
-                    </p>
-                  </div>
-                </div>
-
+                
                 <div className="pt-6 border-t border-border space-y-4">
                   <div>
                     <h3 className="font-semibold mb-3 text-base">
