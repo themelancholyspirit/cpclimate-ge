@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -26,6 +27,7 @@ import {
   Microscope,
   BarChart3,
   Globe,
+  ArrowLeft,
 } from "lucide-react";
 import { useLanguage } from "@/contexts/language-context";
 
@@ -64,6 +66,7 @@ interface Project {
 
 export default function ProjectsPage() {
   const { t, language } = useLanguage();
+  const router = useRouter();
   const [projects, setProjects] = useState<Project[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -103,6 +106,21 @@ export default function ProjectsPage() {
 
   return (
     <div className="min-h-screen bg-background">
+      {/* Back Button */}
+      <div className="border-b border-border">
+        <div className="container mx-auto px-4 py-4">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => router.back()}
+            className="gap-2"
+          >
+            <ArrowLeft className="h-4 w-4" />
+            {language === "en" ? "Back" : "უკან"}
+          </Button>
+        </div>
+      </div>
+
       {/* Header */}
       <div className="border-b border-border bg-muted/30">
         <div className="container mx-auto px-4 py-12">

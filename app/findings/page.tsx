@@ -1,5 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -14,32 +15,35 @@ import {
   ExternalLink,
   Calendar,
   Search,
+  ArrowLeft,
 } from "lucide-react";
 import { useLanguage } from "@/contexts/language-context";
 
 interface Resource {
   id: string;
-  title: string;
-  type: string;
+  title_en: string;
+  title_ka: string;
+  description_en: string;
+  description_ka: string;
   date: string;
-  description: string;
   pages: number | null;
-  category: string;
   fileUrl: string | null;
-  externalUrl: string | null;
 }
 
 interface MediaItem {
   id: string;
-  title: string;
-  outlet: string;
+  title_en: string;
+  title_ka: string;
+  description_en: string | null;
+  description_ka: string | null;
   date: string;
-  type: string;
-  url: string | null;
+  type: string | null;
+  imageUrl: string | null;
 }
 
 export default function FindingsPage() {
   const { t, language } = useLanguage();
+  const router = useRouter();
   const [resources, setResources] = useState<Resource[]>([]);
   const [mediaItems, setMediaItems] = useState<MediaItem[]>([]);
   const [loading, setLoading] = useState(true);
@@ -118,10 +122,10 @@ export default function FindingsPage() {
     const query = searchQuery.toLowerCase();
 
     return (
-      resource?.title?.toLowerCase().includes(query) ||
-      resource?.description?.toLowerCase().includes(query) ||
-      resource?.category?.toLowerCase().includes(query) ||
-      resource?.type?.toLowerCase().includes(query)
+      resource?.title_en?.toLowerCase().includes(query) ||
+      resource?.title_ka?.toLowerCase().includes(query) ||
+      resource?.description_en?.toLowerCase().includes(query) ||
+      resource?.description_ka?.toLowerCase().includes(query)
     );
   });
 
@@ -134,6 +138,21 @@ export default function FindingsPage() {
   }
   return (
     <div className="min-h-screen bg-background">
+      {/* Back Button */}
+      <div className="border-b border-border">
+        <div className="container mx-auto px-4 py-4">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => router.back()}
+            className="gap-2"
+          >
+            <ArrowLeft className="h-4 w-4" />
+            {language === "en" ? "Back" : "უკან"}
+          </Button>
+        </div>
+      </div>
+
       {/* Header */}
       <div className="border-b border-border bg-muted/30">
         <div className="container mx-auto px-4 py-12">
@@ -179,7 +198,7 @@ export default function FindingsPage() {
                   </div>
                   <div className="flex items-center justify-between mb-2 gap-4">
                     <CardTitle className="text-lg text-balance">
-                      {resource.title}
+                      {language === "en" ? resource.title_en : resource.title_ka}
                     </CardTitle>
                     <div className="flex items-center gap-1 text-xs text-muted-foreground whitespace-nowrap">
                       <Calendar className="h-3 w-3" />
@@ -187,7 +206,7 @@ export default function FindingsPage() {
                     </div>
                   </div>
                   <CardDescription className="leading-relaxed line-clamp-3">
-                    {resource.description}
+                    {language === "en" ? resource.description_en : resource.description_ka}
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="mt-auto">

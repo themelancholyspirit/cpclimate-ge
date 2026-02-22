@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -14,11 +15,12 @@ import { MapLegend } from "@/components/map-legend";
 import { MapInstructions } from "@/components/map-instructions";
 import { MapDataModal } from "@/components/map-data-modal";
 import { MapClickReportModal } from "@/components/map-click-report-modal";
-import { AlertCircle, Layers, FileWarning } from "lucide-react";
+import { AlertCircle, Layers, FileWarning, ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import { useLanguage } from "@/contexts/language-context";
 
 export default function MapPage() {
+  const router = useRouter();
   const [activeLayer, setActiveLayer] = useState<string>("all");
   const [selectedPoint, setSelectedPoint] = useState<any>(null);
   const [isReportModalOpen, setIsReportModalOpen] = useState(false);
@@ -74,6 +76,21 @@ export default function MapPage() {
 
   return (
     <div className="min-h-screen bg-background">
+      {/* Back Button */}
+      <div className="border-b border-border">
+        <div className="container mx-auto px-4 py-4">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => router.back()}
+            className="gap-2"
+          >
+            <ArrowLeft className="h-4 w-4" />
+            {language === "en" ? "Back" : "უკან"}
+          </Button>
+        </div>
+      </div>
+
       {/* Header */}
       <div className="border-b border-border bg-muted/30">
         <div className="container mx-auto px-4 py-8">

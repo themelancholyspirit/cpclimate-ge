@@ -36,27 +36,29 @@ import { useEffect, useState } from "react";
 // Icon mapping for dynamic projects - matches /projects page
 const iconMap: Record<string, any> = {
   "water-drop": Droplet,
-  "waves": Waves,
-  "river": TreeDeciduous,
-  "leaf": Leaf,
-  "recycle": Recycle,
-  "factory": Factory,
-  "science": Microscope,
-  "chart": BarChart3,
-  "globe": Globe,
-  "shield": Shield,
+  waves: Waves,
+  river: TreeDeciduous,
+  leaf: Leaf,
+  recycle: Recycle,
+  factory: Factory,
+  science: Microscope,
+  chart: BarChart3,
+  globe: Globe,
+  shield: Shield,
   // Legacy support
-  "Users": Users,
-  "Droplet": Droplet,
-  "Shield": Shield,
-  "Target": Target,
+  Users: Users,
+  Droplet: Droplet,
+  Shield: Shield,
+  Target: Target,
 };
 
 interface Project {
   id: string;
   slug: string;
-  title: string;
-  description: string;
+  title_en: string;
+  title_ka: string;
+  description_en: string;
+  description_ka: string;
   status: string;
   duration: string;
   icon: string;
@@ -147,7 +149,7 @@ export default function HomePage() {
             </p>
             <div className="text-center">
               <Button asChild variant="outline">
-                <Link href="/contact">
+                <Link href="/about">
                   {t.homePage.aboutCPC[language]}
                   <ArrowRight className="ml-2 h-4 w-4" />
                 </Link>
@@ -202,7 +204,7 @@ export default function HomePage() {
           </div>
           <div className="text-center">
             <Button asChild variant="outline">
-              <Link href="/contact">
+              <Link href="/about">
                 {t.homePage.aboutCPC[language]}
                 <ArrowRight className="ml-2 h-4 w-4" />
               </Link>
@@ -218,86 +220,99 @@ export default function HomePage() {
             {t.homePage.featuredProjectsTitle[language]}
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
-            {isLoading ? (
-              // Loading skeleton
-              Array.from({ length: 3 }).map((_, i) => (
-                <Card key={i} className="hover:shadow-lg transition-shadow">
-                  <CardHeader>
-                    <div className="w-full h-48 bg-slate-200 rounded-md mb-4 animate-pulse" />
-                    <div className="h-6 bg-slate-200 rounded mb-2 animate-pulse" />
-                    <div className="h-4 bg-slate-200 rounded animate-pulse" />
-                  </CardHeader>
-                </Card>
-              ))
-            ) : featuredProjects.length > 0 ? (
-              // Dynamic featured projects - same style as /projects page
-              featuredProjects.map((project) => {
-                const IconComponent = (project?.icon && iconMap[project.icon]) || Target;
-                return (
-                  <Card
-                    key={project.id}
-                    className="hover:shadow-lg transition-shadow flex flex-col h-full"
-                  >
-                    <CardHeader className="flex-grow pb-3">
-                      <div className="flex items-start justify-between mb-3">
-                        <div
-                          className="w-9 h-9 rounded-lg flex items-center justify-center"
-                          style={{ backgroundColor: project.color }}
-                        >
-                          <IconComponent className="h-5 w-5" style={{ color: 'white' }} />
-                        </div>
-                        <Badge variant="default" className="bg-green-600 text-xs">
-                          {project.status}
-                        </Badge>
-                      </div>
-                      <CardTitle className="text-lg mb-1.5 text-balance">
-                        {project.title}
-                      </CardTitle>
-                      <CardDescription className="leading-relaxed line-clamp-2 text-sm">
-                        {project.description}
-                      </CardDescription>
+            {isLoading
+              ? // Loading skeleton
+                Array.from({ length: 3 }).map((_, i) => (
+                  <Card key={i} className="hover:shadow-lg transition-shadow">
+                    <CardHeader>
+                      <div className="w-full h-48 bg-slate-200 rounded-md mb-4 animate-pulse" />
+                      <div className="h-6 bg-slate-200 rounded mb-2 animate-pulse" />
+                      <div className="h-4 bg-slate-200 rounded animate-pulse" />
                     </CardHeader>
-                    <CardContent className="pt-0 pb-0">
-                      <div className="flex items-center gap-2 text-xs text-muted-foreground mb-3">
-                        <Calendar className="h-3.5 w-3.5" />
-                        <span>{project.duration}</span>
-                      </div>
-                      <Button asChild className="w-full h-9 text-sm">
-                        <Link href={`/projects/${project.slug}`}>
-                          {t.projects.viewDetails[language]}
-                        </Link>
-                      </Button>
-                    </CardContent>
                   </Card>
-                );
-              })
-            ) : (
-              // Fallback if no featured projects
-              Array.from({ length: 3 }).map((_, i) => (
-                <Card key={i} className="hover:shadow-lg transition-shadow flex flex-col h-full">
-                  <CardHeader className="flex-grow pb-3">
-                    <div className="flex items-start justify-between mb-3">
-                      <div className="w-9 h-9 rounded-lg bg-slate-200 flex items-center justify-center">
-                        <Target className="h-5 w-5 text-slate-400" />
-                      </div>
-                    </div>
-                    <CardTitle className="text-lg mb-1.5">
-                      No featured projects yet
-                    </CardTitle>
-                    <CardDescription className="text-sm">
-                      Mark projects as featured in Directus to display them here
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent className="pt-0 pb-0">
-                    <Button asChild variant="outline" className="w-full h-9 text-sm bg-transparent">
-                      <Link href="/projects">
-                        {t.projects.headerTitle[language]}
-                      </Link>
-                    </Button>
-                  </CardContent>
-                </Card>
-              ))
-            )}
+                ))
+              : featuredProjects.length > 0
+                ? // Dynamic featured projects - same style as /projects page
+                  featuredProjects.map((project) => {
+                    const IconComponent =
+                      (project?.icon && iconMap[project.icon]) || Target;
+                    return (
+                      <Card
+                        key={project.id}
+                        className="hover:shadow-lg transition-shadow flex flex-col h-full"
+                      >
+                        <CardHeader className="flex-grow pb-3">
+                          <div className="flex items-start justify-between mb-3">
+                            <div
+                              className="w-9 h-9 rounded-lg flex items-center justify-center"
+                              style={{ backgroundColor: project.color }}
+                            >
+                              <IconComponent
+                                className="h-5 w-5"
+                                style={{ color: "white" }}
+                              />
+                            </div>
+                            <Badge
+                              variant="default"
+                              className="bg-green-600 text-xs"
+                            >
+                              {project.status}
+                            </Badge>
+                          </div>
+                          <CardTitle className="text-lg mb-1.5 text-balance">
+                            {language === "en" ? project.title_en : project.title_ka}
+                          </CardTitle>
+                          <CardDescription className="leading-relaxed line-clamp-2 text-sm">
+                            {language === "en" ? project.description_en : project.description_ka}
+                          </CardDescription>
+                        </CardHeader>
+                        <CardContent className="pt-0 pb-0">
+                          <div className="flex items-center gap-2 text-xs text-muted-foreground mb-3">
+                            <Calendar className="h-3.5 w-3.5" />
+                            <span>{project.duration}</span>
+                          </div>
+                          <Button asChild className="w-full h-9 text-sm">
+                            <Link href={`/projects/${project.slug}`}>
+                              {t.projects.viewDetails[language]}
+                            </Link>
+                          </Button>
+                        </CardContent>
+                      </Card>
+                    );
+                  })
+                : // Fallback if no featured projects
+                  Array.from({ length: 3 }).map((_, i) => (
+                    <Card
+                      key={i}
+                      className="hover:shadow-lg transition-shadow flex flex-col h-full"
+                    >
+                      <CardHeader className="flex-grow pb-3">
+                        <div className="flex items-start justify-between mb-3">
+                          <div className="w-9 h-9 rounded-lg bg-slate-200 flex items-center justify-center">
+                            <Target className="h-5 w-5 text-slate-400" />
+                          </div>
+                        </div>
+                        <CardTitle className="text-lg mb-1.5">
+                          No featured projects yet
+                        </CardTitle>
+                        <CardDescription className="text-sm">
+                          Mark projects as featured in Directus to display them
+                          here
+                        </CardDescription>
+                      </CardHeader>
+                      <CardContent className="pt-0 pb-0">
+                        <Button
+                          asChild
+                          variant="outline"
+                          className="w-full h-9 text-sm bg-transparent"
+                        >
+                          <Link href="/projects">
+                            {t.projects.headerTitle[language]}
+                          </Link>
+                        </Button>
+                      </CardContent>
+                    </Card>
+                  ))}
           </div>
           <div className="text-center">
             <Button asChild>
@@ -360,7 +375,7 @@ export default function HomePage() {
             <div className="col-span-12 md:col-span-7 row-span-1 md:row-span-2">
               <div className="relative h-48 md:h-full min-h-[280px] bg-gradient-to-br from-blue-50 to-green-50 rounded-2xl overflow-hidden shadow-sm">
                 <img
-                  src="kaparcha_1.jpg"
+                  src="sazogadoeba_mokmedebashi_6.jpg"
                   alt="Community volunteers participating in river cleanup activities along Kaparchina River"
                   className="w-full h-full object-cover"
                 />
@@ -371,7 +386,7 @@ export default function HomePage() {
             <div className="col-span-6 md:col-span-5 row-span-1">
               <div className="relative h-40 md:h-full bg-gradient-to-br from-green-50 to-blue-50 rounded-2xl overflow-hidden shadow-sm">
                 <img
-                  src="kaparcha_1.jpg"
+                  src="sazogadoeba_mokmedebashi_5.jpg"
                   alt="Youth environmental education and training workshop"
                   className="w-full h-full object-cover"
                 />
@@ -382,7 +397,7 @@ export default function HomePage() {
             <div className="col-span-6 md:col-span-5 row-span-1">
               <div className="relative h-40 md:h-full bg-gradient-to-br from-slate-50 to-blue-50 rounded-2xl overflow-hidden shadow-sm">
                 <img
-                  src="kaparcha_1.jpg"
+                  src="sazogadoeba_mokmedebashi_4.jpg"
                   alt="Community leaders and women participating in environmental decision-making"
                   className="w-full h-full object-cover"
                 />
@@ -393,7 +408,7 @@ export default function HomePage() {
             <div className="col-span-12 md:col-span-7 row-span-1">
               <div className="relative h-44 md:h-48 bg-gradient-to-br from-blue-50 to-slate-50 rounded-2xl overflow-hidden shadow-sm">
                 <img
-                  src="kaparcha_1.jpg"
+                  src="sazogadoeba_mokmedebashi_3.jpg"
                   alt="Field monitoring and environmental data collection by citizen scientists"
                   className="w-full h-full object-cover"
                 />
@@ -404,7 +419,7 @@ export default function HomePage() {
             <div className="col-span-12 md:col-span-5 row-span-1 md:row-span-2">
               <div className="relative h-44 md:h-full md:min-h-[260px] bg-gradient-to-br from-green-50 to-slate-50 rounded-2xl overflow-hidden shadow-sm">
                 <img
-                  src="kaparcha_1.jpg"
+                  src="sazogadoeba_mokmedebashi_7.png"
                   alt="Community engagement workshop and collaborative environmental planning"
                   className="w-full h-full object-cover"
                 />
@@ -415,7 +430,7 @@ export default function HomePage() {
             <div className="col-span-6 md:col-span-4 row-span-1">
               <div className="relative h-40 md:h-44 bg-gradient-to-br from-blue-50 to-green-50 rounded-2xl overflow-hidden shadow-sm">
                 <img
-                  src="kaparcha_1.jpg"
+                  src="sazogadoeba_mokmedebashi_1.jpg"
                   alt="Water quality testing and environmental assessment by community monitors"
                   className="w-full h-full object-cover"
                 />
@@ -425,19 +440,18 @@ export default function HomePage() {
             <div className="col-span-6 md:col-span-3 row-span-1">
               <div className="relative h-40 md:h-44 bg-gradient-to-br from-slate-50 to-green-50 rounded-2xl overflow-hidden shadow-sm">
                 <img
-                  src="kaparcha_1.jpg"
+                  src="sazogadoeba_mokmedebashi_2.jpg"
                   alt="Public awareness campaign and environmental education outreach"
                   className="w-full h-full object-cover"
                 />
               </div>
             </div>
           </div>
-
         </div>
       </section>
 
       {/* Impact & Results */}
-      <section className="py-16 md:py-24 bg-muted/30">
+      {/* <section className="py-16 md:py-24 bg-muted/30">
         <div className="container mx-auto px-4">
           <h2 className="text-3xl md:text-4xl font-bold mb-12 text-center">
             {t.homePage.impactTitle[language]}
@@ -477,7 +491,7 @@ export default function HomePage() {
             ))}
           </div>
         </div>
-      </section>
+      </section> */}
 
       {/* Partners & Donors */}
       <section className="py-16 md:py-24 bg-background">

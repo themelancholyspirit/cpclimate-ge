@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -11,20 +12,23 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Newspaper, Calendar } from "lucide-react";
+import { Newspaper, Calendar, ArrowLeft } from "lucide-react";
 import { useLanguage } from "@/contexts/language-context";
 
 interface MediaItem {
   id: string;
   slug: string;
-  title: string;
+  title_en: string;
+  title_ka: string;
   date: string;
-  description: string | null;
+  description_en: string | null;
+  description_ka: string | null;
   imageUrl: string | null;
 }
 
 export default function NewsPage() {
   const { t, language } = useLanguage();
+  const router = useRouter();
   const [mediaItems, setMediaItems] = useState<MediaItem[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -83,6 +87,21 @@ export default function NewsPage() {
 
   return (
     <div className="min-h-screen bg-background">
+      {/* Back Button */}
+      <div className="border-b border-border">
+        <div className="container mx-auto px-4 py-4">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => router.back()}
+            className="gap-2"
+          >
+            <ArrowLeft className="h-4 w-4" />
+            {language === "en" ? "Back" : "უკან"}
+          </Button>
+        </div>
+      </div>
+
       {/* Header */}
       <div className="border-b border-border bg-muted/30">
         <div className="container mx-auto px-4 py-12">
@@ -112,7 +131,7 @@ export default function NewsPage() {
                       <div className="relative w-full aspect-[16/10] overflow-hidden rounded-lg">
                         <Image
                           src={item.imageUrl}
-                          alt={item.title}
+                          alt={language === "en" ? item.title_en : item.title_ka}
                           fill
                           className="object-cover hover:scale-105 transition-transform duration-300"
                         />
@@ -122,7 +141,7 @@ export default function NewsPage() {
 
                   <CardHeader className={item.imageUrl ? "pt-0" : ""}>
                     <CardTitle className="text-lg mb-2 line-clamp-2 text-balance">
-                      {item.title}
+                      {language === "en" ? item.title_en : item.title_ka}
                     </CardTitle>
                     <CardDescription className="flex flex-col gap-2">
                       <div className="flex items-center gap-2 text-xs">
@@ -132,10 +151,10 @@ export default function NewsPage() {
                     </CardDescription>
                   </CardHeader>
 
-                  {item.description && (
+                  { (language === "en" ? item.description_en : item.description_ka) && (
                     <div className="px-6 pb-3">
                       <p className="text-sm text-muted-foreground line-clamp-3">
-                        {item.description}
+                        {language === "en" ? item.description_en : item.description_ka}
                       </p>
                     </div>
                   )}

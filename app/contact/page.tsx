@@ -11,14 +11,16 @@ import {
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-import { Mail, Phone, MapPin, Send } from "lucide-react";
+import { Mail, Phone, MapPin, Send, ArrowLeft } from "lucide-react";
 import { useLanguage } from "@/contexts/language-context";
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
+import { useRouter } from "next/navigation";
 
 export default function ContactPage() {
   const { t, language } = useLanguage();
   const { toast } = useToast();
+  const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState({
     firstName: "",
@@ -30,7 +32,7 @@ export default function ContactPage() {
   });
 
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
     setFormData({ ...formData, [e.target.id]: e.target.value });
   };
@@ -80,8 +82,23 @@ export default function ContactPage() {
 
   return (
     <div className="bg-background">
-      {/* Header */}
+      {/* Back Button */}
 
+      <div className="border-b border-border">
+        <div className="container mx-auto px-4 py-4">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => router.back()}
+            className="gap-2"
+          >
+            <ArrowLeft className="h-8 w-8" />
+            {language === "en" ? "Back" : "უკან"}
+          </Button>
+        </div>
+      </div>
+
+      {/* Header */}
       <div className="border-b border-border bg-muted/30">
         <div className="container mx-auto px-4 py-12">
           <h1 className="text-4xl md:text-5xl font-bold mb-4">
@@ -157,20 +174,35 @@ export default function ContactPage() {
 
                 <div className="pt-6 border-t border-border space-y-4">
                   <div>
-                    <h3 className="font-semibold mb-3 text-base">Quick Actions</h3>
+                    <h3 className="font-semibold mb-3 text-base">
+                      Quick Actions
+                    </h3>
                     <div className="space-y-2">
-                      <Button variant="outline" className="w-full justify-start" asChild>
+                      <Button
+                        variant="outline"
+                        className="w-full justify-start"
+                        asChild
+                      >
                         <a href="/map">Report Environmental Issue</a>
                       </Button>
-                      <Button variant="outline" className="w-full justify-start" asChild>
+                      <Button
+                        variant="outline"
+                        className="w-full justify-start"
+                        asChild
+                      >
                         <a href="/projects">View Our Projects</a>
                       </Button>
                     </div>
                   </div>
-                  
+
                   <div className="pt-4">
                     <p className="text-sm text-muted-foreground leading-relaxed">
-                      We typically respond to inquiries within 24-48 hours. For urgent environmental concerns, please use our <a href="/map" className="text-primary hover:underline">interactive map</a>.
+                      We typically respond to inquiries within 24-48 hours. For
+                      urgent environmental concerns, please use our{" "}
+                      <a href="/map" className="text-primary hover:underline">
+                        interactive map
+                      </a>
+                      .
                     </p>
                   </div>
                 </div>
@@ -275,7 +307,9 @@ export default function ContactPage() {
                     disabled={isSubmitting}
                   >
                     <Send className="h-4 w-4 mr-2" />
-                    {isSubmitting ? "Sending..." : t.contact.sendMessage[language]}
+                    {isSubmitting
+                      ? "Sending..."
+                      : t.contact.sendMessage[language]}
                   </Button>
                 </form>
               </CardContent>

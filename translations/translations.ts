@@ -9,6 +9,7 @@ export const translations = {
     findings: { en: "Findings", ka: "კვლევები" },
     news: { en: "News", ka: "სიახლეები" },
     contact: { en: "Contact", ka: "კონტაქტი" },
+    about: { en: "About", ka: "ჩვენ შესახებ" },
   },
   map: {
     title: {
@@ -111,7 +112,7 @@ export const translations = {
     contact: { en: "Contact", ka: "კონტაქტი" },
     aboutBody: {
       en: "Strengthening climate resilience and environmental governance through data-driven analysis, community engagement, and policy advocacy in Poti, Georgia.",
-      ka: "კლიმატის გამძლეობისა და გარემოს მართვის გაძლიერება მონაცემებზე დაფუძნებული ანალიზით, საზოგადოების ჩართულობით და პოლიტიკის ადვოკატირებით ფოთში, საქართველოში.",
+      ka: "ვნერგავთ ინოვაციურ მიდგომებს და ვაძლიერებთ პარტნიორი ორგანიზაციების ინსტიტუციურ პასუხისმგებლობას და მდგრადობას.",
     },
     copyright: {
       en: "© CPC Georgia. All rights reserved.",
@@ -269,20 +270,20 @@ export const translations = {
   homePage: {
     heroTitle: {
       en: "Civic Participation for Climate & Environment",
-      ka: "სამოქალაქო ჩართულობა კლიმატისა და გარემოსთვის",
+      ka: "თანამონაწილეობისა და ჩართულობის ცენტრი",
     },
     heroSubtitle: {
       en: "Turning evidence and citizen action into climate solutions",
-      ka: "მტკიცებულებებისა და მოქალაქეთა მოქმედებების გარდაქმნა კლიმატის გადაწყვეტილებებად",
+      ka: "ვნერგავთ ინოვაციურ მიდგომებს და ვაძლიერებთ პარტნიორი ორგანიზაციების ინსტიტუციურ პასუხისმგებლობას და მდგრადობას.",
     },
     ctaMap: { en: "View Interactive Map", ka: "ინტერაქტიული რუკის ნახვა" },
     ctaProjects: { en: "Explore Our Projects", ka: "ჩვენი პროექტები" },
-    whoWeAreTitle: { en: "Who We Are", ka: "ვინ ვართ ჩვენ" },
+    whoWeAreTitle: { en: "Who We Are", ka: "ჩვენ შესახებ" },
     whoWeAreDesc: {
       en: "CPC is a civic organization strengthening climate resilience and environmental governance through data-driven analysis, community engagement, and policy advocacy.",
-      ka: "CPC არის სამოქალაქო ორგანიზაცია, რომელიც მონაცემებზე დაფუძნებული ანალიზით, საზოგადოების ჩართულობით და პოლიტიკის ადვოკატირებით აძლიერებს კლიმატის გამძლეობასა და გარემოს მმართველობას.",
+      ka: "დაარსებიდან დღემდე ორგანიზაცია მონაწილეობს საჯარო მმართველობის რეფორმის მონიტორინგში; „თანამონაწილეობისა და ჩართულობის ცენტრი „სიპისი“ აქტიურადაა ჩართული გარემოსდაცვითი პოლიტიკის, მდგარდი განვითარების, კარგი მმართველობის, მოქალაქეთა ჩართულობის, ქალთა საჭიროებების ინდენტიფიცირების გაძლიერების მიმართულებით.",
     },
-    aboutCPC: { en: "About CPC", ka: "CPC შესახებ" },
+    aboutCPC: { en: "About CPC", ka: "CPC-ის შესახებ" },
     whatWeDoTitle: { en: "What We Do", ka: "რას ვაკეთებთ" },
     evidenceTitle: {
       en: "Evidence & Data",
@@ -493,6 +494,7 @@ export const translations = {
     askQuestions: { en: "Ask Questions", ka: "კითხვები" },
   },
   common: {
+    back: { en: "Back", ka: "უკან" },
     cancel: { en: "Cancel", ka: "გაუქმება" },
     save: { en: "Save", ka: "შენახვა" },
     delete: { en: "Delete", ka: "წაშლა" },

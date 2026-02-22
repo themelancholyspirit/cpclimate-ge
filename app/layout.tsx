@@ -12,26 +12,12 @@ const _geist = Geist({ subsets: ["latin"] })
 const _geistMono = Geist_Mono({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
-  title: "CPC Georgia - Civic Participation for Climate & Environment",
+  title: "CPC Georgia - Centre for Participation and Collaboration CPC",
   description:
-    "Strengthening climate resilience and environmental governance through data-driven analysis, community engagement, and policy advocacy in Poti, Georgia.",
+    "Strengthening climate resilience and environmental governance through  community engagement",
   generator: "v0.app",
   icons: {
-    icon: [
-      {
-        url: "/icon-light-32x32.png",
-        media: "(prefers-color-scheme: light)",
-      },
-      {
-        url: "/icon-dark-32x32.png",
-        media: "(prefers-color-scheme: dark)",
-      },
-      {
-        url: "/icon.svg",
-        type: "image/svg+xml",
-      },
-    ],
-    apple: "/apple-icon.png",
+    icon: 'cpc.svg',
   },
 }
 

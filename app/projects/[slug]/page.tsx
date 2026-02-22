@@ -18,15 +18,19 @@ interface ContentSection {
 interface Project {
   id: string;
   slug: string;
-  title: string;
-  description: string;
+  title_en: string;
+  title_ka: string;
+  description_en: string;
+  description_ka: string;
+  content_en?: string;
+  content_ka?: string;
   status: string;
   duration: string;
   icon: string;
   color: string;
-  goals: string[];
+  goals_en?: string[];
+  goals_ka?: string[];
   headerImage?: string;
-  content?: string;
   contentSections?: ContentSection[];
 }
 
@@ -147,7 +151,7 @@ export default function ProjectDetailPage() {
         <div className="relative w-full h-[400px] lg:h-[500px]">
           <Image
             src={project.headerImage}
-            alt={project.title}
+            alt={language === "en" ? project.title_en : project.title_ka}
             fill
             className="object-cover"
             priority
@@ -175,10 +179,10 @@ export default function ProjectDetailPage() {
               </div>
             </div>
             <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4 text-balance break-words">
-              {project.title}
+              {language === "en" ? project.title_en : project.title_ka}
             </h1>
             <p className="text-lg md:text-xl text-muted-foreground leading-relaxed break-words">
-              {project.description}
+              {language === "en" ? project.description_en : project.description_ka}
             </p>
           </div>
         </div>
@@ -223,9 +227,9 @@ export default function ProjectDetailPage() {
             </div>
           ) : (
             // Fallback: Parse content field to extract images and text
-            project.content && (
+            (language === "en" ? project.content_en : project.content_ka) && (
               <div className="space-y-8">
-                {parseContent(project.content).map((section, index) => {
+                {parseContent(language === "en" ? project.content_en! : project.content_ka!).map((section, index) => {
                   if (section.type === "image") {
                     return (
                       <div

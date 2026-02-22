@@ -2,14 +2,31 @@
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { Users, Calendar, Award, BookOpen, CheckCircle } from "lucide-react"
+import { Users, Calendar, Award, BookOpen, CheckCircle, ArrowLeft } from "lucide-react"
 import Link from "next/link"
+import { useRouter } from "next/navigation"
 import { useLanguage } from "@/contexts/language-context"
 
 export default function JoinPage() {
   const { t, language } = useLanguage()
+  const router = useRouter()
   return (
     <div className="min-h-screen bg-background">
+      {/* Back Button */}
+      <div className="border-b border-border">
+        <div className="container mx-auto px-4 py-4">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => router.back()}
+            className="gap-2"
+          >
+            <ArrowLeft className="h-4 w-4" />
+            {language === "en" ? "Back" : "უკან"}
+          </Button>
+        </div>
+      </div>
+
       {/* Header */}
       <div className="border-b border-border bg-green-900 text-white">
         <div className="container mx-auto px-4 py-16">

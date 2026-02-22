@@ -12,10 +12,13 @@ import { useLanguage } from "@/contexts/language-context";
 interface NewsArticle {
   id: string;
   slug: string;
-  title: string;
+  title_en: string;
+  title_ka: string;
   date: string;
-  description?: string;
-  content?: string;
+  description_en?: string;
+  description_ka?: string;
+  content_en?: string;
+  content_ka?: string;
   imageUrl?: string;
 }
 
@@ -137,7 +140,7 @@ export default function NewsDetailPage() {
         <div className="relative w-full h-[400px] lg:h-[500px]">
           <Image
             src={article.imageUrl}
-            alt={article.title}
+            alt={language === "en" ? article.title_en : article.title_ka}
             fill
             className="object-cover"
             priority
@@ -157,11 +160,11 @@ export default function NewsDetailPage() {
               </div>
             </div>
             <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4 text-balance break-words">
-              {article.title}
+              {language === "en" ? article.title_en : article.title_ka}
             </h1>
-            {article.description && (
+            {(language === "en" ? article.description_en : article.description_ka) && (
               <p className="text-lg text-muted-foreground leading-relaxed break-words">
-                {article.description}
+                {language === "en" ? article.description_en : article.description_ka}
               </p>
             )}
           </div>
@@ -171,7 +174,7 @@ export default function NewsDetailPage() {
       {/* Article Content */}
       <div className="container mx-auto px-4 py-12">
         <div className="max-w-4xl mx-auto overflow-hidden">
-          {article.content ? (
+          {(language === "en" ? article.content_en : article.content_ka) ? (
             <div 
               className="prose prose-slate dark:prose-invert max-w-none
                 [&_h1]:text-4xl [&_h1]:font-bold [&_h1]:mb-4 [&_h1]:mt-2
@@ -186,7 +189,7 @@ export default function NewsDetailPage() {
                 [&_a]:text-primary [&_a]:underline hover:[&_a]:no-underline
                 [&_blockquote]:border-l-4 [&_blockquote]:border-primary [&_blockquote]:pl-4 [&_blockquote]:italic [&_blockquote]:my-2
                 [&>*]:mb-2"
-              dangerouslySetInnerHTML={{ __html: article.content }}
+              dangerouslySetInnerHTML={{ __html: language === "en" ? article.content_en! : article.content_ka! }}
             />
           ) : (
             <div className="text-center text-muted-foreground">

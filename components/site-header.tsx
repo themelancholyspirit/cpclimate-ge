@@ -19,7 +19,9 @@ type NavKey =
   | "projects"
   | "findings"
   | "news"
-  | "contact";
+  | "contact"
+  | "about";
+  
 const NAV_ITEMS: { key: NavKey; href: string }[] = [
   { key: "home", href: "/" },
   { key: "interactiveMap", href: "/map" },
@@ -27,6 +29,7 @@ const NAV_ITEMS: { key: NavKey; href: string }[] = [
   { key: "findings", href: "/findings" },
   { key: "news", href: "/news" },
   { key: "contact", href: "/contact" },
+  { key: "about", href: "/about" }
 ];
 
 const LANG_OPTIONS = [
@@ -52,22 +55,12 @@ export function SiteHeader() {
     <header className="sticky top-0 z-50 w-full border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container mx-auto px-4">
         <div className="flex h-16 items-center justify-between">
-          {/* Logo */}
           <Link href="/" className="flex items-center gap-2">
-            <div className="flex h-9 w-9 items-center justify-center rounded-md bg-primary">
-              <svg
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                className="h-5 w-5 text-primary-foreground"
-              >
-                <path d="M12 2L2 7l10 5 10-5-10-5z" />
-                <path d="M2 17l10 5 10-5" />
-                <path d="M2 12l10 5 10-5" />
-              </svg>
-            </div>
-            <span className="font-semibold text-lg">CPC</span>
+            <img
+              src="/cpc.png"
+              alt="Logo"
+              className="h-14 w-auto object-contain"
+            />
           </Link>
 
           {/* Desktop Navigation */}
