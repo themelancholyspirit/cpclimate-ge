@@ -185,7 +185,7 @@ export const translations = {
       en: "Describe what you observed, when it happened, and details...",
       ka: "აღწერეთ რასაც დააკვირდით, როდის მოხდა და დეტალები...",
     },
-    photos: { en: "Photos (Optional)", ka: "ფოტოები (არასავალდებული)" },
+    photos: { en: "Photo", ka: "ფოტოები" },
     clickToUpload: {
       en: "Click to upload photos",
       ka: "დააწკაპუნეთ ფოტოების ასატვირთად",
