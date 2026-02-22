@@ -114,7 +114,7 @@ model Project {
   icon            String
   color           String
 
-  headerImage     String?       @db.Uuid
+  headerImage     String       @db.Uuid
   contentSections Json?
   featured        Boolean       @default(false)
   createdAt       DateTime      @default(now())
@@ -136,6 +136,7 @@ model Landmark {
   content_ka      String?
   location        String?
   image           String?         @db.Uuid
+  featured        Boolean         @default(false)
   date            DateTime
   createdAt       DateTime        @default(now())
   updatedAt       DateTime?       @default(now()) @db.Timestamp(6)

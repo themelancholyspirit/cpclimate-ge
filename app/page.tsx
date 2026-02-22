@@ -51,7 +51,6 @@ const iconMap: Record<string, any> = {
   Shield: Shield,
   Target: Target,
 };
-
 interface Project {
   id: string;
   slug: string;
@@ -78,12 +77,26 @@ interface NewsArticle {
   category?: string;
 }
 
+interface Landmark {
+  id: string;
+  slug: string;
+  title_en: string;
+  title_ka: string;
+  description_en: string;
+  description_ka: string;
+  location?: string;
+  date: string;
+  headerImage: string | null;
+}
+
 export default function HomePage() {
   const { t, language } = useLanguage();
   const [featuredProjects, setFeaturedProjects] = useState<Project[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [newsArticles, setNewsArticles] = useState<NewsArticle[]>([]);
   const [isLoadingNews, setIsLoadingNews] = useState(true);
+  const [featuredLandmarks, setFeaturedLandmarks] = useState<Landmark[]>([]);
+  const [isLoadingLandmarks, setIsLoadingLandmarks] = useState(true);
 
   useEffect(() => {
     async function fetchFeaturedProjects() {
@@ -138,6 +151,33 @@ export default function HomePage() {
     }
 
     fetchNews();
+  }, []);
+
+  useEffect(() => {
+    async function fetchLandmarks() {
+      try {
+        const response = await fetch("/api/landmarks/featured");
+        if (response.ok) {
+          const data = await response.json();
+          if (data && Array.isArray(data.landmarks)) {
+            setFeaturedLandmarks(data.landmarks);
+          } else {
+            console.error("Featured landmarks response invalid format");
+            setFeaturedLandmarks([]);
+          }
+        } else {
+          console.error("Failed to fetch featured landmarks:", response.status);
+          setFeaturedLandmarks([]);
+        }
+      } catch (error) {
+        console.error("Error fetching featured landmarks:", error);
+        setFeaturedLandmarks([]);
+      } finally {
+        setIsLoadingLandmarks(false);
+      }
+    }
+
+    fetchLandmarks();
   }, []);
 
   return (
@@ -225,7 +265,9 @@ export default function HomePage() {
                 <div className="w-12 h-12 rounded-lg bg-green-600 flex items-center justify-center mb-4">
                   <Users className="h-6 w-6 text-white" />
                 </div>
-                <CardTitle className="leading-[1.2]">{t.homePage.communityTitle[language]}</CardTitle>
+                <CardTitle className="leading-[1.2]">
+                  {t.homePage.communityTitle[language]}
+                </CardTitle>
                 <CardDescription className="leading-relaxed">
                   {t.homePage.communityDesc[language]}
                 </CardDescription>
@@ -298,14 +340,25 @@ export default function HomePage() {
                               variant="default"
                               className="bg-green-600 text-xs"
                             >
-                              {{'Planning': 'გეგმაში', 'In Progress': 'მიმდინარე', 'Completed': 'დასრულებული', 'Active': 'აქტიური'}[project.status]}
+                              {
+                                {
+                                  Planning: "გეგმაში",
+                                  "In Progress": "მიმდინარე",
+                                  Completed: "დასრულებული",
+                                  Active: "აქტიური",
+                                }[project.status]
+                              }
                             </Badge>
                           </div>
                           <CardTitle className="text-lg mb-1.5 text-balance">
-                            {language === "en" ? project.title_en : project.title_ka}
+                            {language === "en"
+                              ? project.title_en
+                              : project.title_ka}
                           </CardTitle>
                           <CardDescription className="leading-relaxed line-clamp-2 text-sm">
-                            {language === "en" ? project.description_en : project.description_ka}
+                            {language === "en"
+                              ? project.description_en
+                              : project.description_ka}
                           </CardDescription>
                         </CardHeader>
                         <CardContent className="pt-0 pb-0">
@@ -361,6 +414,86 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* Featured Landmarks */}
+      {(isLoadingLandmarks || featuredLandmarks.length > 0) && (
+        <section className="py-16 md:py-24 bg-background">
+          <div className="container mx-auto px-4">
+            <h2 className="text-3xl md:text-4xl font-bold mb-12 text-center">
+              {language === "en"
+                ? "Featured Landmarks"
+                : "გამორჩეული ლანდშაფტები"}
+            </h2>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+              {isLoadingLandmarks
+                ? // Loading skeleton
+                  Array.from({ length: 3 }).map((_, i) => (
+                    <Card key={i} className="hover:shadow-lg transition-shadow">
+                      <CardHeader>
+                        <div className="w-full h-48 bg-slate-200 rounded-md mb-4 animate-pulse" />
+                        <div className="h-6 bg-slate-200 rounded mb-2 animate-pulse" />
+                        <div className="h-4 bg-slate-200 rounded animate-pulse" />
+                      </CardHeader>
+                    </Card>
+                  ))
+                : // Dynamic featured landmarks
+                  featuredLandmarks.map((landmark) => (
+                    <Card
+                      key={landmark.id}
+                      className="hover:shadow-lg transition-shadow flex flex-col overflow-hidden py-0"
+                    >
+                      {landmark.headerImage && (
+                        <div className="p-3">
+                          <div className="relative w-full aspect-[16/10] overflow-hidden rounded-lg">
+                            <img
+                              src={landmark.headerImage}
+                              alt={
+                                language === "en"
+                                  ? landmark.title_en
+                                  : landmark.title_ka
+                              }
+                              className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+                            />
+                          </div>
+                        </div>
+                      )}
+
+                      <CardHeader
+                        className={landmark.headerImage ? "pt-0" : ""}
+                      >
+                        <CardTitle className="text-lg mb-2 line-clamp-2 text-balance">
+                          {language === "en"
+                            ? landmark.title_en
+                            : landmark.title_ka}
+                        </CardTitle>
+                        <CardDescription className="line-clamp-2 leading-relaxed text-sm">
+                          {language === "en"
+                            ? landmark.description_en
+                            : landmark.description_ka}
+                        </CardDescription>
+                      </CardHeader>
+
+                      <CardContent className="mt-auto space-y-2 pt-0 pb-4">
+                        <Button size="sm" className="w-full" asChild>
+                          <Link href={`/landmarks/${landmark.slug}`}>
+                            {language === "en" ? "Learn More" : "გაიგე მეტი"}
+                          </Link>
+                        </Button>
+                      </CardContent>
+                    </Card>
+                  ))}
+            </div>
+            <div className="text-center">
+              <Button asChild variant="outline">
+                <Link href="/landmarks">
+                  {language === "en" ? "View All Landmarks" : "ყველა ლანდშაფტი"}
+                  <ArrowRight className="ml-2 h-4 w-4" />
+                </Link>
+              </Button>
+            </div>
+          </div>
+        </section>
+      )}
+
       {/* Community in Action */}
       <section className="py-16 md:py-24 bg-background">
         <div className="container mx-auto px-4">
@@ -412,7 +545,7 @@ export default function HomePage() {
                 <img
                   src="sazogadoeba_mokmedebashi_3.jpg"
                   alt="Field monitoring and environmental data collection by citizen scientists"
-                  className="w-full h-full object-cover"
+                  className="w-full h-full object-cover object-[center_40%]"
                 />
               </div>
             </div>
@@ -557,7 +690,11 @@ export default function HomePage() {
                           <div className="relative w-full aspect-[16/10] overflow-hidden rounded-lg">
                             <img
                               src={article.headerImage}
-                              alt={language === "en" ? article.title_en : article.title_ka}
+                              alt={
+                                language === "en"
+                                  ? article.title_en
+                                  : article.title_ka
+                              }
                               className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
                             />
                           </div>
@@ -566,7 +703,9 @@ export default function HomePage() {
 
                       <CardHeader className={article.headerImage ? "pt-0" : ""}>
                         <CardTitle className="text-lg mb-2 line-clamp-2 text-balance">
-                          {language === "en" ? article.title_en : article.title_ka}
+                          {language === "en"
+                            ? article.title_en
+                            : article.title_ka}
                         </CardTitle>
                         <CardDescription className="flex flex-col gap-2">
                           <div className="flex items-center gap-2 text-xs">
@@ -578,7 +717,7 @@ export default function HomePage() {
                                   year: "numeric",
                                   month: "long",
                                   day: "numeric",
-                                }
+                                },
                               )}
                             </span>
                           </div>
@@ -588,7 +727,9 @@ export default function HomePage() {
                       {(article.excerpt_en || article.excerpt_ka) && (
                         <div className="px-6 pb-3">
                           <p className="text-sm text-muted-foreground line-clamp-3">
-                            {language === "en" ? article.excerpt_en : article.excerpt_ka}
+                            {language === "en"
+                              ? article.excerpt_en
+                              : article.excerpt_ka}
                           </p>
                         </div>
                       )}

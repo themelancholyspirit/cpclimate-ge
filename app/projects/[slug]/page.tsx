@@ -136,13 +136,16 @@ export default function ProjectDetailPage() {
           <div className="flex flex-wrap items-center justify-between gap-4 mb-8 pb-8 border-b border-border">
             <Badge
               variant={project.status === "Active" ? "default" : "secondary"}
-              className={
-                project.status === "Active" 
-                  ? "bg-orange-500 hover:bg-orange-600 text-white text-sm px-4 py-1" 
-                  : "bg-gray-200 text-gray-700 text-sm px-4 py-1"
-              }
+              className="bg-blue-600 text-white text-sm px-4 py-1"
             >
-              {{'Planning': 'გეგმაში', 'In Progress': 'მიმდინარე', 'Completed': 'დასრულებული', 'Active': 'აქტიური'}[project.status]}
+              {
+                {
+                  Planning: "გეგმაში",
+                  "In Progress": "მიმდინარე",
+                  Completed: "დასრულებული",
+                  Active: "აქტიური",
+                }[project.status]
+              }
             </Badge>
             <div className="flex items-center gap-2 text-sm text-muted-foreground">
               <Calendar className="h-4 w-4" />
@@ -151,8 +154,27 @@ export default function ProjectDetailPage() {
           </div>
 
           {/* Description */}
-          <div className="text-base md:text-lg text-muted-foreground leading-relaxed mb-8">
-            {language === "en" ? project.description_en : project.description_ka}
+          <div className="space-y-6">
+            <div
+              className="prose prose-lg max-w-none break-words
+      [&_h1]:text-3xl [&_h1]:font-bold [&_h1]:mb-4 [&_h1]:mt-8
+      [&_h2]:text-2xl [&_h2]:font-bold [&_h2]:mb-3 [&_h2]:mt-6
+      [&_h3]:text-xl [&_h3]:font-semibold [&_h3]:mb-2 [&_h3]:mt-4
+      [&_p]:text-base [&_p]:leading-relaxed [&_p]:mb-4 [&_p]:text-foreground/80 [&_p]:break-words [&_p]:overflow-wrap-anywhere
+      [&_strong]:font-semibold [&_strong]:text-foreground
+      [&_em]:italic
+      [&_ul]:list-disc [&_ul]:ml-6 [&_ul]:mb-4 [&_ul]:space-y-2
+      [&_ol]:list-decimal [&_ol]:ml-6 [&_ol]:mb-4 [&_ol]:space-y-2
+      [&_li]:text-base [&_li]:leading-relaxed [&_li]:break-words
+      [&_a]:text-orange-500 [&_a]:underline hover:[&_a]:text-orange-600 [&_a]:break-all
+      [&_blockquote]:border-l-4 [&_blockquote]:border-orange-500 [&_blockquote]:pl-4 [&_blockquote]:italic [&_blockquote]:my-6 [&_blockquote]:text-muted-foreground [&_blockquote]:break-words
+      [&_code]:bg-muted [&_code]:px-1.5 [&_code]:py-0.5 [&_code]:rounded [&_code]:text-sm [&_code]:break-words
+      [&_pre]:bg-muted [&_pre]:p-4 [&_pre]:rounded-lg [&_pre]:overflow-x-auto [&_pre]:my-6"
+            >
+              {language === "en"
+                ? project.description_en
+                : project.description_ka}
+            </div>
           </div>
 
           {/* Main Content with Sections */}
@@ -216,7 +238,12 @@ export default function ProjectDetailPage() {
                   [&_blockquote]:border-l-4 [&_blockquote]:border-orange-500 [&_blockquote]:pl-4 [&_blockquote]:italic [&_blockquote]:my-6 [&_blockquote]:text-muted-foreground [&_blockquote]:break-words
                   [&_code]:bg-muted [&_code]:px-1.5 [&_code]:py-0.5 [&_code]:rounded [&_code]:text-sm [&_code]:break-words
                   [&_pre]:bg-muted [&_pre]:p-4 [&_pre]:rounded-lg [&_pre]:overflow-x-auto [&_pre]:my-6"
-                dangerouslySetInnerHTML={{ __html: language === "en" ? project.content_en! : project.content_ka! }}
+                dangerouslySetInnerHTML={{
+                  __html:
+                    language === "en"
+                      ? project.content_en!
+                      : project.content_ka!,
+                }}
               />
             )
           )}

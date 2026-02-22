@@ -29,7 +29,7 @@ interface ReportData {
   location: string;
   photos?: File[] | string[];
   reporterName: string;
-  reporterEmail: string;
+  reporterEmail?: string;
   reporterPhone?: string;
 }
 
@@ -386,7 +386,6 @@ export function MapClickReportModal({
                       t?.report?.emailPlaceholder?.[language] ||
                       "your.email@example.com"
                     }
-                    required
                     value={formData.reporterEmail}
                     onChange={(e) =>
                       setFormData({

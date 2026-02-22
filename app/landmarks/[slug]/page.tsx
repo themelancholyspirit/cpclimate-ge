@@ -35,45 +35,6 @@ export default function LandmarkDetailPage() {
   const [error, setError] = useState(false);
   const { t, language } = useLanguage();
 
-  // Helper function to parse content and extract text/image sections
-  const parseContent = (content: string) => {
-    // If content contains HTML tags, render it as HTML
-    if (content.includes('<')) {
-      return null; // Will use dangerouslySetInnerHTML instead
-    }
-    
-    const sections: Array<{ type: "text" | "image"; content: string }> = [];
-    
-    // Match both plain URLs and markdown image syntax
-    const imageUrlRegex = /!\[.*?\]\((https?:\/\/[^\s)]+\/assets\/[a-f0-9-]+)\)|(https?:\/\/[^\s]+\/assets\/[a-f0-9-]+)/gi;
-    
-    let lastIndex = 0;
-    let match;
-    
-    imageUrlRegex.lastIndex = 0;
-    
-    while ((match = imageUrlRegex.exec(content)) !== null) {
-      const textBefore = content.substring(lastIndex, match.index).trim();
-      if (textBefore) {
-        sections.push({ type: "text", content: textBefore });
-      }
-      
-      const imageUrl = match[1] || match[2];
-      if (imageUrl) {
-        sections.push({ type: "image", content: imageUrl });
-      }
-      
-      lastIndex = imageUrlRegex.lastIndex;
-    }
-    
-    const remainingText = content.substring(lastIndex).trim();
-    if (remainingText) {
-      sections.push({ type: "text", content: remainingText });
-    }
-    
-    return sections;
-  };
-
   useEffect(() => {
     async function fetchLandmark() {
       try {
@@ -111,7 +72,9 @@ export default function LandmarkDetailPage() {
         <div className="container mx-auto px-4 py-12">
           <div className="text-center">
             <h1 className="text-2xl font-bold mb-4">
-              {language === "en" ? "Landmark Not Found" : "ღირსშესანიშნაობა ვერ მოიძებნა"}
+              {language === "en"
+                ? "Landmark Not Found"
+                : "ღირსშესანიშნაობა ვერ მოიძებნა"}
             </h1>
             <p className="text-muted-foreground mb-6">
               {language === "en"
@@ -121,7 +84,9 @@ export default function LandmarkDetailPage() {
             <Button asChild>
               <Link href="/landmarks">
                 <ArrowLeft className="mr-2 h-4 w-4" />
-                {language === "en" ? "Back to Landmarks" : "უკან ღირსშესანიშნაობებზე"}
+                {language === "en"
+                  ? "Back to Landmarks"
+                  : "უკან ღირსშესანიშნაობებზე"}
               </Link>
             </Button>
           </div>
@@ -131,7 +96,8 @@ export default function LandmarkDetailPage() {
   }
 
   const title = language === "en" ? landmark.title_en : landmark.title_ka;
-  const description = language === "en" ? landmark.description_en : landmark.description_ka;
+  const description =
+    language === "en" ? landmark.description_en : landmark.description_ka;
   const content = language === "en" ? landmark.content_en : landmark.content_ka;
 
   return (
@@ -180,77 +146,47 @@ export default function LandmarkDetailPage() {
           </div>
 
           {/* Description */}
-          <div className="text-base md:text-lg text-muted-foreground leading-relaxed mb-8">
-            {description}
+          <div className="space-y-6">
+            <div
+              className="prose prose-lg max-w-none break-words
+        [&_h1]:text-3xl [&_h1]:font-bold [&_h1]:mb-4 [&_h1]:mt-8
+        [&_h2]:text-2xl [&_h2]:font-bold [&_h2]:mb-3 [&_h2]:mt-6
+        [&_h3]:text-xl [&_h3]:font-semibold [&_h3]:mb-2 [&_h3]:mt-4
+        [&_p]:text-base [&_p]:leading-relaxed [&_p]:mb-4 [&_p]:text-foreground/80 [&_p]:break-words [&_p]:overflow-wrap-anywhere
+        [&_strong]:font-semibold [&_strong]:text-foreground
+        [&_em]:italic
+        [&_ul]:list-disc [&_ul]:ml-6 [&_ul]:mb-4 [&_ul]:space-y-2
+        [&_ol]:list-decimal [&_ol]:ml-6 [&_ol]:mb-4 [&_ol]:space-y-2
+        [&_li]:text-base [&_li]:leading-relaxed [&_li]:break-words
+        [&_a]:text-orange-500 [&_a]:underline hover:[&_a]:text-orange-600 [&_a]:break-all
+        [&_blockquote]:border-l-4 [&_blockquote]:border-orange-500 [&_blockquote]:pl-4 [&_blockquote]:italic [&_blockquote]:my-6 [&_blockquote]:text-muted-foreground [&_blockquote]:break-words
+        [&_code]:bg-muted [&_code]:px-1.5 [&_code]:py-0.5 [&_code]:rounded [&_code]:text-sm [&_code]:break-words
+        [&_pre]:bg-muted [&_pre]:p-4 [&_pre]:rounded-lg [&_pre]:overflow-x-auto [&_pre]:my-6"
+            >
+              {description}
+            </div>
           </div>
 
           {/* Content */}
           {content && (
-            <>
-              {parseContent(content) ? (
-                // Parse and render sections if content has mixed text/images
-                <div className="space-y-6">
-                  {parseContent(content)!.map((section, index) => {
-                    if (section.type === "image") {
-                      return (
-                        <div
-                          key={index}
-                          className="relative w-full h-[300px] md:h-[400px] rounded-xl overflow-hidden my-8"
-                        >
-                          <img
-                            src={section.content}
-                            alt={`Landmark image ${index + 1}`}
-                            className="w-full h-full object-cover"
-                          />
-                        </div>
-                      );
-                    } else {
-                      return (
-                        <div
-                          key={index}
-                          className="prose prose-lg max-w-none break-words
-                            [&_h1]:text-3xl [&_h1]:font-bold [&_h1]:mb-4 [&_h1]:mt-8
-                            [&_h2]:text-2xl [&_h2]:font-bold [&_h2]:mb-3 [&_h2]:mt-6
-                            [&_h3]:text-xl [&_h3]:font-semibold [&_h3]:mb-2 [&_h3]:mt-4
-                            [&_p]:text-base [&_p]:leading-relaxed [&_p]:mb-4 [&_p]:text-foreground/80 [&_p]:break-words [&_p]:whitespace-pre-wrap
-                            [&_ul]:list-disc [&_ul]:ml-6 [&_ul]:mb-4 [&_ul]:space-y-2
-                            [&_ol]:list-decimal [&_ol]:ml-6 [&_ol]:mb-4 [&_ol]:space-y-2
-                            [&_li]:text-base [&_li]:leading-relaxed [&_li]:break-words
-                            [&_a]:text-primary [&_a]:underline [&_a]:hover:text-primary/80 [&_a]:break-words
-                            [&_strong]:font-semibold [&_strong]:text-foreground
-                            [&_em]:italic
-                            [&_blockquote]:border-l-4 [&_blockquote]:border-primary [&_blockquote]:pl-4 [&_blockquote]:italic [&_blockquote]:my-6 [&_blockquote]:text-muted-foreground [&_blockquote]:break-words
-                            [&_code]:bg-muted [&_code]:px-1.5 [&_code]:py-0.5 [&_code]:rounded [&_code]:text-sm [&_code]:break-words
-                            [&_pre]:bg-muted [&_pre]:p-4 [&_pre]:rounded-lg [&_pre]:overflow-x-auto [&_pre]:my-6"
-                        >
-                          <p className="whitespace-pre-wrap break-words">{section.content}</p>
-                        </div>
-                      );
-                    }
-                  })}
-                </div>
-              ) : (
-                // Render as HTML if content contains HTML tags
-                <div
-                  className="prose prose-lg max-w-none break-words
-                    [&_h1]:text-3xl [&_h1]:font-bold [&_h1]:mb-4 [&_h1]:mt-8
-                    [&_h2]:text-2xl [&_h2]:font-bold [&_h2]:mb-3 [&_h2]:mt-6
-                    [&_h3]:text-xl [&_h3]:font-semibold [&_h3]:mb-2 [&_h3]:mt-4
-                    [&_p]:text-base [&_p]:leading-relaxed [&_p]:mb-4 [&_p]:text-foreground/80 [&_p]:break-words [&_p]:overflow-wrap-anywhere
-                    [&_ul]:list-disc [&_ul]:ml-6 [&_ul]:mb-4 [&_ul]:space-y-2
-                    [&_ol]:list-decimal [&_ol]:ml-6 [&_ol]:mb-4 [&_ol]:space-y-2
-                    [&_li]:text-base [&_li]:leading-relaxed [&_li]:break-words
-                    [&_a]:text-primary [&_a]:underline [&_a]:hover:text-primary/80 [&_a]:break-all
-                    [&_strong]:font-semibold [&_strong]:text-foreground
-                    [&_em]:italic
-                    [&_blockquote]:border-l-4 [&_blockquote]:border-primary [&_blockquote]:pl-4 [&_blockquote]:italic [&_blockquote]:my-6 [&_blockquote]:text-muted-foreground [&_blockquote]:break-words
-                    [&_img]:rounded-xl [&_img]:shadow-md [&_img]:my-6 [&_img]:w-full [&_img]:h-auto [&_img]:max-w-full
-                    [&_code]:bg-muted [&_code]:px-1.5 [&_code]:py-0.5 [&_code]:rounded [&_code]:text-sm [&_code]:break-words
-                    [&_pre]:bg-muted [&_pre]:p-4 [&_pre]:rounded-lg [&_pre]:overflow-x-auto [&_pre]:my-6"
-                  dangerouslySetInnerHTML={{ __html: content }}
-                />
-              )}
-            </>
+            <div
+              className="prose prose-lg max-w-none 
+                [&_h1]:text-3xl [&_h1]:font-bold [&_h1]:mb-4 [&_h1]:mt-8
+                [&_h2]:text-2xl [&_h2]:font-bold [&_h2]:mb-3 [&_h2]:mt-6
+                [&_h3]:text-xl [&_h3]:font-semibold [&_h3]:mb-2 [&_h3]:mt-4
+                [&_p]:text-base [&_p]:leading-relaxed [&_p]:mb-4 [&_p]:text-foreground/80
+                [&_ul]:list-disc [&_ul]:ml-6 [&_ul]:mb-4 [&_ul]:space-y-2
+                [&_ol]:list-decimal [&_ol]:ml-6 [&_ol]:mb-4 [&_ol]:space-y-2
+                [&_li]:text-base [&_li]:leading-relaxed
+                [&_a]:text-primary [&_a]:underline [&_a]:hover:text-primary/80
+                [&_strong]:font-semibold [&_strong]:text-foreground
+                [&_em]:italic
+                [&_blockquote]:border-l-4 [&_blockquote]:border-primary [&_blockquote]:pl-4 [&_blockquote]:italic [&_blockquote]:my-6 [&_blockquote]:text-muted-foreground
+                [&_img]:rounded-xl [&_img]:shadow-md [&_img]:my-6 [&_img]:w-full [&_img]:h-auto
+                [&_code]:bg-muted [&_code]:px-1.5 [&_code]:py-0.5 [&_code]:rounded [&_code]:text-sm
+                [&_pre]:bg-muted [&_pre]:p-4 [&_pre]:rounded-lg [&_pre]:overflow-x-auto [&_pre]:my-6"
+              dangerouslySetInnerHTML={{ __html: content }}
+            />
           )}
 
           {/* Map Link */}
@@ -272,7 +208,9 @@ export default function LandmarkDetailPage() {
                   rel="noopener noreferrer"
                 >
                   <MapPin className="mr-2 h-4 w-4" />
-                  {language === "en" ? "Open in Google Maps" : "გახსენით Google Maps-ში"}
+                  {language === "en"
+                    ? "Open in Google Maps"
+                    : "გახსენით Google Maps-ში"}
                 </a>
               </Button>
             </div>
@@ -283,7 +221,9 @@ export default function LandmarkDetailPage() {
             <Button asChild variant="ghost">
               <Link href="/landmarks">
                 <ArrowLeft className="mr-2 h-4 w-4" />
-                {language === "en" ? "Back to Landmarks" : "უკან ღირსშესანიშნაობებზე"}
+                {language === "en"
+                  ? "Back to Landmarks"
+                  : "უკან ღირსშესანიშნაობებზე"}
               </Link>
             </Button>
           </div>

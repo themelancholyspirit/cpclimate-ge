@@ -131,14 +131,15 @@ export default function ContactPage() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Contact Info */}
           <div className="lg:col-span-1 flex">
-            <Card className="flex flex-col w-full">
+            <Card className="flex flex-col w-full h-full">
               <CardHeader>
                 <CardTitle>{t.contact.getInTouch[language]}</CardTitle>
                 <CardDescription>
                   {t.contact.weAreHere[language]}
                 </CardDescription>
               </CardHeader>
-              <CardContent className="space-y-6 flex-grow">
+              <CardContent className="flex flex-col justify-between flex-grow space-y-6">
+                {/* Email */}
                 <div className="flex items-start gap-3">
                   <div className="w-10 h-10 rounded-lg bg-blue-100 flex items-center justify-center flex-shrink-0">
                     <Mail className="h-5 w-5 text-blue-600" />
@@ -156,6 +157,7 @@ export default function ContactPage() {
                   </div>
                 </div>
 
+                {/* Phone */}
                 <div className="flex items-start gap-3">
                   <div className="w-10 h-10 rounded-lg bg-green-100 flex items-center justify-center flex-shrink-0">
                     <Phone className="h-5 w-5 text-green-600" />
@@ -172,40 +174,17 @@ export default function ContactPage() {
                     </a>
                   </div>
                 </div>
-                
-                <div className="pt-6 border-t border-border space-y-4">
-                  <div>
-                    <h3 className="font-semibold mb-3 text-base">
-                      Quick Actions
-                    </h3>
-                    <div className="space-y-2">
-                      <Button
-                        variant="outline"
-                        className="w-full justify-start"
-                        asChild
-                      >
-                        <a href="/map">Report Environmental Issue</a>
-                      </Button>
-                      <Button
-                        variant="outline"
-                        className="w-full justify-start"
-                        asChild
-                      >
-                        <a href="/projects">View Our Projects</a>
-                      </Button>
-                    </div>
-                  </div>
 
-                  <div className="pt-4">
-                    <p className="text-sm text-muted-foreground leading-relaxed">
-                      We typically respond to inquiries within 24-48 hours. For
-                      urgent environmental concerns, please use our{" "}
-                      <a href="/map" className="text-primary hover:underline">
-                        interactive map
-                      </a>
-                      .
-                    </p>
-                  </div>
+                {/* Footer Note */}
+                <div className="pt-6 border-t border-border mt-auto">
+                  <p className="text-sm text-muted-foreground leading-relaxed">
+                    We typically respond to inquiries within 24-48 hours. For
+                    urgent environmental concerns, please use our{" "}
+                    <a href="/map" className="text-primary hover:underline">
+                      interactive map
+                    </a>
+                    .
+                  </p>
                 </div>
               </CardContent>
             </Card>
