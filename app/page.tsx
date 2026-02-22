@@ -225,7 +225,7 @@ export default function HomePage() {
                 <div className="w-12 h-12 rounded-lg bg-green-600 flex items-center justify-center mb-4">
                   <Users className="h-6 w-6 text-white" />
                 </div>
-                <CardTitle>{t.homePage.communityTitle[language]}</CardTitle>
+                <CardTitle className="leading-[1.2]">{t.homePage.communityTitle[language]}</CardTitle>
                 <CardDescription className="leading-relaxed">
                   {t.homePage.communityDesc[language]}
                 </CardDescription>
@@ -355,14 +355,6 @@ export default function HomePage() {
                   {t.homePage.openMap[language]}
                   <ArrowRight className="ml-2 h-5 w-5" />
                 </Link>
-              </Button>
-              <Button
-                asChild
-                size="lg"
-                variant="outline"
-                className="bg-white/10 border-white/20 text-white hover:bg-white/20"
-              >
-                <Link href="/map">{t.homePage.reportIssue[language]}</Link>
               </Button>
             </div>
           </div>
@@ -513,12 +505,22 @@ export default function HomePage() {
             {t.homePage.partnersDonorsDesc[language]}
           </p>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8 items-center justify-items-center">
-            {["EU", "UN", "Municipality", "CSO Network"].map((partner, i) => (
+            {[
+              { name: "European Union", short: "EU" },
+              { name: "UNDP Georgia", short: "UNDP" },
+              { name: "USAID", short: "USAID" },
+              { name: "Danish Government", short: "Denmark" },
+              { name: "Women's Fund Georgia", short: "WFG" },
+              { name: "Poland Ministry", short: "Poland" },
+              { name: "CENN Georgia", short: "CENN" },
+              { name: "Local Municipalities", short: "Municipalities" },
+            ].map((partner, i) => (
               <div
                 key={i}
-                className="w-32 h-24 bg-muted rounded-lg flex items-center justify-center text-sm font-semibold text-muted-foreground"
+                className="w-32 h-24 bg-muted rounded-lg flex items-center justify-center text-sm font-semibold text-muted-foreground text-center p-2"
+                title={partner.name}
               >
-                {partner}
+                {partner.short}
               </div>
             ))}
           </div>
