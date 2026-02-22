@@ -6,7 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
-import { X, MapPin, Camera } from "lucide-react"
+import { X, MapPin, Camera, CheckCircle2, AlertCircle } from "lucide-react"
 import { useLanguage } from "@/contexts/language-context"
 import { useToast } from "@/hooks/use-toast"
 
@@ -73,8 +73,21 @@ export function MapClickReportModal({
       await onSubmit(formData)
       // Show success toast
       toast({
-        title: t?.toast?.reportSuccess?.title?.[language] || "Success",
-        description: t?.toast?.reportSuccess?.description?.[language] || "Report submitted successfully",
+        variant: "success",
+        duration: 5000,
+        title: (
+          <div className="flex flex-col items-center gap-3 text-center">
+            <div className="w-14 h-14 rounded-full bg-green-500 flex items-center justify-center">
+              <CheckCircle2 className="h-8 w-8 text-white" strokeWidth={2.5} />
+            </div>
+            <span className="text-green-900 font-semibold text-xl">
+              {t?.toast?.reportSuccess?.title?.[language] || "Success"}
+            </span>
+            <span className="text-green-800 text-base">
+              {t?.toast?.reportSuccess?.description?.[language] || "Report submitted successfully"}
+            </span>
+          </div>
+        ),
       })
       // Reset form
       setFormData({
@@ -89,9 +102,21 @@ export function MapClickReportModal({
       console.error('Error submitting report:', error)
       // Show error toast
       toast({
-        title: t?.toast?.reportError?.title?.[language] || "Error",
-        description: t?.toast?.reportError?.description?.[language] || "Failed to submit report",
         variant: "destructive",
+        duration: 5000,
+        title: (
+          <div className="flex flex-col items-center gap-3 text-center">
+            <div className="w-14 h-14 rounded-full bg-red-500 flex items-center justify-center">
+              <AlertCircle className="h-8 w-8 text-white" strokeWidth={2.5} />
+            </div>
+            <span className="text-red-900 font-semibold text-xl">
+              {t?.toast?.reportError?.title?.[language] || "Error"}
+            </span>
+            <span className="text-red-800 text-base">
+              {t?.toast?.reportError?.description?.[language] || "Failed to submit report"}
+            </span>
+          </div>
+        ),
       })
     } finally {
       setIsSubmitting(false)
