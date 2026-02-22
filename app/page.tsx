@@ -550,48 +550,56 @@ export default function HomePage() {
                   newsArticles.map((article) => (
                     <Card
                       key={article.id}
-                      className="hover:shadow-lg transition-shadow flex flex-col h-full"
+                      className="hover:shadow-lg transition-shadow flex flex-col overflow-hidden py-0"
                     >
-                      <CardHeader className="flex-grow p-0">
-                        {article.headerImage ? (
-                          <div className="w-full h-40 overflow-hidden rounded-t-lg">
+                      {article.headerImage && (
+                        <div className="p-3">
+                          <div className="relative w-full aspect-[16/10] overflow-hidden rounded-lg">
                             <img
                               src={article.headerImage}
                               alt={language === "en" ? article.title_en : article.title_ka}
-                              className="w-full h-full object-cover"
+                              className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
                             />
                           </div>
-                        ) : (
-                          <div className="w-full h-40 bg-slate-100 flex items-center justify-center rounded-t-lg">
-                            <FileText className="h-12 w-12 text-slate-400" />
-                          </div>
-                        )}
-                        <div className="p-6">
-                          <CardTitle className="text-lg mb-2 line-clamp-2">
-                            {language === "en" ? article.title_en : article.title_ka}
-                          </CardTitle>
-                          {(article.excerpt_en || article.excerpt_ka) && (
-                            <CardDescription className="line-clamp-2 mb-3">
-                              {language === "en" ? article.excerpt_en : article.excerpt_ka}
-                            </CardDescription>
-                          )}
-                          <div className="text-xs text-muted-foreground mb-4">
-                            {new Date(article.publishedAt).toLocaleDateString(
-                              language === "en" ? "en-US" : "ka-GE",
-                              {
-                                year: "numeric",
-                                month: "long",
-                                day: "numeric",
-                              }
-                            )}
-                          </div>
-                          <Button asChild variant="outline" className="w-full">
-                            <Link href={`/news/${article.slug}`}>
-                              {t.news.readMore[language]}
-                            </Link>
-                          </Button>
                         </div>
+                      )}
+
+                      <CardHeader className={article.headerImage ? "pt-0" : ""}>
+                        <CardTitle className="text-lg mb-2 line-clamp-2 text-balance">
+                          {language === "en" ? article.title_en : article.title_ka}
+                        </CardTitle>
+                        <CardDescription className="flex flex-col gap-2">
+                          <div className="flex items-center gap-2 text-xs">
+                            <Calendar className="h-3 w-3" />
+                            <span>
+                              {new Date(article.publishedAt).toLocaleDateString(
+                                language === "en" ? "en-US" : "ka-GE",
+                                {
+                                  year: "numeric",
+                                  month: "long",
+                                  day: "numeric",
+                                }
+                              )}
+                            </span>
+                          </div>
+                        </CardDescription>
                       </CardHeader>
+
+                      {(article.excerpt_en || article.excerpt_ka) && (
+                        <div className="px-6 pb-3">
+                          <p className="text-sm text-muted-foreground line-clamp-3">
+                            {language === "en" ? article.excerpt_en : article.excerpt_ka}
+                          </p>
+                        </div>
+                      )}
+
+                      <CardContent className="mt-auto space-y-2 pt-4 pb-4">
+                        <Button size="sm" className="w-full" asChild>
+                          <Link href={`/news/${article.slug}`}>
+                            {t.news.readMore[language]}
+                          </Link>
+                        </Button>
+                      </CardContent>
                     </Card>
                   ))}
             </div>
