@@ -28,8 +28,8 @@ const NAV_ITEMS: { key: NavKey; href: string }[] = [
   { key: "projects", href: "/projects" },
   { key: "findings", href: "/findings" },
   { key: "news", href: "/news" },
+  { key: "about", href: "/about" },
   { key: "contact", href: "/contact" },
-  { key: "about", href: "/about" }
 ];
 
 const LANG_OPTIONS = [
@@ -61,6 +61,7 @@ export function SiteHeader() {
               alt="Logo"
               className="h-14 w-auto object-contain"
             />
+            <span className="text-xl font-bold text-foreground">CPC</span>
           </Link>
 
           {/* Desktop Navigation */}

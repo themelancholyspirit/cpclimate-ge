@@ -111,9 +111,6 @@ export default function NewsPage() {
               {t.news.headerTitle[language]}
             </h1>
           </div>
-          <p className="text-lg text-muted-foreground max-w-3xl leading-relaxed">
-            {t.news.headerDesc[language]}
-          </p>
         </div>
       </div>
 

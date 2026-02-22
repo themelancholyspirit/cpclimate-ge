@@ -1,3 +1,5 @@
+import { describe } from "node:test";
+
 export type Language = "en" | "ka";
 
 export const translations = {
@@ -16,6 +18,13 @@ export const translations = {
       en: "Environmental Monitoring Map",
       ka: "გარემოს მონიტორინგის რუკა",
     },
+    headerDesc: {
+      'ka': "თვალი ადევნეთ მონაცემებს, მოქალაქეთა რეპორტებს, დაბინძურების წერტილებს და მდინარის მონიტორინგის შედეგებს რეალურ დროში.",
+    },
+    description: {
+      ka: "თვალი ადევნეთ მონაცემებს, მოქალაქეთა რეპორტებს, დაბინძურების წერტილებს და მდინარის მონიტორინგის შედეგებს რეალურ დროში."
+    },
+    
     apiKeyMissingTitle: {
       en: "Google Maps API Key Missing",
       ka: "აკლია Google Maps API კოდი",
@@ -63,10 +72,6 @@ export const translations = {
       ka: "დააწკაპუნეთ რუკაზე ნებისმიერ ადგილას, რათა მოახსენოთ ახალი გარემოსდაცვითი პრობლემა იმ ლოკაციაზე.",
     },
     instructionStep4: {
-      en: "Use the legend below to understand what each marker color represents (normal, warning, or problem status).",
-      ka: "გამოიყენეთ ქვემოთ მოცემული ლეგენდა, რათა გაიგოთ რას ნიშნავს თითოეული მარკერის ფერი (ნორმალური, გაფრთხილება ან პრობლემა).",
-    },
-    instructionStep5: {
       en: "View the statistics at the bottom to see an overview of environmental conditions in the area.",
       ka: "იხილეთ სტატისტიკა ქვემოთ, რათა მიიღოთ ზოგადი წარმოდგენა გარემოსდაცვით პირობებზე რეგიონში.",
     },
@@ -169,7 +174,7 @@ export const translations = {
       sea: { en: "Sea Water Intrusion", ka: "ზღვის წყლის შეჭრა" },
       erosion: { en: "Erosion Sections", ka: "ეროზიის მონაკვეთები" },
     },
-    locationDesc: { en: "Location Coordinates *", ka: "კოორდინატები *" },
+    locationDesc: { en: "Location Coordinates ", ka: "კოორდინატები " },
     locationPlaceholder: {
       en: "Coordinates are auto-generated.",
       ka: "კოორდინატები (ავტომატურად გენერირებული).",
@@ -287,7 +292,7 @@ export const translations = {
     whatWeDoTitle: { en: "What We Do", ka: "რას ვაკეთებთ" },
     evidenceTitle: {
       en: "Evidence & Data",
-      ka: "მტკიცებულებები და მონაცემები",
+      ka: "გარემოსდაცვითი აქტივობები და ადვოკატირება",
     },
     evidenceDesc: {
       en: "Baseline studies, field assessments, ecological and climate risk analysis",
@@ -295,16 +300,16 @@ export const translations = {
     },
     communityTitle: {
       en: "Community Engagement",
-      ka: "საზოგადოების ჩართულობა",
+      ka: "⁠მოქალაქეთა თანამონაწილეობისა და ჩართულობის ხელშეწყობა",
     },
     communityDesc: {
       en: "Citizen monitoring, awareness campaigns, inclusive participation models",
       ka: "მოქალაქეთა მონიტორინგი, ცნობიერების ამაღლება, ინკლუზიური მონაწილეობა",
     },
-    policyTitle: { en: "Policy & Advocacy", ka: "პოლიტიკა და ადვოკატირება" },
+    policyTitle: { en: "Policy & Advocacy", ka: "⁠საინფორმაციო კამპანიები და მონიტორინგი" },
     policyDesc: {
       en: "Evidence-based recommendations and dialogue with local authorities",
-      ka: "მტკიცებულებებზე დაფუძნებული რეკომენდაციები და დიალოგი ადგილობრივი ხელისუფლებასთან",
+      ka: "მედიატორი ადგილობრივ მმართველობასა და მოქალაქეებს შორის",
     },
     featuredProjectsTitle: {
       en: "Featured Projects",
@@ -326,7 +331,7 @@ export const translations = {
     },
     communityInActionDesc: {
       en: "Citizens are co-creators of solutions through monitoring, events, and youth engagement.",
-      ka: "მოქალაქეები არიან გადაწყვეტილებების თანაშემქმნელები მონიტორინგით, ღონისძიებებით და ახალგაზრდების ჩართულობით.",
+      ka: "სიპისი წარმატებით ასრულებს მედიატორის როლს ადგილობრივ მმართველობასა და მოქალაქეებს შორის. ამავდროულად, არის ლიდერი ორგანიზაცია გარემოსდაცვითი, მდგრადი განვითარების, კარგი მმართველობის, მონაწილეობითი დემოკრატიის, მოქალაქეთა ჩართულობის უზრუნველყოფისა და მოწყვლადი  ჯგუფების ადვოკატირების მიმართულებით.",
     },
     partnersDonorsTitle: {
       en: "Partners & Donors",
@@ -358,7 +363,7 @@ export const translations = {
     getInvolvedTitle: { en: "Get Involved", ka: "ჩაერთეთ" },
     getInvolvedDesc: {
       en: "Join us in protecting our environment and building climate resilience",
-      ka: "შემოგვიერთდით გარემოს დაცვასა და კლიმატის გამძლეობის გაძლიერებაში",
+      ka: "შემოგვიერთდით და ჩაერთეთ სხვადასხვა პროექტებში!",
     },
     becomeObserver: {
       en: "Become a Community Observer",
@@ -422,6 +427,7 @@ export const translations = {
       en: "Stay informed about our latest activities, media coverage, community events, and environmental updates.",
       ka: "იყავით ინფორმირებული ჩვენი უახლესი აქტივობების, მედია გაშუქების, საზოგადოებრივი ღონისძიებებისა და გარემოსდაცვითი განახლებების შესახებ.",
     },
+    viewAll: { en: "View All News", ka: "ყველა სიახლის ნახვა" },
     filterAll: { en: "All News", ka: "ყველა სიახლე" },
     filterArticles: { en: "Articles", ka: "სტატიები" },
     filterInterviews: { en: "Interviews", ka: "ინტერვიუები" },

@@ -9,20 +9,17 @@ export function MapInstructions() {
   return (
     <div className="space-y-3 text-sm">
       <ol className="space-y-2 list-decimal list-inside">
-        <li className="text-xs leading-relaxed">
+        <li className="text-xl leading-relaxed">
           {t.map.instructionStep1[language]}
         </li>
-        <li className="text-xs leading-relaxed">
+        <li className="text-xl leading-relaxed">
           {t.map.instructionStep2[language]}
         </li>
-        <li className="text-xs leading-relaxed">
+        <li className="text-xl leading-relaxed">
           {t.map.instructionStep3[language]}
         </li>
-        <li className="text-xs leading-relaxed">
+        <li className="text-xl   leading-relaxed">
           {t.map.instructionStep4[language]}
-        </li>
-        <li className="text-xs leading-relaxed">
-          {t.map.instructionStep5[language]}
         </li>
       </ol>
     </div>

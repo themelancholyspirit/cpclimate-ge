@@ -3,6 +3,27 @@
 import Link from "next/link"
 import { useLanguage } from "@/contexts/language-context"
 
+const NAV_ITEMS: { key: NavKey; href: string }[] = [
+  { key: "home", href: "/" },
+  { key: "interactiveMap", href: "/map" },
+  { key: "projects", href: "/projects" },
+  { key: "findings", href: "/findings" },
+  { key: "news", href: "/news" },
+  { key: "about", href: "/about" },
+  { key: "contact", href: "/contact" },
+];
+
+
+type NavKey =
+  | "home"
+  | "interactiveMap"
+  | "riskAlert"
+  | "projects"
+  | "findings"
+  | "news"
+  | "contact"
+  | "about";
+
 export function SiteFooter() {
   const { t, language } = useLanguage()
   return (
@@ -26,30 +47,20 @@ export function SiteFooter() {
             </p>
           </div>
 
-          {/* Quick Links */}
+          {/* Quick Links - same as header navigation */}
           <div>
             <h3 className="font-semibold mb-4">{t.footer.quickLinks[language]}</h3>
             <ul className="space-y-2 text-sm">
-              <li>
-                <Link href="/map" className="text-muted-foreground hover:text-foreground transition-colors">
-                  {t.footer.interactiveMap[language]}
-                </Link>
-              </li>
-              <li>
-                <Link href="/projects" className="text-muted-foreground hover:text-foreground transition-colors">
-                  {t.footer.ourProjects[language]}
-                </Link>
-              </li>
-              <li>
-                <Link href="/map" className="text-muted-foreground hover:text-foreground transition-colors">
-                  {t.footer.reportIssue[language]}
-                </Link>
-              </li>
-              <li>
-                <Link href="/findings" className="text-muted-foreground hover:text-foreground transition-colors">
-                  {t.footer.findingsReports[language]}
-                </Link>
-              </li>
+              {NAV_ITEMS.map((item) => (
+                <li key={item.key}>
+                  <Link 
+                    href={item.href} 
+                    className="text-muted-foreground hover:text-foreground transition-colors"
+                  >
+                    {t.nav[item.key][language]}
+                  </Link>
+                </li>
+              ))}
             </ul>
           </div>
 

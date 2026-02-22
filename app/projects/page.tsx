@@ -127,9 +127,6 @@ export default function ProjectsPage() {
           <h1 className="text-4xl md:text-5xl font-bold mb-4">
             {t.projects.headerTitle[language]}
           </h1>
-          <p className="text-lg text-muted-foreground max-w-3xl leading-relaxed">
-            {t.projects.headerDesc[language]}
-          </p>
         </div>
       </div>
 

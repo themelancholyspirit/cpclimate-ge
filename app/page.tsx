@@ -66,10 +66,24 @@ interface Project {
   headerImage: string | null;
 }
 
+interface NewsArticle {
+  id: string;
+  slug: string;
+  title_en: string;
+  title_ka: string;
+  excerpt_en?: string;
+  excerpt_ka?: string;
+  publishedAt: string;
+  headerImage: string | null;
+  category?: string;
+}
+
 export default function HomePage() {
   const { t, language } = useLanguage();
   const [featuredProjects, setFeaturedProjects] = useState<Project[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [newsArticles, setNewsArticles] = useState<NewsArticle[]>([]);
+  const [isLoadingNews, setIsLoadingNews] = useState(true);
 
   useEffect(() => {
     async function fetchFeaturedProjects() {
@@ -96,6 +110,34 @@ export default function HomePage() {
     }
 
     fetchFeaturedProjects();
+  }, []);
+
+  useEffect(() => {
+    async function fetchNews() {
+      try {
+        const response = await fetch("/api/news");
+        if (response.ok) {
+          const data = await response.json();
+          if (data && Array.isArray(data.news)) {
+            // Get only the latest 3 news articles
+            setNewsArticles(data.news.slice(0, 3));
+          } else {
+            console.error("News response invalid format");
+            setNewsArticles([]);
+          }
+        } else {
+          console.error("Failed to fetch news:", response.status);
+          setNewsArticles([]);
+        }
+      } catch (error) {
+        console.error("Error fetching news:", error);
+        setNewsArticles([]);
+      } finally {
+        setIsLoadingNews(false);
+      }
+    }
+
+    fetchNews();
   }, []);
 
   return (
@@ -483,48 +525,85 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Resources & Publications */}
-      <section className="py-16 md:py-24 bg-muted/30">
-        <div className="container mx-auto px-4">
-          <h2 className="text-3xl md:text-4xl font-bold mb-12 text-center">
-            {t.homePage.resourcesTitle[language]}
-          </h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-            {[
-              {
-                title: "Kaparchina River Baseline Study 2024",
-                type: "Technical Report",
-              },
-              {
-                title: "Climate Resilience Policy Brief",
-                type: "Policy Document",
-              },
-              {
-                title: "Community Monitoring Guide",
-                type: "Training Material",
-              },
-            ].map((resource, i) => (
-              <Card key={i}>
-                <CardHeader>
-                  <div className="w-full h-40 bg-slate-100 rounded-md mb-4 flex items-center justify-center">
-                    <FileText className="h-12 w-12 text-slate-400" />
-                  </div>
-                  <CardTitle className="text-lg">{resource.title}</CardTitle>
-                  <CardDescription>{resource.type}</CardDescription>
-                </CardHeader>
-              </Card>
-            ))}
+      {/* Latest News - only show if there are news articles */}
+      {(isLoadingNews || newsArticles.length > 0) && (
+        <section className="py-16 md:py-24 bg-muted/30">
+          <div className="container mx-auto px-4">
+            <h2 className="text-3xl md:text-4xl font-bold mb-12 text-center">
+              {t.news.headerTitle[language]}
+            </h2>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+              {isLoadingNews
+                ? // Loading skeleton
+                  Array.from({ length: 3 }).map((_, i) => (
+                    <Card key={i} className="hover:shadow-lg transition-shadow">
+                      <CardHeader>
+                        <div className="w-full h-40 bg-slate-200 rounded-md mb-4 animate-pulse" />
+                        <div className="h-6 bg-slate-200 rounded mb-2 animate-pulse" />
+                        <div className="h-4 bg-slate-200 rounded animate-pulse" />
+                      </CardHeader>
+                    </Card>
+                  ))
+                : // Dynamic news articles
+                  newsArticles.map((article) => (
+                    <Card
+                      key={article.id}
+                      className="hover:shadow-lg transition-shadow flex flex-col h-full"
+                    >
+                      <CardHeader className="flex-grow p-0">
+                        {article.headerImage ? (
+                          <div className="w-full h-40 overflow-hidden rounded-t-lg">
+                            <img
+                              src={article.headerImage}
+                              alt={language === "en" ? article.title_en : article.title_ka}
+                              className="w-full h-full object-cover"
+                            />
+                          </div>
+                        ) : (
+                          <div className="w-full h-40 bg-slate-100 flex items-center justify-center rounded-t-lg">
+                            <FileText className="h-12 w-12 text-slate-400" />
+                          </div>
+                        )}
+                        <div className="p-6">
+                          <CardTitle className="text-lg mb-2 line-clamp-2">
+                            {language === "en" ? article.title_en : article.title_ka}
+                          </CardTitle>
+                          {(article.excerpt_en || article.excerpt_ka) && (
+                            <CardDescription className="line-clamp-2 mb-3">
+                              {language === "en" ? article.excerpt_en : article.excerpt_ka}
+                            </CardDescription>
+                          )}
+                          <div className="text-xs text-muted-foreground mb-4">
+                            {new Date(article.publishedAt).toLocaleDateString(
+                              language === "en" ? "en-US" : "ka-GE",
+                              {
+                                year: "numeric",
+                                month: "long",
+                                day: "numeric",
+                              }
+                            )}
+                          </div>
+                          <Button asChild variant="outline" className="w-full">
+                            <Link href={`/news/${article.slug}`}>
+                              {t.news.readMore[language]}
+                            </Link>
+                          </Button>
+                        </div>
+                      </CardHeader>
+                    </Card>
+                  ))}
+            </div>
+            <div className="text-center">
+              <Button asChild variant="outline">
+                <Link href="/news">
+                  {t.news.viewAll[language]}
+                  <ArrowRight className="ml-2 h-4 w-4" />
+                </Link>
+              </Button>
+            </div>
           </div>
-          <div className="text-center">
-            <Button asChild variant="outline">
-              <Link href="/findings">
-                {t.homePage.accessAllResources[language]}
-                <ArrowRight className="ml-2 h-4 w-4" />
-              </Link>
-            </Button>
-          </div>
-        </div>
-      </section>
+        </section>
+      )}
 
       {/* Get Involved */}
       <section className="py-16 md:py-24 bg-blue-900 text-white">

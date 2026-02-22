@@ -11,7 +11,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-import { Mail, Phone, MapPin, Send, ArrowLeft } from "lucide-react";
+import { Mail, Phone, MapPin, Send, ArrowLeft, CheckCircle2 } from "lucide-react";
 import { useLanguage } from "@/contexts/language-context";
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
@@ -55,8 +55,14 @@ export default function ContactPage() {
       }
 
       toast({
-        title: t.toast.contactSuccess.title[language],
+        title: (
+          <div className="flex items-center gap-2">
+            <CheckCircle2 className="h-5 w-5 text-green-600" />
+            <span>{t.toast.contactSuccess.title[language]}</span>
+          </div>
+        ),
         description: t.toast.contactSuccess.description[language],
+        className: "border-green-600 bg-green-50",
       });
 
       // Reset form
@@ -104,9 +110,6 @@ export default function ContactPage() {
           <h1 className="text-4xl md:text-5xl font-bold mb-4">
             {t.contact.headerTitle[language]}
           </h1>
-          <p className="text-lg text-muted-foreground max-w-3xl leading-relaxed">
-            {t.contact.headerDesc[language]}
-          </p>
         </div>
       </div>
 

@@ -159,9 +159,6 @@ export default function FindingsPage() {
           <h1 className="text-4xl md:text-5xl font-bold mb-4">
             {t.findings.headerTitle[language]}
           </h1>
-          <p className="text-lg text-muted-foreground max-w-3xl leading-relaxed">
-            {t.findings.headerDesc[language]}
-          </p>
         </div>
       </div>
 
@@ -217,28 +214,6 @@ export default function FindingsPage() {
                           <Download className="h-4 w-4 mr-1" />
                           {t.findings.download[language]}
                         </a>
-                      </Button>
-                    )}
-                    {resource.externalUrl && (
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        className="bg-transparent"
-                        asChild
-                      >
-                        <a
-                          href={resource.externalUrl}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                        >
-                          <ExternalLink className="h-4 w-4" />
-                        </a>
-                      </Button>
-                    )}
-                    {!resource.fileUrl && !resource.externalUrl && (
-                      <Button size="sm" className="flex-1" disabled>
-                        <Download className="h-4 w-4 mr-1" />
-                        {t.findings.download[language]}
                       </Button>
                     )}
                   </div>

@@ -15,7 +15,13 @@ import { MapLegend } from "@/components/map-legend";
 import { MapInstructions } from "@/components/map-instructions";
 import { MapDataModal } from "@/components/map-data-modal";
 import { MapClickReportModal } from "@/components/map-click-report-modal";
-import { AlertCircle, Layers, FileWarning, ArrowLeft } from "lucide-react";
+import {
+  AlertCircle,
+  Layers,
+  FileWarning,
+  ArrowLeft,
+  Info,
+} from "lucide-react";
 import Link from "next/link";
 import { useLanguage } from "@/contexts/language-context";
 
@@ -24,7 +30,10 @@ export default function MapPage() {
   const [activeLayer, setActiveLayer] = useState<string>("all");
   const [selectedPoint, setSelectedPoint] = useState<any>(null);
   const [isReportModalOpen, setIsReportModalOpen] = useState(false);
-  const [reportCoordinates, setReportCoordinates] = useState<{ lat: number; lng: number } | null>(null);
+  const [reportCoordinates, setReportCoordinates] = useState<{
+    lat: number;
+    lng: number;
+  } | null>(null);
   const [stats, setStats] = useState({
     normal: 0,
     warning: 0,
@@ -115,6 +124,31 @@ export default function MapPage() {
       </div>
 
       <div className="container mx-auto px-4 py-8">
+        <div className="mb-12">
+          <Card className="bg-gradient-to-br from-muted/40 to-muted/20 border-2">
+            <CardHeader className="pb-6">
+              <div className="flex items-center gap-3">
+                <div className="p-2 rounded-lg bg-primary/10">
+                  <Info className="h-6 w-6 text-primary" />
+                </div>
+                <div>
+                  <CardTitle className="text-2xl md:text-3xl">
+                    {t.map.instructionsTitle[language]}
+                  </CardTitle>
+                  <CardDescription className="text-base mt-1">
+                    {language === "en"
+                      ? "Learn how to interact with the map and report environmental issues"
+                      : "ისწავლეთ როგორ გამოიყენოთ რუკა და მოახსენოთ გარემოს პრობლემები"}
+                  </CardDescription>
+                </div>
+              </div>
+            </CardHeader>
+            <CardContent className="text-base">
+              <MapInstructions />
+            </CardContent>
+          </Card>
+        </div>
+
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 lg:h-[1000px]">
           {/* Sidebar - Layer Controls */}
           <div className="lg:col-span-1 flex flex-col gap-4 lg:h-full lg:overflow-y-auto">
@@ -136,7 +170,7 @@ export default function MapPage() {
                 >
                   {t.map.layerAll[language]}
                 </Button>
-                
+
                 {/* A. Water Quality Section */}
                 <div className="pt-2">
                   <div className="text-xs font-semibold text-muted-foreground mb-1 px-2">
@@ -155,7 +189,9 @@ export default function MapPage() {
                 {/* B. Pollution Indicators Section */}
                 <div className="pt-2">
                   <div className="text-xs font-semibold text-muted-foreground mb-1 px-2">
-                    {language === "en" ? "Pollution Indicators" : "დაბინძურების ინდიკატორები"}
+                    {language === "en"
+                      ? "Pollution Indicators"
+                      : "დაბინძურების ინდიკატორები"}
                   </div>
                   <div className="pl-2 space-y-1 border-l-2 border-muted">
                     <Button
@@ -167,7 +203,9 @@ export default function MapPage() {
                       {t.map.layerWaste[language]}
                     </Button>
                     <Button
-                      variant={activeLayer === "illegal_dump" ? "default" : "outline"}
+                      variant={
+                        activeLayer === "illegal_dump" ? "default" : "outline"
+                      }
                       className="w-full justify-start text-sm"
                       onClick={() => setActiveLayer("illegal_dump")}
                     >
@@ -200,7 +238,9 @@ export default function MapPage() {
                       {t.map.layerFlood[language]}
                     </Button>
                     <Button
-                      variant={activeLayer === "drainage" ? "default" : "outline"}
+                      variant={
+                        activeLayer === "drainage" ? "default" : "outline"
+                      }
                       className="w-full justify-start text-sm"
                       onClick={() => setActiveLayer("drainage")}
                     >
@@ -208,7 +248,9 @@ export default function MapPage() {
                       {t.map.layerDrainage[language]}
                     </Button>
                     <Button
-                      variant={activeLayer === "sea_intrusion" ? "default" : "outline"}
+                      variant={
+                        activeLayer === "sea_intrusion" ? "default" : "outline"
+                      }
                       className="w-full justify-start text-sm"
                       onClick={() => setActiveLayer("sea_intrusion")}
                     >
@@ -216,7 +258,9 @@ export default function MapPage() {
                       {t.map.layerSeaIntrusion[language]}
                     </Button>
                     <Button
-                      variant={activeLayer === "erosion" ? "default" : "outline"}
+                      variant={
+                        activeLayer === "erosion" ? "default" : "outline"
+                      }
                       className="w-full justify-start text-sm"
                       onClick={() => setActiveLayer("erosion")}
                     >
@@ -232,15 +276,7 @@ export default function MapPage() {
               </CardContent>
             </Card>
 
-            {/* Instructions Card */}
-            <Card className="flex-1">
-              <CardHeader>
-                <CardTitle>{t.map.instructionsTitle[language]}</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <MapInstructions />
-              </CardContent>
-            </Card>
+            {/* Removed Instructions Card from Sidebar */}
           </div>
 
           {/* Map Area */}
@@ -305,6 +341,8 @@ export default function MapPage() {
             </div>
           </div>
         </div>
+
+        {/* Map Instructions - Below the map grid */}
       </div>
 
       {/* Modal for point details */}
