@@ -616,6 +616,8 @@ model directus_settings {
   directus_files_directus_settings_public_foregroundTodirectus_files directus_files?   @relation("directus_settings_public_foregroundTodirectus_files", fields: [public_foreground], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "directus_settings_public_foreground_foreign")
   directus_roles                                                     directus_roles?   @relation(fields: [public_registration_role], references: [id], onUpdate: NoAction, map: "directus_settings_public_registration_role_foreign")
   directus_folders                                                   directus_folders? @relation(fields: [storage_default_folder], references: [id], onUpdate: NoAction, map: "directus_settings_storage_default_folder_foreign")
+  reportPhotos                                                       ReportPhoto[]
+
 }
 
 model directus_shares {
