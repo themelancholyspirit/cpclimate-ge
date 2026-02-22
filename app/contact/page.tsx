@@ -11,7 +11,14 @@ import {
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-import { Mail, Phone, MapPin, Send, ArrowLeft, CheckCircle2 } from "lucide-react";
+import {
+  Mail,
+  Phone,
+  MapPin,
+  Send,
+  ArrowLeft,
+  CheckCircle2,
+} from "lucide-react";
 import { useLanguage } from "@/contexts/language-context";
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
@@ -58,14 +65,23 @@ export default function ContactPage() {
         variant: "success",
         duration: 5000,
         title: (
-          <div className="flex items-center gap-3">
-            <div className="flex-shrink-0 w-10 h-10 rounded-full bg-green-500 flex items-center justify-center">
+          <div className="flex gap-3">
+            <div className="mt-0.5 flex-shrink-0 w-10 h-10 rounded-full bg-green-500 flex items-center justify-center">
               <CheckCircle2 className="h-6 w-6 text-white" strokeWidth={2.5} />
             </div>
-            <span className="text-green-900 font-semibold">{t.toast.contactSuccess.title[language]}</span>
+
+            <div className="flex flex-col">
+              <span className="text-green-900 font-semibold leading-tight">
+                {t.toast.contactSuccess.title[language]}
+              </span>
+            </div>
           </div>
         ),
-        description: <span className="text-green-800 ml-[52px]">{t.toast.contactSuccess.description[language]}</span>,
+        description: (
+          <span className="text-green-800 ml-[52px]">
+            {t.toast.contactSuccess.description[language]}
+          </span>
+        ),
       });
 
       // Reset form
