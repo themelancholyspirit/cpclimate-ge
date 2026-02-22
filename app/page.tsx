@@ -298,7 +298,7 @@ export default function HomePage() {
                               variant="default"
                               className="bg-green-600 text-xs"
                             >
-                              {project.status}
+                              {{'Planning': 'გეგმაში', 'In Progress': 'მიმდინარე', 'Completed': 'დასრულებული', 'Active': 'აქტიური'}[project.status]}
                             </Badge>
                           </div>
                           <CardTitle className="text-lg mb-1.5 text-balance">

@@ -142,7 +142,7 @@ export default function ProjectDetailPage() {
                   : "bg-gray-200 text-gray-700 text-sm px-4 py-1"
               }
             >
-              {project.status}
+              {{'Planning': 'გეგმაში', 'In Progress': 'მიმდინარე', 'Completed': 'დასრულებული', 'Active': 'აქტიური'}[project.status]}
             </Badge>
             <div className="flex items-center gap-2 text-sm text-muted-foreground">
               <Calendar className="h-4 w-4" />
