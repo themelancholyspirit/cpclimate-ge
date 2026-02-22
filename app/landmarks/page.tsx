@@ -45,6 +45,7 @@ interface Landmark {
   description_en: string;
   description_ka: string;
   location?: string;
+  date: string;
   icon?: string;
   color?: string;
   headerImage: string | null;
@@ -55,6 +56,22 @@ export default function LandmarksPage() {
   const router = useRouter();
   const [landmarks, setLandmarks] = useState<Landmark[]>([]);
   const [loading, setLoading] = useState(true);
+
+  const formatDate = (dateString: string) => {
+    try {
+      if (!dateString) return "N/A";
+      const date = new Date(dateString);
+      if (isNaN(date.getTime())) return "N/A";
+      return date.toLocaleDateString(language === "en" ? "en-US" : "ka-GE", {
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+      });
+    } catch (error) {
+      console.error("Error formatting date:", error);
+      return "N/A";
+    }
+  };
 
   useEffect(() => {
     async function fetchLandmarks() {
@@ -125,7 +142,7 @@ export default function LandmarksPage() {
         </div>
       </div>
 
-      <div className="container mx-auto px-4 py-12">
+      <div className="container mx-auto px-2 py-16">
         {landmarks.length === 0 ? (
           <div className="text-center py-16">
             <LandmarkIcon className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
@@ -137,63 +154,52 @@ export default function LandmarksPage() {
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {landmarks.map((landmark) => {
-              const IconComponent = iconMap[landmark.icon || 'map-pin'] || MapPin;
-              const iconColor = landmark.color || '#3b82f6';
-              return (
-                <Card
-                  key={landmark.id}
-                  className="hover:shadow-lg transition-shadow flex flex-col h-full overflow-hidden"
-                >
-                  {landmark.headerImage && (
-                    <div className="relative w-full h-48 overflow-hidden">
+            {landmarks.map((landmark) => (
+              <Card
+                key={landmark.id}
+                className="hover:shadow-lg transition-shadow flex flex-col overflow-hidden py-0"
+              >
+                {landmark.headerImage && (
+                  <div className="p-3">
+                    <div className="relative w-full aspect-[16/10] overflow-hidden rounded-lg">
                       <img
                         src={landmark.headerImage}
                         alt={language === "en" ? landmark.title_en : landmark.title_ka}
                         className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
                       />
                     </div>
-                  )}
+                  </div>
+                )}
 
-                  <CardHeader className="flex-grow pb-3">
-                    <div className="flex items-start justify-between mb-3">
-                      <div
-                        className="w-12 h-12 rounded-lg flex items-center justify-center flex-shrink-0"
-                        style={{ backgroundColor: iconColor }}
-                      >
-                        <IconComponent
-                          className="h-6 w-6"
-                          style={{ color: "white" }}
-                        />
-                      </div>
+                <CardHeader className={landmark.headerImage ? "pt-0" : ""}>
+                  <CardTitle className="text-lg mb-2 line-clamp-2 text-balance">
+                    {language === "en" ? landmark.title_en : landmark.title_ka}
+                  </CardTitle>
+                  <CardDescription className="flex flex-col gap-2">
+                    <div className="flex items-center gap-2 text-xs">
+                      <MapPin className="h-3 w-3" />
+                      <span>{landmark.location || (language === "en" ? "Location not specified" : "მდებარეობა არ არის მითითებული")}</span>
                     </div>
-                    <CardTitle className="text-xl mb-2 text-balance">
-                      {language === "en" ? landmark.title_en : landmark.title_ka}
-                    </CardTitle>
-                    <CardDescription className="leading-relaxed line-clamp-3">
+                  </CardDescription>
+                </CardHeader>
+
+                {(language === "en" ? landmark.description_en : landmark.description_ka) && (
+                  <div className="px-6 pb-3">
+                    <p className="text-sm text-muted-foreground line-clamp-3">
                       {language === "en" ? landmark.description_en : landmark.description_ka}
-                    </CardDescription>
-                  </CardHeader>
+                    </p>
+                  </div>
+                )}
 
-                  {landmark.location && (
-                    <div className="px-6 pb-3">
-                      <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                        <MapPin className="h-4 w-4" />
-                        <span>{landmark.location}</span>
-                      </div>
-                    </div>
-                  )}
-
-                  <CardContent className="pt-0 pb-6">
-                    <Button asChild className="w-full">
-                      <Link href={`/landmarks/${landmark.slug}`}>
-                        {language === "en" ? "Learn More" : "ვრცლად"}
-                      </Link>
-                    </Button>
-                  </CardContent>
-                </Card>
-              );
-            })}
+                <CardContent className="mt-auto space-y-2 pt-4 pb-4">
+                  <Button size="sm" className="w-full" asChild>
+                    <Link href={`/landmarks/${landmark.slug}`}>
+                      {language === "en" ? "Learn More" : "ვრცლად"}
+                    </Link>
+                  </Button>
+                </CardContent>
+              </Card>
+            ))}
           </div>
         )}
       </div>

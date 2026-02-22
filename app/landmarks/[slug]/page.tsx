@@ -35,6 +35,45 @@ export default function LandmarkDetailPage() {
   const [error, setError] = useState(false);
   const { t, language } = useLanguage();
 
+  // Helper function to parse content and extract text/image sections
+  const parseContent = (content: string) => {
+    // If content contains HTML tags, render it as HTML
+    if (content.includes('<')) {
+      return null; // Will use dangerouslySetInnerHTML instead
+    }
+    
+    const sections: Array<{ type: "text" | "image"; content: string }> = [];
+    
+    // Match both plain URLs and markdown image syntax
+    const imageUrlRegex = /!\[.*?\]\((https?:\/\/[^\s)]+\/assets\/[a-f0-9-]+)\)|(https?:\/\/[^\s]+\/assets\/[a-f0-9-]+)/gi;
+    
+    let lastIndex = 0;
+    let match;
+    
+    imageUrlRegex.lastIndex = 0;
+    
+    while ((match = imageUrlRegex.exec(content)) !== null) {
+      const textBefore = content.substring(lastIndex, match.index).trim();
+      if (textBefore) {
+        sections.push({ type: "text", content: textBefore });
+      }
+      
+      const imageUrl = match[1] || match[2];
+      if (imageUrl) {
+        sections.push({ type: "image", content: imageUrl });
+      }
+      
+      lastIndex = imageUrlRegex.lastIndex;
+    }
+    
+    const remainingText = content.substring(lastIndex).trim();
+    if (remainingText) {
+      sections.push({ type: "text", content: remainingText });
+    }
+    
+    return sections;
+  };
+
   useEffect(() => {
     async function fetchLandmark() {
       try {
