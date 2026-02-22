@@ -55,14 +55,17 @@ export default function ContactPage() {
       }
 
       toast({
+        variant: "success",
+        duration: 5000,
         title: (
-          <div className="flex items-center gap-2">
-            <CheckCircle2 className="h-5 w-5 text-green-600" />
-            <span>{t.toast.contactSuccess.title[language]}</span>
+          <div className="flex items-center gap-3">
+            <div className="flex-shrink-0 w-10 h-10 rounded-full bg-green-500 flex items-center justify-center">
+              <CheckCircle2 className="h-6 w-6 text-white" strokeWidth={2.5} />
+            </div>
+            <span className="text-green-900 font-semibold">{t.toast.contactSuccess.title[language]}</span>
           </div>
         ),
-        description: t.toast.contactSuccess.description[language],
-        className: "border-green-600 bg-green-50",
+        description: <span className="text-green-800 ml-[52px]">{t.toast.contactSuccess.description[language]}</span>,
       });
 
       // Reset form

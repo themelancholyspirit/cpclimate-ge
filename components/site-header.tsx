@@ -61,7 +61,9 @@ export function SiteHeader() {
               alt="Logo"
               className="h-14 w-auto object-contain"
             />
-            <span className="text-xl font-bold text-foreground">CPC</span>
+            <span className="text-xl font-bold text-foreground">
+              {language === "en" ? "CPC" : "სიპისი"}
+            </span>
           </Link>
 
           {/* Desktop Navigation */}

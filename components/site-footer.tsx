@@ -1,6 +1,7 @@
 "use client"
 
 import Link from "next/link"
+import { Facebook } from "lucide-react"
 import { useLanguage } from "@/contexts/language-context"
 
 const NAV_ITEMS: { key: NavKey; href: string }[] = [
@@ -40,11 +41,25 @@ export function SiteFooter() {
                   className="h-14 w-auto object-contain"
                 />
               </Link>
-              <span className="font-semibold text-lg">CPC Georgia</span>
+              <span className="font-semibold text-lg">{language === "en" ? "CPC" : "სიპისი"}</span>
             </div>
             <p className="text-sm text-muted-foreground leading-relaxed max-w-md">
               {t.footer.aboutBody[language]}
             </p>
+            <div className="mt-4">
+              <a 
+                href="https://www.facebook.com/profile.php?id=100076012705577&ref=1" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white transition-colors"
+                aria-label="Follow us on Facebook"
+              >
+                <Facebook className="h-5 w-5" />
+                <span className="text-sm font-medium">
+                  {language === "en" ? "Follow us" : "გამოგვყევით"}
+                </span>
+              </a>
+            </div>
           </div>
 
           {/* Quick Links - same as header navigation */}
