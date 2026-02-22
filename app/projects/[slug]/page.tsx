@@ -65,42 +65,9 @@ export default function ProjectDetailPage() {
     }
   }, [slug]);
 
-  // Helper function to parse content and extract text/image sections
-  const parseContent = (content: string): ContentSection[] => {
-    const sections: ContentSection[] = [];
-    
-    // Match both plain URLs and markdown image syntax: ![](url) or ![alt](url)
-    const imageUrlRegex = /!\[.*?\]\((https?:\/\/[^\s)]+\/assets\/[a-f0-9-]+)\)|(https?:\/\/[^\s]+\/assets\/[a-f0-9-]+)/gi;
-    
-    let lastIndex = 0;
-    let match;
-    
-    // Reset regex to start from beginning
-    imageUrlRegex.lastIndex = 0;
-    
-    while ((match = imageUrlRegex.exec(content)) !== null) {
-      // Add text before the image
-      const textBefore = content.substring(lastIndex, match.index).trim();
-      if (textBefore) {
-        sections.push({ type: "text", content: textBefore });
-      }
-      
-      // Extract URL from either markdown syntax or plain URL
-      const imageUrl = match[1] || match[2]; // match[1] is from markdown, match[2] is plain URL
-      if (imageUrl) {
-        sections.push({ type: "image", content: imageUrl });
-      }
-      
-      lastIndex = imageUrlRegex.lastIndex;
-    }
-    
-    // Add remaining text after last image
-    const remainingText = content.substring(lastIndex).trim();
-    if (remainingText) {
-      sections.push({ type: "text", content: remainingText });
-    }
-    
-    return sections;
+  // Helper function to check if content is HTML
+  const isHTMLContent = (content: string): boolean => {
+    return /<[a-z][\s\S]*>/i.test(content);
   };
 
   if (loading) {
@@ -234,47 +201,24 @@ export default function ProjectDetailPage() {
               })}
             </div>
           ) : (
-            // Fallback: Parse content field to extract images and text
+            // Fallback: Render content directly (supports HTML from Directus rich text editor)
             (language === "en" ? project.content_en : project.content_ka) && (
-              <div className="space-y-8">
-                {parseContent(language === "en" ? project.content_en! : project.content_ka!).map((section, index) => {
-                  if (section.type === "image") {
-                    return (
-                      <div
-                        key={index}
-                        className="relative w-full h-[400px] rounded-lg overflow-hidden"
-                      >
-                        <Image
-                          src={section.content}
-                          alt={`Project image ${index + 1}`}
-                          fill
-                          className="object-cover"
-                        />
-                      </div>
-                    );
-                  } else {
-                    // Render as HTML content
-                    return (
-                      <div
-                        key={index}
-                        className="prose prose-slate dark:prose-invert max-w-none break-words
-                          [&_h1]:text-4xl [&_h1]:font-bold [&_h1]:mb-4 [&_h1]:mt-2
-                          [&_h2]:text-3xl [&_h2]:font-bold [&_h2]:mb-3 [&_h2]:mt-6
-                          [&_h3]:text-2xl [&_h3]:font-bold [&_h3]:mb-2 [&_h3]:mt-4
-                          [&_p]:text-lg [&_p]:leading-relaxed [&_p]:mb-4
-                          [&_strong]:font-semibold [&_em]:italic
-                          [&_ul]:list-disc [&_ul]:ml-6 [&_ul]:mb-4
-                          [&_ol]:list-decimal [&_ol]:ml-6 [&_ol]:mb-4
-                          [&_li]:mb-1
-                          [&_a]:text-primary [&_a]:underline hover:[&_a]:no-underline
-                          [&_blockquote]:border-l-4 [&_blockquote]:border-primary [&_blockquote]:pl-4 [&_blockquote]:italic [&_blockquote]:my-4
-                          [&>*]:mb-4"
-                        dangerouslySetInnerHTML={{ __html: section.content }}
-                      />
-                    );
-                  }
-                })}
-              </div>
+              <div
+                className="prose prose-slate dark:prose-invert max-w-none break-words
+                  [&_h1]:text-4xl [&_h1]:font-bold [&_h1]:mb-4 [&_h1]:mt-2
+                  [&_h2]:text-3xl [&_h2]:font-bold [&_h2]:mb-3 [&_h2]:mt-6
+                  [&_h3]:text-2xl [&_h3]:font-bold [&_h3]:mb-2 [&_h3]:mt-4
+                  [&_p]:text-lg [&_p]:leading-relaxed [&_p]:mb-4
+                  [&_strong]:font-semibold [&_em]:italic
+                  [&_ul]:list-disc [&_ul]:ml-6 [&_ul]:mb-4
+                  [&_ol]:list-decimal [&_ol]:ml-6 [&_ol]:mb-4
+                  [&_li]:mb-1
+                  [&_img]:rounded-lg [&_img]:shadow-md [&_img]:my-4 [&_img]:w-full [&_img]:h-auto
+                  [&_a]:text-primary [&_a]:underline hover:[&_a]:no-underline
+                  [&_blockquote]:border-l-4 [&_blockquote]:border-primary [&_blockquote]:pl-4 [&_blockquote]:italic [&_blockquote]:my-4
+                  [&>*]:mb-4"
+                dangerouslySetInnerHTML={{ __html: language === "en" ? project.content_en! : project.content_ka! }}
+              />
             )
           )}
 
