@@ -79,7 +79,6 @@ export async function POST(request: NextRequest) {
         issueType,
         location,
         description,
-        photos: validPhotos,
         reporterName,
         reporterEmail,
         lat: lat || null,
@@ -89,22 +88,21 @@ export async function POST(request: NextRequest) {
       },
     });
 
-    // Populate junction table if photos exist
+    // Create ReportPhoto records for each uploaded photo
     if (validPhotos.length > 0) {
       try {
-        const values = validPhotos
-          .map((photoId) => `('${report.id}', '${photoId}')`)
-          .join(", ");
-        await prisma.$executeRawUnsafe(`
-          INSERT INTO reports_files (reports_id, directus_files_id)
-          VALUES ${values}
-        `);
+        await prisma.reportPhoto.createMany({
+          data: validPhotos.map((photoId) => ({
+            reportId: report.id,
+            fileId: photoId,
+          })),
+        });
         console.log(
           `Linked ${validPhotos.length} photos to report ${report.id}`,
         );
-      } catch (junctionError) {
-        console.error("Error populating junction table:", junctionError);
-        // Don't fail the entire request if junction table fails
+      } catch (photoError) {
+        console.error("Error creating report photos:", photoError);
+        // Don't fail the entire request if photo linking fails
       }
     }
 

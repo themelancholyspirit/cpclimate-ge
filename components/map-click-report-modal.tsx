@@ -21,7 +21,7 @@ interface ReportData {
   issueType: string
   description: string
   location: string
-  photos?: File[]
+  photos?: File[] | string[]
   reporterName: string
   reporterEmail: string
   reporterPhone?: string
@@ -70,7 +70,48 @@ export function MapClickReportModal({
     setIsSubmitting(true)
 
     try {
-      await onSubmit(formData)
+      // Upload photos to Directus first if they exist
+      let photoIds: string[] = []
+      const DIRECTUS_URL = process.env.NEXT_PUBLIC_DIRECTUS_URL || 'http://localhost:8055'
+      
+      if (formData.photos && formData.photos.length > 0 && Array.isArray(formData.photos)) {
+        const photosToUpload = formData.photos.filter((p): p is File => p instanceof File)
+        
+        for (const photo of photosToUpload) {
+          try {
+            const photoFormData = new FormData()
+            photoFormData.append('file', photo)
+            
+            const uploadResponse = await fetch(`${DIRECTUS_URL}/files`, {
+              method: 'POST',
+              body: photoFormData,
+            })
+            
+            if (uploadResponse.ok) {
+              const uploadResult = await uploadResponse.json()
+              photoIds.push(uploadResult.data.id)
+              console.log('Photo uploaded successfully:', uploadResult.data.id)
+            } else {
+              console.error('Failed to upload photo:', await uploadResponse.text())
+              // Continue with other photos even if one fails
+            }
+          } catch (uploadError) {
+            console.error('Error uploading photo:', uploadError)
+            // Continue with other photos even if one fails
+          }
+        }
+      }
+
+      // Submit report with photo IDs
+      await onSubmit({
+        issueType: formData.issueType,
+        description: formData.description,
+        location: formData.location,
+        reporterName: formData.reporterName,
+        reporterEmail: formData.reporterEmail,
+        reporterPhone: formData.reporterPhone,
+        photos: photoIds,
+      })
       // Show success toast
       toast({
         variant: "success",
