@@ -179,7 +179,7 @@ model MediaItem {
 }
 
 model Report {
-  id              String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  id              String        @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   issueType       IssueType
   location        String
   description     String
@@ -197,12 +197,12 @@ model Report {
 }
 
 model ReportPhoto {
-  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  reportId  String   @db.Uuid
-  fileId    String   @db.Uuid
+  id        String           @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  reportId  String           @db.Uuid
+  fileId    String           @db.Uuid
 
-  report    Report         @relation(fields: [reportId], references: [id], onDelete: Cascade)
-  file      directus_files @relation(fields: [fileId], references: [id])
+  report    Report           @relation(fields: [reportId], references: [id], onDelete: Cascade)
+  file      directus_files   @relation(fields: [fileId], references: [id])
 
   @@map("report_photos")
 }
