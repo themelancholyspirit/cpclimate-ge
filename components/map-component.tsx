@@ -4,7 +4,6 @@ import { useCallback, useState, useMemo, useEffect } from "react";
 import {
   GoogleMap,
   Marker,
-  InfoWindow,
   Polygon,
   Polyline,
   useJsApiLoader,
@@ -125,7 +124,9 @@ export function MapComponent({ activeLayer, onPointClick }: MapComponentProps) {
     lat: number;
     lng: number;
   } | null>(null);
+  const [showClickedMarker, setShowClickedMarker] = useState(false);
   const [showReportModal, setShowReportModal] = useState(false);
+  const [showReportPrompt, setShowReportPrompt] = useState(false);
   const { t, language } = useLanguage();
 
   // Fetch map entities from APIs
@@ -247,15 +248,22 @@ export function MapComponent({ activeLayer, onPointClick }: MapComponentProps) {
       const lng = e.latLng.lng();
       setSelectedPoint(null); // Close any hover InfoWindow
       setShowReportModal(false); // Close report modal
+      setShowReportPrompt(false); // Close report prompt
       if (hoverTimeout) {
         clearTimeout(hoverTimeout);
         setHoverTimeout(null);
       }
+      
+      // Show marker immediately
       setClickedLocation({ lat, lng });
+      setShowClickedMarker(true);
 
       console.log(lat, lng);
-      // Don't open modal immediately - just show the marker
-      // setShowReportModal(true); // Remove this line
+      
+      // Show the report prompt after 500ms delay
+      setTimeout(() => {
+        setShowReportPrompt(true);
+      }, 500);
     }
   };
 
@@ -354,7 +362,9 @@ export function MapComponent({ activeLayer, onPointClick }: MapComponentProps) {
         clearTimeout(hoverTimeout);
         setHoverTimeout(null);
       }
-      setClickedLocation(null); // Close any clicked location InfoWindow
+      setClickedLocation(null); // Close any clicked location
+      setShowClickedMarker(false);
+      setShowReportPrompt(false);
       setShowReportModal(false); // Close report modal
       setHoveredMarkerId(point.id);
       setSelectedPoint(point);
@@ -616,164 +626,177 @@ export function MapComponent({ activeLayer, onPointClick }: MapComponentProps) {
           }
         })}
 
-
-
-        {clickedLocation && (
-          <InfoWindow
+        {/* Marker for clicked location */}
+        {clickedLocation && showClickedMarker && (
+          <Marker
             position={{ lat: clickedLocation.lat, lng: clickedLocation.lng }}
-            onCloseClick={() => {
-              setClickedLocation(null);
+            icon={{
+              path: google.maps.SymbolPath.CIRCLE,
+              scale: 10,
+              fillColor: "#ef4444",
+              fillOpacity: 1,
+              strokeColor: "#ffffff",
+              strokeWeight: 3,
             }}
-          >
-            <div className="p-3 min-w-[200px]">
-              <div className="font-semibold text-sm mb-2">
-                {t.map.reportPromptTitle[language]}
-              </div>
-              <div className="text-xs text-muted-foreground mb-3">
-                {t.map.reportPromptBody[language]}
-              </div>
-              <div className="flex gap-2">
-                <Button
-                  size="sm"
-                  onClick={() => {
-                    setShowReportModal(true);
-                    setClickedLocation(null); // Close the InfoWindow when modal opens
-                    setSelectedPoint(null); // Close any hover InfoWindow
-                    if (hoverTimeout) {
-                      clearTimeout(hoverTimeout);
-                      setHoverTimeout(null);
-                    }
-                  }}
-                  className="flex-1"
-                >
-                  {t.map.reportYes[language]}
-                </Button>
-                <Button
-                  size="sm"
-                  variant="outline"
-                  onClick={() => {
-                    setClickedLocation(null);
-                  }}
-                  className="flex-1"
-                >
-                  {t.map.cancel[language]}
-                </Button>
+          />
+        )}
+      </GoogleMap>
+
+      {/* Info tooltip for selected/hovered point */}
+      {selectedPoint &&
+        (() => {
+          try {
+            const lat = selectedPoint.entityType === "water" ? selectedPoint.lat
+              : selectedPoint.entityType === "pollution" && selectedPoint.geometryType === "point" ? selectedPoint.lat
+              : selectedPoint.entityType === "risk" && selectedPoint.geometryType === "point" ? selectedPoint.lat
+              : null;
+            const lng = selectedPoint.entityType === "water" ? selectedPoint.lng
+              : selectedPoint.entityType === "pollution" && selectedPoint.geometryType === "point" ? selectedPoint.lng
+              : selectedPoint.entityType === "risk" && selectedPoint.geometryType === "point" ? selectedPoint.lng
+              : null;
+            
+            if (!lat || !lng || typeof lat !== 'number' || typeof lng !== 'number') return null;
+            
+            const position = getPixelPosition(lat, lng);
+            if (!position) return null;
+
+            const title = selectedPoint.entityType === "water" ? (selectedPoint.locationName || "Water Point")
+              : (selectedPoint.title || "Map Point");
+            
+            const date = (() => {
+              try {
+                if (selectedPoint.entityType === "water" && selectedPoint.testDate) {
+                  return new Date(selectedPoint.testDate).toLocaleDateString("en-US", { month: "short", day: "2-digit", year: "numeric" });
+                } else if (selectedPoint.entityType === "pollution" && selectedPoint.reportedAt) {
+                  return new Date(selectedPoint.reportedAt).toLocaleDateString("en-US", { month: "short", day: "2-digit", year: "numeric" });
+                }
+                return new Date().toLocaleDateString("en-US", { month: "short", day: "2-digit", year: "numeric" });
+              } catch (err) {
+                console.error("Error formatting date:", err);
+                return "N/A";
+              }
+            })();
+
+            const statusBadge = (() => {
+              try {
+                if (selectedPoint.entityType === "water" && selectedPoint.status) {
+                  return t?.map?.status?.[selectedPoint.status]?.[language] || selectedPoint.status;
+                } else if (selectedPoint.entityType === "pollution" && selectedPoint.severity) {
+                  const sev = selectedPoint.severity;
+                  return (sev && typeof sev === 'string' && sev.length > 0) 
+                    ? sev.charAt(0).toUpperCase() + sev.slice(1) 
+                    : "Unknown";
+                } else if (selectedPoint.entityType === "risk" && selectedPoint.riskLevel) {
+                  const level = selectedPoint.riskLevel;
+                  return (level && typeof level === 'string' && level.length > 0)
+                    ? level.charAt(0).toUpperCase() + level.slice(1)
+                    : "Unknown";
+                }
+                return "Unknown";
+              } catch (err) {
+                console.error("Error determining status badge:", err);
+                return "Unknown";
+              }
+            })();
+
+          return (
+            <div
+              style={{
+                position: "absolute",
+                left: `${position.x}px`,
+                top: `${position.y - 10}px`,
+                transform: "translate(-50%, -100%)",
+                pointerEvents: "auto",
+                zIndex: 1000,
+              }}
+              onMouseEnter={() => {
+                if (hoverTimeout) {
+                  clearTimeout(hoverTimeout);
+                  setHoverTimeout(null);
+                }
+              }}
+              onMouseLeave={() => {
+                const timeout = setTimeout(() => {
+                  setSelectedPoint(null);
+                }, 300);
+                setHoverTimeout(timeout);
+              }}
+            >
+              <div className="bg-white rounded-lg shadow-lg min-w-[220px] border border-gray-200 overflow-hidden">
+                <div className="p-3">
+                  <h3 className="font-semibold text-base mb-2 text-gray-900 leading-tight">
+                    {title}
+                  </h3>
+                  <p className="text-xs text-gray-400 mb-3">
+                    {date}
+                  </p>
+                  <div className="flex items-center gap-2">
+                    <Badge
+                      variant="default"
+                      className="text-xs font-medium"
+                    >
+                      {statusBadge}
+                    </Badge>
+                  </div>
+                </div>
               </div>
             </div>
-          </InfoWindow>
-        )}
-        {/* Info window for selected point */}
-        {selectedPoint &&
-          (() => {
-            try {
-              const lat = selectedPoint.entityType === "water" ? selectedPoint.lat
-                : selectedPoint.entityType === "pollution" && selectedPoint.geometryType === "point" ? selectedPoint.lat
-                : selectedPoint.entityType === "risk" && selectedPoint.geometryType === "point" ? selectedPoint.lat
-                : null;
-              const lng = selectedPoint.entityType === "water" ? selectedPoint.lng
-                : selectedPoint.entityType === "pollution" && selectedPoint.geometryType === "point" ? selectedPoint.lng
-                : selectedPoint.entityType === "risk" && selectedPoint.geometryType === "point" ? selectedPoint.lng
-                : null;
-              
-              if (!lat || !lng || typeof lat !== 'number' || typeof lng !== 'number') return null;
-              
-              const position = getPixelPosition(lat, lng);
-              if (!position) return null;
+          );
+          } catch (err) {
+            console.error("Error rendering tooltip:", err);
+            return null;
+          }
+        })()}
 
-              const title = selectedPoint.entityType === "water" ? (selectedPoint.locationName || "Water Point")
-                : (selectedPoint.title || "Map Point");
-              
-              const date = (() => {
-                try {
-                  if (selectedPoint.entityType === "water" && selectedPoint.testDate) {
-                    return new Date(selectedPoint.testDate).toLocaleDateString("en-US", { month: "short", day: "2-digit", year: "numeric" });
-                  } else if (selectedPoint.entityType === "pollution" && selectedPoint.reportedAt) {
-                    return new Date(selectedPoint.reportedAt).toLocaleDateString("en-US", { month: "short", day: "2-digit", year: "numeric" });
-                  }
-                  return new Date().toLocaleDateString("en-US", { month: "short", day: "2-digit", year: "numeric" });
-                } catch (err) {
-                  console.error("Error formatting date:", err);
-                  return "N/A";
-                }
-              })();
-
-              const statusBadge = (() => {
-                try {
-                  if (selectedPoint.entityType === "water" && selectedPoint.status) {
-                    return t?.map?.status?.[selectedPoint.status]?.[language] || selectedPoint.status;
-                  } else if (selectedPoint.entityType === "pollution" && selectedPoint.severity) {
-                    const sev = selectedPoint.severity;
-                    return (sev && typeof sev === 'string' && sev.length > 0) 
-                      ? sev.charAt(0).toUpperCase() + sev.slice(1) 
-                      : "Unknown";
-                  } else if (selectedPoint.entityType === "risk" && selectedPoint.riskLevel) {
-                    const level = selectedPoint.riskLevel;
-                    return (level && typeof level === 'string' && level.length > 0)
-                      ? level.charAt(0).toUpperCase() + level.slice(1)
-                      : "Unknown";
-                  }
-                  return "Unknown";
-                } catch (err) {
-                  console.error("Error determining status badge:", err);
-                  return "Unknown";
-                }
-              })();
-
-            return (
-              <div
-                style={{
-                  position: "absolute",
-                  left: `${position.x}px`,
-                  top: `${position.y - 10}px`,
-                  transform: "translate(-50%, -100%)",
-                  pointerEvents: "auto",
-                  zIndex: 1000,
-                }}
-                onMouseEnter={() => {
+      {/* Centered report prompt */}
+      {showReportPrompt && clickedLocation && (
+        <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-50">
+          <div className="bg-white rounded-lg shadow-xl border border-gray-200 p-4 min-w-[240px] pointer-events-auto">
+            <div className="font-semibold text-sm mb-2">
+              {t.map.reportPromptTitle[language]}
+            </div>
+            <div className="text-xs text-muted-foreground mb-3">
+              {t.map.reportPromptBody[language]}
+            </div>
+            <div className="flex gap-2">
+              <Button
+                size="sm"
+                onClick={() => {
+                  setShowReportModal(true);
+                  setShowReportPrompt(false);
+                  setSelectedPoint(null);
                   if (hoverTimeout) {
                     clearTimeout(hoverTimeout);
                     setHoverTimeout(null);
                   }
                 }}
-                onMouseLeave={() => {
-                  const timeout = setTimeout(() => {
-                    setSelectedPoint(null);
-                  }, 300);
-                  setHoverTimeout(timeout);
-                }}
+                className="flex-1"
               >
-                <div className="bg-white rounded-lg shadow-lg min-w-[220px] border border-gray-200 overflow-hidden">
-                  <div className="p-3">
-                    <h3 className="font-semibold text-base mb-2 text-gray-900 leading-tight">
-                      {title}
-                    </h3>
-                    <p className="text-xs text-gray-400 mb-3">
-                      {date}
-                    </p>
-                    <div className="flex items-center gap-2">
-                      <Badge
-                        variant="default"
-                        className="text-xs font-medium"
-                      >
-                        {statusBadge}
-                      </Badge>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            );
-            } catch (err) {
-              console.error("Error rendering tooltip:", err);
-              return null;
-            }
-          })()}
-      </GoogleMap>
+                {t.map.reportYes[language]}
+              </Button>
+              <Button
+                size="sm"
+                variant="outline"
+                onClick={() => {
+                  setShowReportPrompt(false);
+                  setClickedLocation(null);
+                  setShowClickedMarker(false);
+                }}
+                className="flex-1"
+              >
+                {t.map.cancel[language]}
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
 
       <MapClickReportModal
         isOpen={showReportModal}
         onClose={() => {
           setShowReportModal(false);
           setClickedLocation(null);
+          setShowClickedMarker(false);
         }}
         coordinates={clickedLocation}
         onSubmit={handleReportSubmit}
