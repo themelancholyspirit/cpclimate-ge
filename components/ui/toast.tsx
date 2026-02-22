@@ -45,14 +45,42 @@ const toastVariants = cva(
 const Toast = React.forwardRef<
   React.ElementRef<typeof ToastPrimitives.Root>,
   React.ComponentPropsWithoutRef<typeof ToastPrimitives.Root> &
-    VariantProps<typeof toastVariants>
->(({ className, variant, ...props }, ref) => {
+    VariantProps<typeof toastVariants> & { duration?: number }
+>(({ className, variant, duration = 5000, ...props }, ref) => {
+  const [progress, setProgress] = React.useState(100);
+
+  React.useEffect(() => {
+    const interval = setInterval(() => {
+      setProgress((prev) => {
+        const newProgress = prev - (100 / (duration / 50));
+        return newProgress <= 0 ? 0 : newProgress;
+      });
+    }, 50);
+
+    return () => clearInterval(interval);
+  }, [duration]);
+
   return (
     <ToastPrimitives.Root
       ref={ref}
       className={cn(toastVariants({ variant }), className)}
+      duration={duration}
       {...props}
-    />
+    >
+      {props.children}
+      {/* Progress bar */}
+      <div className="absolute bottom-0 left-0 right-0 h-1 bg-black/10">
+        <div
+          className={cn(
+            "h-full transition-all duration-50 ease-linear",
+            variant === "success" && "bg-green-500",
+            variant === "destructive" && "bg-red-500",
+            variant === "default" && "bg-blue-500"
+          )}
+          style={{ width: `${progress}%` }}
+        />
+      </div>
+    </ToastPrimitives.Root>
   )
 })
 Toast.displayName = ToastPrimitives.Root.displayName
