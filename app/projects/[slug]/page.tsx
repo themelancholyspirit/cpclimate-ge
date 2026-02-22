@@ -115,7 +115,7 @@ export default function ProjectDetailPage() {
 
       {/* Header Image */}
       {project.headerImage && (
-        <div className="relative w-full h-[400px] lg:h-[500px]">
+        <div className="relative w-full max-w-6xl mx-auto h-[400px] lg:h-[500px]">
           <Image
             src={project.headerImage}
             alt={language === "en" ? project.title_en : project.title_ka}
