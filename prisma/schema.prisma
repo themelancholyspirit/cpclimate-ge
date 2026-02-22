@@ -126,20 +126,20 @@ model Project {
 }
 
 model Landmark {
+  id              String          @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  slug            String          @unique @default(dbgenerated("gen_random_uuid()::text"))
   title_en        String
   title_ka        String
-  slug            String          @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   description_en  String?
   description_ka  String?
   content_en      String?
   content_ka      String?
+  location        String?
+  image           String?         @db.Uuid
   date            DateTime
   createdAt       DateTime        @default(now())
-  id              String          @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  image           String?         @db.Uuid
-  location        String?
   updatedAt       DateTime?       @default(now()) @db.Timestamp(6)
-  directus_files  directus_files? @relation(fields: [image], references: [id], onUpdate: NoAction, map: "media_items_image_foreign")
+  directus_files  directus_files? @relation(fields: [image], references: [id], onUpdate: NoAction, map: "landmarks_image_foreign")
 
   @@map("landmarks")
 }
