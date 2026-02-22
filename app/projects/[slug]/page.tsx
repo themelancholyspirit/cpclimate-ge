@@ -113,9 +113,9 @@ export default function ProjectDetailPage() {
         </div>
       </div>
 
-      {/* Header Image */}
-      {project.headerImage && (
-        <div className="relative w-full max-w-6xl mx-auto h-[400px] lg:h-[500px]">
+      {/* Header Image with Overlay */}
+      {project.headerImage ? (
+        <div className="relative w-full h-[450px] md:h-[550px] lg:h-[600px] overflow-hidden">
           <Image
             src={project.headerImage}
             alt={language === "en" ? project.title_en : project.title_ka}
@@ -123,37 +123,65 @@ export default function ProjectDetailPage() {
             className="object-cover"
             priority
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-        </div>
-      )}
-
-      {/* Project Header */}
-      <div className="border-b border-border bg-muted/30">
-        <div className="container mx-auto px-4 py-12">
-          <div className="max-w-4xl">
-            <div className="flex flex-wrap items-center gap-3 mb-4">
-              <Badge
-                variant={project.status === "Active" ? "default" : "secondary"}
-                className={
-                  project.status === "Active" ? "bg-green-600" : ""
-                }
-              >
-                {project.status}
-              </Badge>
-              <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                <Calendar className="h-4 w-4" />
-                <span>{project.duration}</span>
+          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
+          <div className="absolute inset-0 flex items-end">
+            <div className="container mx-auto px-4 py-8 md:py-12">
+              <div className="max-w-4xl">
+                <div className="flex flex-wrap items-center gap-3 mb-4">
+                  <Badge
+                    variant={project.status === "Active" ? "default" : "secondary"}
+                    className={
+                      project.status === "Active" 
+                        ? "bg-green-600 text-white border-green-600" 
+                        : "bg-white/90 text-gray-900"
+                    }
+                  >
+                    {project.status}
+                  </Badge>
+                  <div className="flex items-center gap-2 text-sm text-white/90">
+                    <Calendar className="h-4 w-4" />
+                    <span>{project.duration}</span>
+                  </div>
+                </div>
+                <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4 text-white text-balance break-words">
+                  {language === "en" ? project.title_en : project.title_ka}
+                </h1>
+                <p className="text-base md:text-lg lg:text-xl text-white/90 leading-relaxed break-words max-w-3xl">
+                  {language === "en" ? project.description_en : project.description_ka}
+                </p>
               </div>
             </div>
-            <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4 text-balance break-words">
-              {language === "en" ? project.title_en : project.title_ka}
-            </h1>
-            <p className="text-lg md:text-xl text-muted-foreground leading-relaxed break-words">
-              {language === "en" ? project.description_en : project.description_ka}
-            </p>
           </div>
         </div>
-      </div>
+      ) : (
+        /* Fallback header without image */
+        <div className="border-b border-border bg-muted/30">
+          <div className="container mx-auto px-4 py-12">
+            <div className="max-w-4xl">
+              <div className="flex flex-wrap items-center gap-3 mb-4">
+                <Badge
+                  variant={project.status === "Active" ? "default" : "secondary"}
+                  className={
+                    project.status === "Active" ? "bg-green-600" : ""
+                  }
+                >
+                  {project.status}
+                </Badge>
+                <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                  <Calendar className="h-4 w-4" />
+                  <span>{project.duration}</span>
+                </div>
+              </div>
+              <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4 text-balance break-words">
+                {language === "en" ? project.title_en : project.title_ka}
+              </h1>
+              <p className="text-lg md:text-xl text-muted-foreground leading-relaxed break-words">
+                {language === "en" ? project.description_en : project.description_ka}
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Project Content */}
       <div className="container mx-auto px-4 py-12">
