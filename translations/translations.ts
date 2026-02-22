@@ -7,6 +7,7 @@ export const translations = {
     home: { en: "Home", ka: "მთავარი" },
     interactiveMap: { en: "Interactive Map", ka: "ინტერაქტიული რუკა" },
     riskAlert: { en: "Risk Alert", ka: "საფრთხის შეტყობინება" },
+    landmarks: { en: "Landmarks", ka: "ღირსშესანიშნაობები" },
     projects: { en: "Projects", ka: "პროექტები" },
     findings: { en: "Findings", ka: "კვლევები" },
     news: { en: "News", ka: "სიახლეები" },

@@ -125,6 +125,28 @@ model Project {
   @@map("projects")
 }
 
+model Landmark {
+  slug            String          @unique @default(dbgenerated("gen_random_uuid()::text"))
+  title_en        String
+  title_ka        String
+  description_en  String
+  description_ka  String
+  content_en      String?
+  content_ka      String?
+  location        String?
+  lat             Float?
+  lng             Float?
+  icon            String
+  color           String
+  headerImage     String?       @db.Uuid
+  featured        Boolean       @default(false)
+  createdAt       DateTime      @default(now())
+  id              String        @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+
+  @@index([featured])
+  @@map("landmarks")
+}
+
 model Resource {
   title_en        String
   title_ka        String
