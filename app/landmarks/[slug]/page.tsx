@@ -4,8 +4,6 @@ import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Separator } from "@/components/ui/separator";
 import { ArrowLeft, MapPin, Navigation } from "lucide-react";
 import { useLanguage } from "@/contexts/language-context";
 
@@ -81,14 +79,6 @@ export default function LandmarkDetailPage() {
                 ? "The landmark you're looking for doesn't exist or has been removed."
                 : "თქვენ მიერ მოძიებული ღირსშესანიშნაობა არ არსებობს ან წაშლილია."}
             </p>
-            <Button asChild>
-              <Link href="/landmarks">
-                <ArrowLeft className="mr-2 h-4 w-4" />
-                {language === "en"
-                  ? "Back to Landmarks"
-                  : "უკან ღირსშესანიშნაობებზე"}
-              </Link>
-            </Button>
           </div>
         </div>
       </div>

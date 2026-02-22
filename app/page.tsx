@@ -135,7 +135,6 @@ export default function HomePage() {
             // Get only the latest 3 news articles
             setNewsArticles(data.news.slice(0, 3));
           } else {
-            console.error("News response invalid format");
             setNewsArticles([]);
           }
         } else {
@@ -143,7 +142,6 @@ export default function HomePage() {
           setNewsArticles([]);
         }
       } catch (error) {
-        console.error("Error fetching news:", error);
         setNewsArticles([]);
       } finally {
         setIsLoadingNews(false);
@@ -421,7 +419,7 @@ export default function HomePage() {
             <h2 className="text-3xl md:text-4xl font-bold mb-12 text-center">
               {language === "en"
                 ? "Featured Landmarks"
-                : "გამორჩეული ლანდშაფტები"}
+                : "გამორჩეული ღირსშესანიშნაობები"}
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
               {isLoadingLandmarks
@@ -637,26 +635,95 @@ export default function HomePage() {
           <p className="text-center text-muted-foreground mb-12 max-w-2xl mx-auto">
             {t.homePage.partnersDonorsDesc[language]}
           </p>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 items-center justify-items-center">
-            {[
-              { name: "European Union", short: "EU" },
-              { name: "UNDP Georgia", short: "UNDP" },
-              { name: "USAID", short: "USAID" },
-              { name: "Danish Government", short: "Denmark" },
-              { name: "Women's Fund Georgia", short: "WFG" },
-              { name: "Poland Ministry", short: "Poland" },
-              { name: "CENN Georgia", short: "CENN" },
-              { name: "Local Municipalities", short: "Municipalities" },
-            ].map((partner, i) => (
-              <div
-                key={i}
-                className="w-32 h-24 bg-muted rounded-lg flex items-center justify-center text-sm font-semibold text-muted-foreground text-center p-2"
-                title={partner.name}
-              >
-                {partner.short}
-              </div>
-            ))}
+          
+          {/* Partners Carousel */}
+          <div className="relative overflow-hidden">
+            <div className="flex animate-scroll">
+              {/* First set of logos */}
+              {[
+                { name: "CENN", logo: "/partners/cenn-300x240.png" },
+                { name: "European Environmental Bureau", logo: "/partners/EEB-logo-on-white-blue-text-cmyk-002-1-300x188.jpg" },
+                { name: "IRC", logo: "/partners/irc-300x240.png" },
+                { name: "Ozurgeti Municipality", logo: "/partners/ozurgeti.png" },
+                { name: "VVG", logo: "/partners/vvg-300x240.png" },
+                { name: "Chokhatauri Municipality", logo: "/partners/chokhatauri.png" },
+                { name: "iBloki", logo: "/partners/ibloki.png" },
+                { name: "Lanchkhuti Municipality", logo: "/partners/lanchkhuti.png" },
+                { name: "Poland Ministry", logo: "/partners/poland.png" },
+                { name: "Women's Fund Georgia", logo: "/partners/ქალათა_ფონდი.png" },
+              ].map((partner, i) => (
+                <div
+                  key={i}
+                  className="flex-shrink-0 mx-4 md:mx-6 group"
+                  style={{ width: '180px' }}
+                >
+                  <div className="bg-white rounded-xl p-6 shadow-sm hover:shadow-md transition-all duration-300 border border-slate-100 h-32 flex items-center justify-center group-hover:scale-105">
+                    <img
+                      src={partner.logo}
+                      alt={partner.name}
+                      className="max-w-full max-h-full object-contain filter grayscale group-hover:grayscale-0 transition-all duration-300"
+                      title={partner.name}
+                    />
+                  </div>
+                  <p className="text-center text-xs text-muted-foreground mt-3 font-medium">
+                    {partner.name}
+                  </p>
+                </div>
+              ))}
+              
+              {/* Duplicate set for seamless loop */}
+              {[
+                { name: "CENN", logo: "/partners/cenn-300x240.png" },
+                { name: "European Environmental Bureau", logo: "/partners/EEB-logo-on-white-blue-text-cmyk-002-1-300x188.jpg" },
+                { name: "IRC", logo: "/partners/irc-300x240.png" },
+                { name: "Ozurgeti Municipality", logo: "/partners/ozurgeti.png" },
+                { name: "VVG", logo: "/partners/vvg-300x240.png" },
+                { name: "Chokhatauri Municipality", logo: "/partners/chokhatauri.png" },
+                { name: "iBloki", logo: "/partners/ibloki.png" },
+                { name: "Lanchkhuti Municipality", logo: "/partners/lanchkhuti.png" },
+                { name: "Poland Ministry", logo: "/partners/poland.png" },
+                { name: "Women's Fund Georgia", logo: "/partners/ქალათა_ფონდი.png" },
+              ].map((partner, i) => (
+                <div
+                  key={`dup-${i}`}
+                  className="flex-shrink-0 mx-4 md:mx-6 group"
+                  style={{ width: '180px' }}
+                >
+                  <div className="bg-white rounded-xl p-6 shadow-sm hover:shadow-md transition-all duration-300 border border-slate-100 h-32 flex items-center justify-center group-hover:scale-105">
+                    <img
+                      src={partner.logo}
+                      alt={partner.name}
+                      className="max-w-full max-h-full object-contain filter grayscale group-hover:grayscale-0 transition-all duration-300"
+                      title={partner.name}
+                    />
+                  </div>
+                  <p className="text-center text-xs text-muted-foreground mt-3 font-medium">
+                    {partner.name}
+                  </p>
+                </div>
+              ))}
+            </div>
           </div>
+          
+          {/* Add CSS animation */}
+          <style jsx>{`
+            @keyframes scroll {
+              0% {
+                transform: translateX(0);
+              }
+              100% {
+                transform: translateX(-50%);
+              }
+            }
+            
+            .animate-scroll {
+              animation: scroll 40s linear infinite;
+            }
+            
+            .animate-scroll:hover {
+              animation-play-state: paused;
+            }
+          `}</style>
         </div>
       </section>
 

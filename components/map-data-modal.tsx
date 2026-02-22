@@ -108,18 +108,7 @@ export function MapDataModal({ point, onClose }: MapDataModalProps) {
           },
           {
             label: "Source",
-            value: (() => {
-              try {
-                if (!point.sourceType) return "Unknown";
-                return String(point.sourceType).replace(/_/g, " ").replace(/\b\w/g, (c: string) => c.toUpperCase());
-              } catch {
-                return "Unknown";
-              }
-            })(),
-          },
-          {
-            label: "Severity",
-            value: capitalize(point.severity),
+            value: language === "en" ? "Citizen Report" : "მოქალაქის შეტყობინება",
           },
         ],
         description: point.description || "",
@@ -173,44 +162,6 @@ export function MapDataModal({ point, onClose }: MapDataModalProps) {
               <X className="h-4 w-4" />
             </Button>
           </div>
-          {(isWaterPoint || isPollutionIndicator) && (
-            <Badge
-              variant={
-                isWaterPoint 
-                  ? (point.status === "normal" ? "default" : "destructive")
-                  : (point.severity === "low" ? "default" : "destructive")
-              }
-              className={
-                isWaterPoint
-                  ? point.status === "normal"
-                    ? "bg-green-600 w-fit"
-                    : point.status === "risk"
-                      ? "bg-yellow-600 w-fit"
-                      : "bg-red-600 w-fit"
-                  : point.severity === "low"
-                    ? "bg-orange-500 w-fit"
-                    : point.severity === "medium"
-                      ? "bg-red-500 w-fit"
-                      : "bg-red-700 w-fit"
-              }
-            >
-              {isWaterPoint 
-                ? capitalize(point.status)
-                : capitalize(point.severity)}
-            </Badge>
-          )}
-          {isRiskLayer && point.riskLevel && (
-            <Badge
-              variant={point.riskLevel === "low" ? "default" : "destructive"}
-              className={
-                point.riskLevel === "low"
-                  ? "bg-yellow-600 w-fit"
-                  : "bg-red-600 w-fit"
-              }
-            >
-              {capitalize(point.riskLevel)} Risk
-            </Badge>
-          )}
         </CardHeader>
         <CardContent className="space-y-4">
           <div>

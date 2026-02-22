@@ -157,6 +157,11 @@ export function MapComponent({ activeLayer, onPointClick }: MapComponentProps) {
           setWaterPoints([]);
         }
 
+
+        useEffect(() => {
+          map?.setHeading(40);
+        }, [map])
+
         // Fetch pollution indicators
         if (activeLayer === "all" || ["waste", "illegal_dump", "odor"].includes(activeLayer)) {
           try {
