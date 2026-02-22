@@ -213,26 +213,26 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Featured Projects */}
-      <section className="py-16 md:py-24 bg-background">
-        <div className="container mx-auto px-4">
-          <h2 className="text-3xl md:text-4xl font-bold mb-12 text-center">
-            {t.homePage.featuredProjectsTitle[language]}
-          </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
-            {isLoading
-              ? // Loading skeleton
-                Array.from({ length: 3 }).map((_, i) => (
-                  <Card key={i} className="hover:shadow-lg transition-shadow">
-                    <CardHeader>
-                      <div className="w-full h-48 bg-slate-200 rounded-md mb-4 animate-pulse" />
-                      <div className="h-6 bg-slate-200 rounded mb-2 animate-pulse" />
-                      <div className="h-4 bg-slate-200 rounded animate-pulse" />
-                    </CardHeader>
-                  </Card>
-                ))
-              : featuredProjects.length > 0
-                ? // Dynamic featured projects - same style as /projects page
+      {/* Featured Projects - only show if there are featured projects */}
+      {(isLoading || featuredProjects.length > 0) && (
+        <section className="py-16 md:py-24 bg-background">
+          <div className="container mx-auto px-4">
+            <h2 className="text-3xl md:text-4xl font-bold mb-12 text-center">
+              {t.homePage.featuredProjectsTitle[language]}
+            </h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
+              {isLoading
+                ? // Loading skeleton
+                  Array.from({ length: 3 }).map((_, i) => (
+                    <Card key={i} className="hover:shadow-lg transition-shadow">
+                      <CardHeader>
+                        <div className="w-full h-48 bg-slate-200 rounded-md mb-4 animate-pulse" />
+                        <div className="h-6 bg-slate-200 rounded mb-2 animate-pulse" />
+                        <div className="h-4 bg-slate-200 rounded animate-pulse" />
+                      </CardHeader>
+                    </Card>
+                  ))
+                : // Dynamic featured projects - same style as /projects page
                   featuredProjects.map((project) => {
                     const IconComponent =
                       (project?.icon && iconMap[project.icon]) || Target;
@@ -279,51 +279,19 @@ export default function HomePage() {
                         </CardContent>
                       </Card>
                     );
-                  })
-                : // Fallback if no featured projects
-                  Array.from({ length: 3 }).map((_, i) => (
-                    <Card
-                      key={i}
-                      className="hover:shadow-lg transition-shadow flex flex-col h-full"
-                    >
-                      <CardHeader className="flex-grow pb-3">
-                        <div className="flex items-start justify-between mb-3">
-                          <div className="w-9 h-9 rounded-lg bg-slate-200 flex items-center justify-center">
-                            <Target className="h-5 w-5 text-slate-400" />
-                          </div>
-                        </div>
-                        <CardTitle className="text-lg mb-1.5">
-                          No featured projects yet
-                        </CardTitle>
-                        <CardDescription className="text-sm">
-                          Mark projects as featured in Directus to display them
-                          here
-                        </CardDescription>
-                      </CardHeader>
-                      <CardContent className="pt-0 pb-0">
-                        <Button
-                          asChild
-                          variant="outline"
-                          className="w-full h-9 text-sm bg-transparent"
-                        >
-                          <Link href="/projects">
-                            {t.projects.headerTitle[language]}
-                          </Link>
-                        </Button>
-                      </CardContent>
-                    </Card>
-                  ))}
+                  })}
+            </div>
+            <div className="text-center">
+              <Button asChild>
+                <Link href="/projects">
+                  {t.projects.headerTitle[language]}
+                  <ArrowRight className="ml-2 h-4 w-4" />
+                </Link>
+              </Button>
+            </div>
           </div>
-          <div className="text-center">
-            <Button asChild>
-              <Link href="/projects">
-                {t.projects.headerTitle[language]}
-                <ArrowRight className="ml-2 h-4 w-4" />
-              </Link>
-            </Button>
-          </div>
-        </div>
-      </section>
+        </section>
+      )}
 
       {/* Interactive Map CTA */}
       <section className="py-16 md:py-24 bg-slate-900 text-white">

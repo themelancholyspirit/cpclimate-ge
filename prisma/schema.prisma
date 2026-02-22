@@ -133,7 +133,8 @@ model Resource {
   date            DateTime
   pages           Int?
   createdAt       DateTime @default(now())
-  file            String?  @db.Uuid
+  file            String? @db.Uuid
+  file_item       directus_files? @relation(fields: [file], references: [id], onUpdate: NoAction, map: "resources_file_foreign")
   id              String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
 
   @@map("resources")
