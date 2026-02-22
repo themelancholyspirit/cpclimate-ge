@@ -180,15 +180,15 @@ export default function NewsDetailPage() {
                 [&_h1]:text-4xl [&_h1]:font-bold [&_h1]:mb-4 [&_h1]:mt-2
                 [&_h2]:text-3xl [&_h2]:font-bold [&_h2]:mb-3 [&_h2]:mt-6
                 [&_h3]:text-2xl [&_h3]:font-bold [&_h3]:mb-2 [&_h3]:mt-4
-                [&_p]:text-lg [&_p]:leading-relaxed [&_p]:mb-2
+                [&_p]:text-lg [&_p]:leading-relaxed [&_p]:mb-4
                 [&_strong]:font-semibold [&_em]:italic
-                [&_ul]:list-disc [&_ul]:ml-6 [&_ul]:mb-2
-                [&_ol]:list-decimal [&_ol]:ml-6 [&_ol]:mb-2
+                [&_ul]:list-disc [&_ul]:ml-6 [&_ul]:mb-4
+                [&_ol]:list-decimal [&_ol]:ml-6 [&_ol]:mb-4
                 [&_li]:mb-1
-                [&_img]:rounded-lg [&_img]:shadow-md [&_img]:my-2 [&_img]:w-full
+                [&_img]:rounded-lg [&_img]:shadow-md [&_img]:my-4 [&_img]:w-full
                 [&_a]:text-primary [&_a]:underline hover:[&_a]:no-underline
-                [&_blockquote]:border-l-4 [&_blockquote]:border-primary [&_blockquote]:pl-4 [&_blockquote]:italic [&_blockquote]:my-2
-                [&>*]:mb-2"
+                [&_blockquote]:border-l-4 [&_blockquote]:border-primary [&_blockquote]:pl-4 [&_blockquote]:italic [&_blockquote]:my-4
+                [&>*]:mb-4"
               dangerouslySetInnerHTML={{ __html: language === "en" ? article.content_en! : article.content_ka! }}
             />
           ) : (
