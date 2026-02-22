@@ -171,24 +171,72 @@ export default function NewsDetailPage() {
 
           {/* Article Content */}
           {(language === "en" ? article.content_en : article.content_ka) ? (
-            <div 
-              className="prose prose-lg max-w-none break-words
-                [&_h1]:text-3xl [&_h1]:font-bold [&_h1]:mb-4 [&_h1]:mt-8
-                [&_h2]:text-2xl [&_h2]:font-bold [&_h2]:mb-3 [&_h2]:mt-6
-                [&_h3]:text-xl [&_h3]:font-semibold [&_h3]:mb-2 [&_h3]:mt-4
-                [&_p]:text-base [&_p]:leading-relaxed [&_p]:mb-4 [&_p]:text-foreground/80 [&_p]:break-words [&_p]:overflow-wrap-anywhere
-                [&_ul]:list-disc [&_ul]:ml-6 [&_ul]:mb-4 [&_ul]:space-y-2
-                [&_ol]:list-decimal [&_ol]:ml-6 [&_ol]:mb-4 [&_ol]:space-y-2
-                [&_li]:text-base [&_li]:leading-relaxed [&_li]:break-words
-                [&_a]:text-primary [&_a]:underline [&_a]:hover:text-primary/80 [&_a]:break-all
-                [&_strong]:font-semibold [&_strong]:text-foreground
-                [&_em]:italic
-                [&_blockquote]:border-l-4 [&_blockquote]:border-primary [&_blockquote]:pl-4 [&_blockquote]:italic [&_blockquote]:my-6 [&_blockquote]:text-muted-foreground [&_blockquote]:break-words
-                [&_img]:rounded-xl [&_img]:shadow-md [&_img]:my-6 [&_img]:w-full [&_img]:h-auto [&_img]:max-w-full
-                [&_code]:bg-muted [&_code]:px-1.5 [&_code]:py-0.5 [&_code]:rounded [&_code]:text-sm [&_code]:break-words
-                [&_pre]:bg-muted [&_pre]:p-4 [&_pre]:rounded-lg [&_pre]:overflow-x-auto [&_pre]:my-6"
-              dangerouslySetInnerHTML={{ __html: language === "en" ? article.content_en! : article.content_ka! }}
-            />
+            <>
+              {parseContent(language === "en" ? article.content_en! : article.content_ka!) ? (
+                // Parse and render sections if content has mixed text/images
+                <div className="space-y-6">
+                  {parseContent(language === "en" ? article.content_en! : article.content_ka!)!.map((section, index) => {
+                    if (section.type === "image") {
+                      return (
+                        <div
+                          key={index}
+                          className="relative w-full h-[300px] md:h-[400px] rounded-xl overflow-hidden my-8"
+                        >
+                          <Image
+                            src={section.content}
+                            alt={`Article image ${index + 1}`}
+                            fill
+                            className="object-cover"
+                          />
+                        </div>
+                      );
+                    } else {
+                      return (
+                        <div
+                          key={index}
+                          className="prose prose-lg max-w-none break-words
+                            [&_h1]:text-3xl [&_h1]:font-bold [&_h1]:mb-4 [&_h1]:mt-8
+                            [&_h2]:text-2xl [&_h2]:font-bold [&_h2]:mb-3 [&_h2]:mt-6
+                            [&_h3]:text-xl [&_h3]:font-semibold [&_h3]:mb-2 [&_h3]:mt-4
+                            [&_p]:text-base [&_p]:leading-relaxed [&_p]:mb-4 [&_p]:text-foreground/80 [&_p]:break-words [&_p]:whitespace-pre-wrap
+                            [&_ul]:list-disc [&_ul]:ml-6 [&_ul]:mb-4 [&_ul]:space-y-2
+                            [&_ol]:list-decimal [&_ol]:ml-6 [&_ol]:mb-4 [&_ol]:space-y-2
+                            [&_li]:text-base [&_li]:leading-relaxed [&_li]:break-words
+                            [&_a]:text-primary [&_a]:underline [&_a]:hover:text-primary/80 [&_a]:break-words
+                            [&_strong]:font-semibold [&_strong]:text-foreground
+                            [&_em]:italic
+                            [&_blockquote]:border-l-4 [&_blockquote]:border-primary [&_blockquote]:pl-4 [&_blockquote]:italic [&_blockquote]:my-6 [&_blockquote]:text-muted-foreground [&_blockquote]:break-words
+                            [&_code]:bg-muted [&_code]:px-1.5 [&_code]:py-0.5 [&_code]:rounded [&_code]:text-sm [&_code]:break-words
+                            [&_pre]:bg-muted [&_pre]:p-4 [&_pre]:rounded-lg [&_pre]:overflow-x-auto [&_pre]:my-6"
+                        >
+                          <p className="whitespace-pre-wrap break-words">{section.content}</p>
+                        </div>
+                      );
+                    }
+                  })}
+                </div>
+              ) : (
+                // Render as HTML if content contains HTML tags
+                <div 
+                  className="prose prose-lg max-w-none break-words
+                    [&_h1]:text-3xl [&_h1]:font-bold [&_h1]:mb-4 [&_h1]:mt-8
+                    [&_h2]:text-2xl [&_h2]:font-bold [&_h2]:mb-3 [&_h2]:mt-6
+                    [&_h3]:text-xl [&_h3]:font-semibold [&_h3]:mb-2 [&_h3]:mt-4
+                    [&_p]:text-base [&_p]:leading-relaxed [&_p]:mb-4 [&_p]:text-foreground/80 [&_p]:break-words [&_p]:overflow-wrap-anywhere
+                    [&_ul]:list-disc [&_ul]:ml-6 [&_ul]:mb-4 [&_ul]:space-y-2
+                    [&_ol]:list-decimal [&_ol]:ml-6 [&_ol]:mb-4 [&_ol]:space-y-2
+                    [&_li]:text-base [&_li]:leading-relaxed [&_li]:break-words
+                    [&_a]:text-primary [&_a]:underline [&_a]:hover:text-primary/80 [&_a]:break-all
+                    [&_strong]:font-semibold [&_strong]:text-foreground
+                    [&_em]:italic
+                    [&_blockquote]:border-l-4 [&_blockquote]:border-primary [&_blockquote]:pl-4 [&_blockquote]:italic [&_blockquote]:my-6 [&_blockquote]:text-muted-foreground [&_blockquote]:break-words
+                    [&_img]:rounded-xl [&_img]:shadow-md [&_img]:my-6 [&_img]:w-full [&_img]:h-auto [&_img]:max-w-full
+                    [&_code]:bg-muted [&_code]:px-1.5 [&_code]:py-0.5 [&_code]:rounded [&_code]:text-sm [&_code]:break-words
+                    [&_pre]:bg-muted [&_pre]:p-4 [&_pre]:rounded-lg [&_pre]:overflow-x-auto [&_pre]:my-6"
+                  dangerouslySetInnerHTML={{ __html: language === "en" ? article.content_en! : article.content_ka! }}
+                />
+              )}
+            </>
           ) : (
             <div className="text-center text-muted-foreground mt-8">
               <p>No content available for this article.</p>
