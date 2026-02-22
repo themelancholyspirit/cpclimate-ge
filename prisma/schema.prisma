@@ -179,24 +179,32 @@ model MediaItem {
 }
 
 model Report {
-  id              String        @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  issueType     IssueType
-  location      String
-  description   String
-  photos        String[]
-  reporterName  String
-  reporterEmail String
-  reporterPhone String?
-  lat           Float?
-  lng           Float?
-  status        ReportStatus @default(pending)
-  createdAt     DateTime     @default(now())
+  id              String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  issueType       IssueType
+  location        String
+  description     String
+  reporterName    String
+  reporterEmail   String
+  reporterPhone   String?
+  lat             Float?
+  lng             Float?
+  status          ReportStatus @default(pending)
+  createdAt       DateTime     @default(now())
 
-  @@index([status])
-  @@index([issueType])
-  @@index([createdAt])
-  @@index([lat, lng])
+  photos          ReportPhoto[]
+
   @@map("reports")
+}
+
+model ReportPhoto {
+  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  reportId  String   @db.Uuid
+  fileId    String   @db.Uuid
+
+  report    Report         @relation(fields: [reportId], references: [id], onDelete: Cascade)
+  file      directus_files @relation(fields: [fileId], references: [id])
+
+  @@map("report_photos")
 }
 
 model Contact {
