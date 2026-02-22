@@ -124,75 +124,73 @@ export default function NewsDetailPage() {
   return (
     <div className="min-h-screen bg-background">
       {/* Back Button */}
-      <div className="border-b border-border">
-        <div className="container mx-auto px-4 py-4">
-          <Button variant="ghost" asChild>
-            <Link href="/news">
-              <ArrowLeft className="mr-2 h-4 w-4" />
-              {t.news?.headerTitle?.[language] || "News"}
-            </Link>
-          </Button>
-        </div>
+      <div className="container mx-auto px-4 py-6">
+        <Button variant="ghost" size="sm" asChild>
+          <Link href="/news">
+            <ArrowLeft className="mr-2 h-4 w-4" />
+            {t.news?.headerTitle?.[language] || "News"}
+          </Link>
+        </Button>
       </div>
 
-      {/* Header Image */}
-      {article.imageUrl && (
-        <div className="relative w-full h-[400px] lg:h-[500px]">
-          <Image
-            src={article.imageUrl}
-            alt={language === "en" ? article.title_en : article.title_ka}
-            fill
-            className="object-cover"
-            priority
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-        </div>
-      )}
+      {/* Main Content Container */}
+      <div className="container mx-auto px-4 pb-16">
+        <div className="max-w-4xl mx-auto">
+          {/* Title */}
+          <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-8 text-balance break-words leading-tight">
+            {language === "en" ? article.title_en : article.title_ka}
+          </h1>
 
-      {/* Article Header */}
-      <div className="border-b border-border bg-muted/30">
-        <div className="container mx-auto px-4 py-12">
-          <div className="max-w-4xl">
-            <div className="flex flex-wrap items-center gap-3 mb-4">
-              <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                <Calendar className="h-4 w-4" />
-                <span>{new Date(article.date).toLocaleDateString()}</span>
-              </div>
+          {/* Header Image */}
+          {article.imageUrl && (
+            <div className="relative w-full h-[300px] md:h-[400px] lg:h-[500px] rounded-2xl overflow-hidden mb-6">
+              <Image
+                src={article.imageUrl}
+                alt={language === "en" ? article.title_en : article.title_ka}
+                fill
+                className="object-cover"
+                priority
+              />
             </div>
-            <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4 text-balance break-words">
-              {language === "en" ? article.title_en : article.title_ka}
-            </h1>
-            {(language === "en" ? article.description_en : article.description_ka) && (
-              <p className="text-lg text-muted-foreground leading-relaxed break-words">
-                {language === "en" ? article.description_en : article.description_ka}
-              </p>
-            )}
-          </div>
-        </div>
-      </div>
+          )}
 
-      {/* Article Content */}
-      <div className="container mx-auto px-4 py-12">
-        <div className="max-w-4xl mx-auto overflow-hidden">
+          {/* Metadata Bar */}
+          <div className="flex flex-wrap items-center justify-between gap-4 mb-8 pb-8 border-b border-border">
+            <div className="flex items-center gap-2 text-muted-foreground">
+              <Calendar className="h-4 w-4" />
+              <span className="text-sm">{new Date(article.date).toLocaleDateString()}</span>
+            </div>
+          </div>
+
+          {/* Description */}
+          {(language === "en" ? article.description_en : article.description_ka) && (
+            <div className="text-base md:text-lg text-muted-foreground leading-relaxed mb-8">
+              {language === "en" ? article.description_en : article.description_ka}
+            </div>
+          )}
+
+          {/* Article Content */}
           {(language === "en" ? article.content_en : article.content_ka) ? (
             <div 
-              className="prose prose-slate dark:prose-invert max-w-none
-                [&_h1]:text-4xl [&_h1]:font-bold [&_h1]:mb-4 [&_h1]:mt-2
-                [&_h2]:text-3xl [&_h2]:font-bold [&_h2]:mb-3 [&_h2]:mt-6
-                [&_h3]:text-2xl [&_h3]:font-bold [&_h3]:mb-2 [&_h3]:mt-4
-                [&_p]:text-lg [&_p]:leading-relaxed [&_p]:mb-4
-                [&_strong]:font-semibold [&_em]:italic
-                [&_ul]:list-disc [&_ul]:ml-6 [&_ul]:mb-4
-                [&_ol]:list-decimal [&_ol]:ml-6 [&_ol]:mb-4
-                [&_li]:mb-1
-                [&_img]:rounded-lg [&_img]:shadow-md [&_img]:my-4 [&_img]:w-full
-                [&_a]:text-primary [&_a]:underline hover:[&_a]:no-underline
-                [&_blockquote]:border-l-4 [&_blockquote]:border-primary [&_blockquote]:pl-4 [&_blockquote]:italic [&_blockquote]:my-4
-                [&>*]:mb-4"
+              className="prose prose-lg max-w-none
+                [&_h1]:text-3xl [&_h1]:font-bold [&_h1]:mb-4 [&_h1]:mt-8
+                [&_h2]:text-2xl [&_h2]:font-bold [&_h2]:mb-3 [&_h2]:mt-6
+                [&_h3]:text-xl [&_h3]:font-semibold [&_h3]:mb-2 [&_h3]:mt-4
+                [&_p]:text-base [&_p]:leading-relaxed [&_p]:mb-4 [&_p]:text-foreground/80
+                [&_ul]:list-disc [&_ul]:ml-6 [&_ul]:mb-4 [&_ul]:space-y-2
+                [&_ol]:list-decimal [&_ol]:ml-6 [&_ol]:mb-4 [&_ol]:space-y-2
+                [&_li]:text-base [&_li]:leading-relaxed
+                [&_a]:text-primary [&_a]:underline [&_a]:hover:text-primary/80
+                [&_strong]:font-semibold [&_strong]:text-foreground
+                [&_em]:italic
+                [&_blockquote]:border-l-4 [&_blockquote]:border-primary [&_blockquote]:pl-4 [&_blockquote]:italic [&_blockquote]:my-6 [&_blockquote]:text-muted-foreground
+                [&_img]:rounded-xl [&_img]:shadow-md [&_img]:my-6 [&_img]:w-full [&_img]:h-auto
+                [&_code]:bg-muted [&_code]:px-1.5 [&_code]:py-0.5 [&_code]:rounded [&_code]:text-sm
+                [&_pre]:bg-muted [&_pre]:p-4 [&_pre]:rounded-lg [&_pre]:overflow-x-auto [&_pre]:my-6"
               dangerouslySetInnerHTML={{ __html: language === "en" ? article.content_en! : article.content_ka! }}
             />
           ) : (
-            <div className="text-center text-muted-foreground">
+            <div className="text-center text-muted-foreground mt-8">
               <p>No content available for this article.</p>
             </div>
           )}
