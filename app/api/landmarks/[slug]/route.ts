@@ -22,11 +22,11 @@ export async function GET(
       )
     }
 
-    // Transform headerImage UUID to full Directus asset URL
+    // Transform image UUID to full Directus asset URL
     const transformedLandmark = {
       ...landmark,
-      headerImage: landmark.headerImage 
-        ? `${DIRECTUS_URL}/assets/${landmark.headerImage}`
+      headerImage: landmark.image 
+        ? `${DIRECTUS_URL}/assets/${landmark.image}`
         : null,
     }
 

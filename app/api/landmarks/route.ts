@@ -10,11 +10,11 @@ export async function GET(request: NextRequest) {
       orderBy: { createdAt: 'desc' },
     })
 
-    // Transform headerImage UUIDs to full Directus asset URLs
+    // Transform image UUIDs to full Directus asset URLs
     const transformedLandmarks = landmarks.map(landmark => ({
       ...landmark,
-      headerImage: landmark.headerImage 
-        ? `${DIRECTUS_URL}/assets/${landmark.headerImage}`
+      headerImage: landmark.image 
+        ? `${DIRECTUS_URL}/assets/${landmark.image}`
         : null,
     }))
 
@@ -32,9 +32,9 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
-    const { slug, title_en, title_ka, description_en, description_ka, content_en, content_ka, location, lat, lng, icon, color, headerImage, featured } = body
+    const { slug, title_en, title_ka, description_en, description_ka, content_en, content_ka, location, image, date } = body
 
-    if (!title_en || !title_ka || !description_en || !description_ka) {
+    if (!title_en || !title_ka) {
       return NextResponse.json(
         { error: 'Missing required fields' },
         { status: 400 }
@@ -51,12 +51,8 @@ export async function POST(request: NextRequest) {
         content_en,
         content_ka,
         location,
-        lat,
-        lng,
-        icon: icon || 'map-pin',
-        color: color || '#3b82f6',
-        headerImage,
-        featured: featured || false,
+        image,
+        date: date ? new Date(date) : new Date(),
       },
     })
 

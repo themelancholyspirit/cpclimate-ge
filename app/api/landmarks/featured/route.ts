@@ -7,16 +7,15 @@ const DIRECTUS_URL = process.env.NEXT_PUBLIC_DIRECTUS_URL || 'http://localhost:8
 export async function GET(request: NextRequest) {
   try {
     const landmarks = await prisma.landmark.findMany({
-      where: { featured: true },
       orderBy: { createdAt: 'desc' },
       take: 3,
     })
 
-    // Transform headerImage UUIDs to full Directus asset URLs
+    // Transform image UUIDs to full Directus asset URLs
     const transformedLandmarks = landmarks.map(landmark => ({
       ...landmark,
-      headerImage: landmark.headerImage 
-        ? `${DIRECTUS_URL}/assets/${landmark.headerImage}`
+      headerImage: landmark.image 
+        ? `${DIRECTUS_URL}/assets/${landmark.image}`
         : null,
     }))
 

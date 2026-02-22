@@ -45,8 +45,8 @@ interface Landmark {
   description_en: string;
   description_ka: string;
   location?: string;
-  icon: string;
-  color: string;
+  icon?: string;
+  color?: string;
   headerImage: string | null;
 }
 
@@ -138,7 +138,8 @@ export default function LandmarksPage() {
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {landmarks.map((landmark) => {
-              const IconComponent = iconMap[landmark.icon] || MapPin;
+              const IconComponent = iconMap[landmark.icon || 'map-pin'] || MapPin;
+              const iconColor = landmark.color || '#3b82f6';
               return (
                 <Card
                   key={landmark.id}
@@ -158,7 +159,7 @@ export default function LandmarksPage() {
                     <div className="flex items-start justify-between mb-3">
                       <div
                         className="w-12 h-12 rounded-lg flex items-center justify-center flex-shrink-0"
-                        style={{ backgroundColor: landmark.color }}
+                        style={{ backgroundColor: iconColor }}
                       >
                         <IconComponent
                           className="h-6 w-6"

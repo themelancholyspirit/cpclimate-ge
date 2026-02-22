@@ -21,8 +21,8 @@ interface Landmark {
   location?: string;
   lat?: number;
   lng?: number;
-  icon: string;
-  color: string;
+  icon?: string;
+  color?: string;
   headerImage?: string;
 }
 
