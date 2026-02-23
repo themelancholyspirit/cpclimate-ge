@@ -6,6 +6,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Separator } from "@/components/ui/separator";
 import { ArrowLeft, Calendar, ExternalLink } from "lucide-react";
 import { useLanguage } from "@/contexts/language-context";
 
@@ -168,26 +169,18 @@ export default function NewsDetailPage() {
           {(language === "en"
             ? article.description_en
             : article.description_ka) && (
-            <div className="relative mb-10">
-              <div className="bg-gradient-to-r from-orange-50 to-slate-50 dark:from-orange-950/30 dark:to-slate-900/30 rounded-xl p-6 md:p-8 border-l-4 border-orange-500">
-                <p className="text-lg md:text-xl leading-relaxed text-foreground/90 font-medium">
-                  {language === "en"
-                    ? article.description_en
-                    : article.description_ka}
-                </p>
-              </div>
+            <div className="mb-10">
+              <p className="text-lg md:text-xl leading-relaxed text-muted-foreground break-words whitespace-pre-wrap">
+                {language === "en"
+                  ? article.description_en
+                  : article.description_ka}
+              </p>
             </div>
           )}
 
           {/* Content Divider */}
           {(language === "en" ? article.content_en : article.content_ka) && (
-            <div className="flex items-center gap-4 mb-8">
-              <div className="h-px flex-1 bg-border" />
-              <span className="text-sm font-medium text-muted-foreground uppercase tracking-wider">
-                {language === "en" ? "Full Article" : "სრული სტატია"}
-              </span>
-              <div className="h-px flex-1 bg-border" />
-            </div>
+            <Separator className="mb-8" />
           )}
 
           {/* Article Content */}

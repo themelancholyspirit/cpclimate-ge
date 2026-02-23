@@ -153,26 +153,18 @@ export default function ProjectDetailPage() {
           </div>
 
           {/* Description - Lead/Intro Section */}
-          <div className="relative mb-10">
-            <div className="bg-gradient-to-r from-blue-50 to-slate-50 dark:from-blue-950/30 dark:to-slate-900/30 rounded-xl p-6 md:p-8 border-l-4 border-blue-600">
-              <p className="text-lg md:text-xl leading-relaxed text-foreground/90 font-medium">
-                {language === "en"
-                  ? project.description_en
-                  : project.description_ka}
-              </p>
-            </div>
+          <div className="mb-10">
+            <p className="text-lg md:text-xl leading-relaxed text-muted-foreground break-words whitespace-pre-wrap">
+              {language === "en"
+                ? project.description_en
+                : project.description_ka}
+            </p>
           </div>
 
           {/* Content Divider */}
           {((project.contentSections && project.contentSections.length > 0) || 
             (language === "en" ? project.content_en : project.content_ka)) && (
-            <div className="flex items-center gap-4 mb-8">
-              <div className="h-px flex-1 bg-border" />
-              <span className="text-sm font-medium text-muted-foreground uppercase tracking-wider">
-                {language === "en" ? "Full Details" : "სრული ინფორმაცია"}
-              </span>
-              <div className="h-px flex-1 bg-border" />
-            </div>
+            <Separator className="mb-8" />
           )}
 
           {/* Main Content with Sections */}

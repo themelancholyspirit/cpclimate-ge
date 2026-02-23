@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { Separator } from "@/components/ui/separator";
 import { ArrowLeft, MapPin, Navigation } from "lucide-react";
 import { useLanguage } from "@/contexts/language-context";
 
@@ -135,23 +136,15 @@ export default function LandmarkDetailPage() {
           </div>
 
           {/* Description - Lead/Intro Section */}
-          <div className="relative mb-10">
-            <div className="bg-gradient-to-r from-green-50 to-slate-50 dark:from-green-950/30 dark:to-slate-900/30 rounded-xl p-6 md:p-8 border-l-4 border-green-600">
-              <p className="text-lg md:text-xl leading-relaxed text-foreground/90 font-medium">
-                {description}
-              </p>
-            </div>
+          <div className="mb-10">
+            <p className="text-lg md:text-xl leading-relaxed text-muted-foreground break-words whitespace-pre-wrap">
+              {description}
+            </p>
           </div>
 
           {/* Content Divider */}
           {content && (
-            <div className="flex items-center gap-4 mb-8">
-              <div className="h-px flex-1 bg-border" />
-              <span className="text-sm font-medium text-muted-foreground uppercase tracking-wider">
-                {language === "en" ? "Learn More" : "დაწვრილებით"}
-              </span>
-              <div className="h-px flex-1 bg-border" />
-            </div>
+            <Separator className="mb-8" />
           )}
 
           {/* Content */}
