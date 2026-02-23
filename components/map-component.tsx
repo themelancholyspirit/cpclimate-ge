@@ -1,7 +1,12 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { GoogleMap, Marker, Polygon, useJsApiLoader } from "@react-google-maps/api";
+import {
+  GoogleMap,
+  Marker,
+  Polygon,
+  useJsApiLoader,
+} from "@react-google-maps/api";
 import { Badge } from "@/components/ui/badge";
 import { MapClickReportModal } from "./map-click-report-modal";
 import { Button } from "@/components/ui/button";
@@ -10,12 +15,9 @@ import { useLanguage } from "@/contexts/language-context";
 // MapEntity.ts
 export type EntityType = "water" | "pollution" | "risk" | "report";
 
-export type GeometryType = "point" | "polygon" | "line";
-
 export interface MapEntity {
   id: string;
   entityType: EntityType;
-  geometryType?: GeometryType;
 
   // For points
   lat?: number;
@@ -30,17 +32,24 @@ export interface MapEntity {
   // Common fields
   title?: string;
   description?: string;
-  
+
   // Water-specific
   locationName?: string;
   status?: "normal" | "risk" | "problematic";
 
   // Pollution-specific
-  indicatorType?: "waste_accumulation" | "illegal_discharge" | "odor_stagnation";
+  indicatorType?:
+    | "waste_accumulation"
+    | "illegal_discharge"
+    | "odor_stagnation";
   severity?: "low" | "medium" | "high" | "critical";
 
   // Risk-specific
-  riskType?: "flood_zone" | "drainage_channel" | "sea_intrusion" | "erosion_section";
+  riskType?:
+    | "flood_zone"
+    | "drainage_channel"
+    | "sea_intrusion"
+    | "erosion_section";
   riskLevel?: "low" | "medium" | "high" | "critical";
   channelStatus?: "existing" | "blocked" | "damaged";
 
@@ -50,9 +59,9 @@ export interface MapEntity {
   testDate?: string;
   citizenImpactExplanation?: string;
   sourceType?: string;
+
+  type?: string;
 }
-
-
 
 interface MapComponentProps {
   activeLayer: string;
@@ -86,7 +95,10 @@ export function MapComponent({ activeLayer, onPointClick }: MapComponentProps) {
   const [initialLoading, setInitialLoading] = useState(true);
   const [hoveredMarkerId, setHoveredMarkerId] = useState<string | null>(null);
   const [selectedPoint, setSelectedPoint] = useState<MapEntity | null>(null);
-  const [clickedLocation, setClickedLocation] = useState<{ lat: number; lng: number } | null>(null);
+  const [clickedLocation, setClickedLocation] = useState<{
+    lat: number;
+    lng: number;
+  } | null>(null);
   const [showClickedMarker, setShowClickedMarker] = useState(false);
   const [showReportModal, setShowReportModal] = useState(false);
   const [showReportPrompt, setShowReportPrompt] = useState(false);
@@ -114,37 +126,51 @@ export function MapComponent({ activeLayer, onPointClick }: MapComponentProps) {
   }, [activeLayer]);
 
   // ------------------- Marker Icon -------------------
-  const getMarkerIcon = useCallback((entity: MapEntity, isHovered = false): google.maps.Symbol | undefined => {
-    if (typeof window === "undefined" || !window?.google?.maps?.SymbolPath) return undefined;
-    let color = "#22c55e";
+  const getMarkerIcon = useCallback(
+    (entity: MapEntity, isHovered = false): google.maps.Symbol | undefined => {
+      if (typeof window === "undefined" || !window?.google?.maps?.SymbolPath)
+        return undefined;
+      let color = "#22c55e";
 
-    try {
-      if (entity.entityType === "water") {
-        color = entity.status === "normal" ? "#22c55e" : entity.status === "risk" ? "#eab308" : "#ef4444";
-      } else if (entity.entityType === "pollution") {
-        color = entity.indicatorType === "waste_accumulation" ? "#f97316"
-          : entity.indicatorType === "illegal_discharge" ? "#b91c1c"
-          : "#f59e0b";
-      } else if (entity.entityType === "risk") {
-        color = entity.riskType === "flood_zone" ? "#06b6d4"
-          : entity.riskType === "drainage_channel" ? "#14b8a6"
-          : entity.riskType === "sea_intrusion" ? "#6366f1"
-          : entity.riskType === "erosion_section" ? "#78716c"
-          : "#64748b";
+      const TYPE_COLORS: Record<string, string> = {
+        water: "#ef4444",
+        channels: "#14b8a6",
+        flooding: "#06b6d4",
+        sea: "#6366f1",
+        erosion: "#78716c",
+        waste: "#f97316",
+        dump: "#b91c1c",
+        odor: "#f59e0b",
+      };
+
+      try {
+        if (entity.type === "water") {
+          color =
+            entity.status === "normal"
+              ? "#22c55e"
+              : entity.status === "risk"
+                ? "#eab308"
+                : "#ef4444";
+        } else {
+          color = entity.type
+            ? (TYPE_COLORS[entity.type as EntityType] ?? "#64748b")
+            : "#64748b";
+        }
+      } catch {
+        color = "#22c55e";
       }
-    } catch (err) {
-      color = "#22c55e";
-    }
 
-    return {
-      path: google.maps.SymbolPath.CIRCLE,
-      scale: isHovered ? 8.5 : 8,
-      fillColor: color,
-      fillOpacity: 1,
-      strokeColor: "#ffffff",
-      strokeWeight: isHovered ? 2.3 : 2,
-    };
-  }, []);
+      return {
+        path: google.maps.SymbolPath.CIRCLE,
+        scale: isHovered ? 8.5 : 8,
+        fillColor: color,
+        fillOpacity: 1,
+        strokeColor: "#ffffff",
+        strokeWeight: isHovered ? 2.3 : 2,
+      };
+    },
+    [],
+  );
 
   // ------------------- Map Load/Unmount -------------------
   const onLoad = useCallback((map: google.maps.Map) => setMap(map), []);
@@ -157,7 +183,7 @@ export function MapComponent({ activeLayer, onPointClick }: MapComponentProps) {
       setHoveredMarkerId(point.id);
       setSelectedPoint(point);
     },
-    [hoverTimeout]
+    [hoverTimeout],
   );
 
   const handleMarkerLeave = useCallback(() => {
@@ -166,7 +192,10 @@ export function MapComponent({ activeLayer, onPointClick }: MapComponentProps) {
     setHoverTimeout(timeout);
   }, []);
 
-  const handleMarkerClick = useCallback((point: MapEntity) => onPointClick(point), [onPointClick]);
+  const handleMarkerClick = useCallback(
+    (point: MapEntity) => onPointClick(point),
+    [onPointClick],
+  );
 
   // ------------------- Map Click -------------------
   const handleMapClick = (e: google.maps.MapMouseEvent) => {
@@ -188,7 +217,11 @@ export function MapComponent({ activeLayer, onPointClick }: MapComponentProps) {
       const res = await fetch("/api/reports", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...data, lat: clickedLocation.lat, lng: clickedLocation.lng }),
+        body: JSON.stringify({
+          ...data,
+          lat: clickedLocation.lat,
+          lng: clickedLocation.lng,
+        }),
       });
       if (res.ok) {
         setShowReportModal(false);
@@ -197,22 +230,25 @@ export function MapComponent({ activeLayer, onPointClick }: MapComponentProps) {
     } catch (err) {}
   };
 
-  const mapOptions: google.maps.MapOptions = useMemo(() => ({
-    disableDefaultUI: true,
-    zoomControl: false,
-    streetViewControl: false,
-    mapTypeControl: false,
-    fullscreenControl: false,
-    restriction: mapRestriction,
-    minZoom: 13,
-    maxZoom: 13,
-    mapTypeId: "terrain",
-    draggable: true,
-    scrollwheel: false,
-    gestureHandling: "none",
-    disableDoubleClickZoom: true,
-    styles: riverOnlyStyle,
-  }), []);
+  const mapOptions: google.maps.MapOptions = useMemo(
+    () => ({
+      disableDefaultUI: true,
+      zoomControl: false,
+      streetViewControl: false,
+      mapTypeControl: false,
+      fullscreenControl: false,
+      restriction: mapRestriction,
+      minZoom: 13,
+      maxZoom: 13,
+      mapTypeId: "terrain",
+      draggable: true,
+      scrollwheel: false,
+      gestureHandling: "none",
+      disableDoubleClickZoom: true,
+      styles: riverOnlyStyle,
+    }),
+    [],
+  );
 
   const { isLoaded, loadError } = useJsApiLoader({
     id: "google-map-script",
@@ -235,22 +271,33 @@ export function MapComponent({ activeLayer, onPointClick }: MapComponentProps) {
         options={mapOptions}
         onClick={handleMapClick}
       >
-        {mapPoints.filter(p => p.lat && p.lng).map(point => (
-          <Marker
-            key={point.id}
-            position={{ lat: point.lat!, lng: point.lng! }}
-            icon={getMarkerIcon(point, point.id === hoveredMarkerId)}
-            onClick={() => handleMarkerClick(point)}
-            onMouseOver={() => handleMarkerHover(point)}
-            onMouseOut={handleMarkerLeave}
-            title={point.entityType === "water" ? point.locationName : point.title}
-          />
-        ))}
+        {mapPoints
+          .filter((p) => p.lat && p.lng)
+          .map((point) => (
+            <Marker
+              key={point.id}
+              position={{ lat: point.lat!, lng: point.lng! }}
+              icon={getMarkerIcon(point, point.id === hoveredMarkerId)}
+              onClick={() => handleMarkerClick(point)}
+              onMouseOver={() => handleMarkerHover(point)}
+              onMouseOut={handleMarkerLeave}
+              title={
+                point.entityType === "water" ? point.locationName : point.title
+              }
+            />
+          ))}
 
         {clickedLocation && showClickedMarker && (
           <Marker
             position={clickedLocation}
-            icon={{ path: google.maps.SymbolPath.CIRCLE, scale: 10, fillColor: "#ef4444", fillOpacity: 1, strokeColor: "#fff", strokeWeight: 3 }}
+            icon={{
+              path: google.maps.SymbolPath.CIRCLE,
+              scale: 10,
+              fillColor: "#ef4444",
+              fillOpacity: 1,
+              strokeColor: "#fff",
+              strokeWeight: 3,
+            }}
           />
         )}
       </GoogleMap>
@@ -258,11 +305,33 @@ export function MapComponent({ activeLayer, onPointClick }: MapComponentProps) {
       {showReportPrompt && clickedLocation && (
         <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-50">
           <div className="bg-white rounded-lg shadow-xl border p-4 pointer-events-auto">
-            <div className="font-semibold text-sm mb-2">{t.map.reportPromptTitle[language]}</div>
-            <div className="text-xs text-muted-foreground mb-3">{t.map.reportPromptBody[language]}</div>
+            <div className="font-semibold text-sm mb-2">
+              {t.map.reportPromptTitle[language]}
+            </div>
+            <div className="text-xs text-muted-foreground mb-3">
+              {t.map.reportPromptBody[language]}
+            </div>
             <div className="flex gap-2">
-              <Button size="sm" onClick={() => { setShowReportModal(true); setShowReportPrompt(false); }}>{language === "en" ? "Yes" : "კი"}</Button>
-              <Button size="sm" variant="outline" onClick={() => { setShowReportPrompt(false); setClickedLocation(null); setShowClickedMarker(false); }}>{language === "en" ? "Cancel" : "გაუქმება"}</Button>
+              <Button
+                size="sm"
+                onClick={() => {
+                  setShowReportModal(true);
+                  setShowReportPrompt(false);
+                }}
+              >
+                {language === "en" ? "Yes" : "კი"}
+              </Button>
+              <Button
+                size="sm"
+                variant="outline"
+                onClick={() => {
+                  setShowReportPrompt(false);
+                  setClickedLocation(null);
+                  setShowClickedMarker(false);
+                }}
+              >
+                {language === "en" ? "Cancel" : "გაუქმება"}
+              </Button>
             </div>
           </div>
         </div>
@@ -270,7 +339,11 @@ export function MapComponent({ activeLayer, onPointClick }: MapComponentProps) {
 
       <MapClickReportModal
         isOpen={showReportModal}
-        onClose={() => { setShowReportModal(false); setClickedLocation(null); setShowClickedMarker(false); }}
+        onClose={() => {
+          setShowReportModal(false);
+          setClickedLocation(null);
+          setShowClickedMarker(false);
+        }}
         coordinates={clickedLocation}
         onSubmit={handleReportSubmit}
       />
