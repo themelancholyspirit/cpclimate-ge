@@ -26,7 +26,6 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
         setLanguageState(navLang as Language);
       }
     } catch (error) {
-      console.error("Error loading language preference:", error);
       setLanguageState("en");
     }
   }, []);
@@ -38,7 +37,6 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
         localStorage.setItem("language", lang);
       }
     } catch (error) {
-      console.error("Error saving language preference:", error);
     }
   };
 

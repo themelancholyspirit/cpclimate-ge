@@ -53,7 +53,6 @@ export default function ProjectDetailPage() {
           setError(true);
         }
       } catch (error) {
-        console.error("Error fetching project:", error);
         setError(true);
       } finally {
         setLoading(false);

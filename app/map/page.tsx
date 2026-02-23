@@ -67,15 +67,12 @@ export default function MapPage() {
               total: points.length,
             });
           } else {
-            console.error("Map points response is not an array");
             setStats({ normal: 0, warning: 0, problem: 0, total: 0 });
           }
         } else {
-          console.error("Failed to fetch map points stats", response.status);
           setStats({ normal: 0, warning: 0, problem: 0, total: 0 });
         }
       } catch (error) {
-        console.error("Error fetching stats:", error);
         setStats({ normal: 0, warning: 0, problem: 0, total: 0 });
       }
     }
@@ -362,7 +359,6 @@ export default function MapPage() {
         }}
         coordinates={reportCoordinates}
         onSubmit={(data) => {
-          console.log("Report submitted:", data);
           // Handle the submission here
         }}
       />

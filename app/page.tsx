@@ -107,15 +107,12 @@ export default function HomePage() {
           if (data && Array.isArray(data.projects)) {
             setFeaturedProjects(data.projects);
           } else {
-            console.error("Featured projects response invalid format");
             setFeaturedProjects([]);
           }
         } else {
-          console.error("Failed to fetch featured projects:", response.status);
           setFeaturedProjects([]);
         }
       } catch (error) {
-        console.error("Error fetching featured projects:", error);
         setFeaturedProjects([]);
       } finally {
         setIsLoading(false);
@@ -138,7 +135,6 @@ export default function HomePage() {
             setNewsArticles([]);
           }
         } else {
-          console.error("Failed to fetch news:", response.status);
           setNewsArticles([]);
         }
       } catch (error) {
@@ -160,15 +156,12 @@ export default function HomePage() {
           if (data && Array.isArray(data.landmarks)) {
             setFeaturedLandmarks(data.landmarks);
           } else {
-            console.error("Featured landmarks response invalid format");
             setFeaturedLandmarks([]);
           }
         } else {
-          console.error("Failed to fetch featured landmarks:", response.status);
           setFeaturedLandmarks([]);
         }
       } catch (error) {
-        console.error("Error fetching featured landmarks:", error);
         setFeaturedLandmarks([]);
       } finally {
         setIsLoadingLandmarks(false);
@@ -583,49 +576,6 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Impact & Results */}
-      {/* <section className="py-16 md:py-24 bg-muted/30">
-        <div className="container mx-auto px-4">
-          <h2 className="text-3xl md:text-4xl font-bold mb-12 text-center">
-            {t.homePage.impactTitle[language]}
-          </h2>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-            {[
-              {
-                number: "3",
-                label: t.homePage.statsRiversAssessed[language],
-                icon: Droplet,
-              },
-              {
-                number: "250+",
-                label: t.homePage.statsCitizensEngaged[language],
-                icon: Users,
-              },
-              {
-                number: "12",
-                label: t.homePage.statsPolicyRecommendations[language],
-                icon: FileText,
-              },
-              {
-                number: "45",
-                label: t.homePage.statsCommunityMonitors[language],
-                icon: TrendingUp,
-              },
-            ].map((stat, i) => (
-              <div key={i} className="text-center">
-                <stat.icon className="h-10 w-10 mx-auto mb-4 text-primary" />
-                <div className="text-4xl md:text-5xl font-bold mb-2">
-                  {stat.number}
-                </div>
-                <div className="text-sm text-muted-foreground">
-                  {stat.label}
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section> */}
-
       {/* Partners & Donors */}
       <section className="py-16 md:py-24 bg-background">
         <div className="container mx-auto px-4">
@@ -641,66 +591,72 @@ export default function HomePage() {
             <div className="flex animate-scroll">
               {/* First set of logos */}
               {[
-                { name: "CENN", logo: "/partners/cenn-300x240.png" },
-                { name: "European Environmental Bureau", logo: "/partners/EEB-logo-on-white-blue-text-cmyk-002-1-300x188.jpg" },
-                { name: "IRC", logo: "/partners/irc-300x240.png" },
-                { name: "Ozurgeti Municipality", logo: "/partners/ozurgeti.png" },
-                { name: "VVG", logo: "/partners/vvg-300x240.png" },
-                { name: "Chokhatauri Municipality", logo: "/partners/chokhatauri.png" },
-                { name: "iBloki", logo: "/partners/ibloki.png" },
-                { name: "Lanchkhuti Municipality", logo: "/partners/lanchkhuti.png" },
-                { name: "Poland Ministry", logo: "/partners/poland.png" },
-                { name: "Women's Fund Georgia", logo: "/partners/ქალათა_ფონდი.png" },
+                { name: "CENN", logo: "/partners/cenn-300x240.png", url: "https://www.cenn.org/ka/" },
+                { name: "European Environmental Bureau", logo: "/partners/EEB-logo-on-white-blue-text-cmyk-002-1-300x188.jpg", url: "https://eeb.org/en/" },
+                { name: "IRC", logo: "/partners/irc-300x240.png", url: "https://www.irc.ge/" },
+                { name: "Ozurgeti Municipality", logo: "/partners/ozurgeti.png", url: "http://ozurgeti.mun.gov.ge/" },
+                { name: "VVG", logo: "/partners/vvg-300x240.png", url: "https://alytausrvvg.lt/" },
+                { name: "Chokhatauri Municipality", logo: "/partners/chokhatauri.png", url: "http://chokhatauri.ge/" },
+                { name: "iBloki", logo: "/partners/ibloki.png", url: "https://www.facebook.com/people/%E1%83%9E%E1%83%98%E1%83%A0%E1%83%95%E1%83%94%E1%83%9A%E1%83%98-%E1%83%91%E1%83%9A%E1%83%9D%E1%83%99%E1%83%98-first-block/100069353190510/" },
+                { name: "Lanchkhuti Municipality", logo: "/partners/lanchkhuti.png", url: "https://lanchkhuti.gov.ge/" },
+                { name: "Poland Ministry", logo: "/partners/poland.png", url: "https://www.facebook.com/CWPW.PECC/?locale=pl_PL" },
+                { name: "Women's Fund Georgia", logo: "/partners/ქალათა_ფონდი.png", url: "https://www.womenfundgeorgia.org/ka/Main" },
               ].map((partner, i) => (
-                <div
+                <a
                   key={i}
-                  className="flex-shrink-0 mx-4 md:mx-6 group"
-                  style={{ width: '180px' }}
+                  href={partner.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex-shrink-0 mx-5 md:mx-8 group"
+                  style={{ width: '220px' }}
                 >
-                  <div className="bg-white rounded-xl p-6 shadow-sm hover:shadow-md transition-all duration-300 border border-slate-100 h-32 flex items-center justify-center group-hover:scale-105">
+                  <div className="bg-white rounded-xl p-6 shadow-sm hover:shadow-md transition-all duration-300 border border-slate-100 h-40 flex items-center justify-center group-hover:scale-105">
                     <img
                       src={partner.logo}
                       alt={partner.name}
-                      className="max-w-full max-h-full object-contain filter grayscale group-hover:grayscale-0 transition-all duration-300"
+                      className="max-w-full max-h-full object-contain transition-all duration-300"
                       title={partner.name}
                     />
                   </div>
-                  <p className="text-center text-xs text-muted-foreground mt-3 font-medium">
+                  <p className="text-center text-sm text-muted-foreground mt-3 font-medium">
                     {partner.name}
                   </p>
-                </div>
+                </a>
               ))}
               
               {/* Duplicate set for seamless loop */}
               {[
-                { name: "CENN", logo: "/partners/cenn-300x240.png" },
-                { name: "European Environmental Bureau", logo: "/partners/EEB-logo-on-white-blue-text-cmyk-002-1-300x188.jpg" },
-                { name: "IRC", logo: "/partners/irc-300x240.png" },
-                { name: "Ozurgeti Municipality", logo: "/partners/ozurgeti.png" },
-                { name: "VVG", logo: "/partners/vvg-300x240.png" },
-                { name: "Chokhatauri Municipality", logo: "/partners/chokhatauri.png" },
-                { name: "iBloki", logo: "/partners/ibloki.png" },
-                { name: "Lanchkhuti Municipality", logo: "/partners/lanchkhuti.png" },
-                { name: "Poland Ministry", logo: "/partners/poland.png" },
-                { name: "Women's Fund Georgia", logo: "/partners/ქალათა_ფონდი.png" },
+                { name: "CENN", logo: "/partners/cenn-300x240.png", url: "https://www.cenn.org/ka/" },
+                { name: "European Environmental Bureau", logo: "/partners/EEB-logo-on-white-blue-text-cmyk-002-1-300x188.jpg", url: "https://eeb.org/en/" },
+                { name: "IRC", logo: "/partners/irc-300x240.png", url: "https://www.irc.ge/" },
+                { name: "Ozurgeti Municipality", logo: "/partners/ozurgeti.png", url: "http://ozurgeti.mun.gov.ge/" },
+                { name: "VVG", logo: "/partners/vvg-300x240.png", url: "https://alytausrvvg.lt/" },
+                { name: "Chokhatauri Municipality", logo: "/partners/chokhatauri.png", url: "http://chokhatauri.ge/" },
+                { name: "iBloki", logo: "/partners/ibloki.png", url: "https://www.facebook.com/people/%E1%83%9E%E1%83%98%E1%83%A0%E1%83%95%E1%83%94%E1%83%9A%E1%83%98-%E1%83%91%E1%83%9A%E1%83%9D%E1%83%99%E1%83%98-first-block/100069353190510/" },
+                { name: "Lanchkhuti Municipality", logo: "/partners/lanchkhuti.png", url: "https://lanchkhuti.gov.ge/" },
+                { name: "Poland Ministry", logo: "/partners/poland.png", url: "https://www.facebook.com/CWPW.PECC/?locale=pl_PL" },
+                { name: "Women's Fund Georgia", logo: "/partners/ქალათა_ფონდი.png", url: "https://www.womenfundgeorgia.org/ka/Main" },
               ].map((partner, i) => (
-                <div
+                <a
                   key={`dup-${i}`}
-                  className="flex-shrink-0 mx-4 md:mx-6 group"
-                  style={{ width: '180px' }}
+                  href={partner.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex-shrink-0 mx-5 md:mx-8 group"
+                  style={{ width: '220px' }}
                 >
-                  <div className="bg-white rounded-xl p-6 shadow-sm hover:shadow-md transition-all duration-300 border border-slate-100 h-32 flex items-center justify-center group-hover:scale-105">
+                  <div className="bg-white rounded-xl p-6 shadow-sm hover:shadow-md transition-all duration-300 border border-slate-100 h-40 flex items-center justify-center group-hover:scale-105">
                     <img
                       src={partner.logo}
                       alt={partner.name}
-                      className="max-w-full max-h-full object-contain filter grayscale group-hover:grayscale-0 transition-all duration-300"
+                      className="max-w-full max-h-full object-contain transition-all duration-300"
                       title={partner.name}
                     />
                   </div>
-                  <p className="text-center text-xs text-muted-foreground mt-3 font-medium">
+                  <p className="text-center text-sm text-muted-foreground mt-3 font-medium">
                     {partner.name}
                   </p>
-                </div>
+                </a>
               ))}
             </div>
           </div>
@@ -717,7 +673,7 @@ export default function HomePage() {
             }
             
             .animate-scroll {
-              animation: scroll 40s linear infinite;
+              animation: scroll 20s linear infinite;
             }
             
             .animate-scroll:hover {

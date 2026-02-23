@@ -64,11 +64,9 @@ export default function FindingsPage() {
           if (Array.isArray(resourcesData)) {
             setResources(resourcesData);
           } else {
-            console.error("Resources response is not an array");
             setResources([]);
           }
         } else {
-          console.error("Failed to fetch resources:", resourcesResponse.status);
           setResources([]);
         }
 
@@ -77,15 +75,12 @@ export default function FindingsPage() {
           if (Array.isArray(mediaData)) {
             setMediaItems(mediaData);
           } else {
-            console.error("Media items response is not an array");
             setMediaItems([]);
           }
         } else {
-          console.error("Failed to fetch media items:", mediaResponse.status);
           setMediaItems([]);
         }
       } catch (error) {
-        console.error("Error fetching data:", error);
         setResources([]);
         setMediaItems([]);
       } finally {
@@ -111,7 +106,6 @@ export default function FindingsPage() {
         day: "numeric",
       });
     } catch (error) {
-      console.error("Error formatting date:", error);
       return "N/A";
     }
   };

@@ -89,7 +89,6 @@ export default function ContactPage() {
         message: "",
       });
     } catch (error) {
-      console.error("Error submitting contact form:", error);
       toast({
         title: t.toast.contactError.title[language],
         description: t.toast.contactError.description[language],

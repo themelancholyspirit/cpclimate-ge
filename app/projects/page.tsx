@@ -79,15 +79,12 @@ export default function ProjectsPage() {
           if (Array.isArray(data)) {
             setProjects(data);
           } else {
-            console.error("Projects response is not an array");
             setProjects([]);
           }
         } else {
-          console.error("Failed to fetch projects:", response.status);
           setProjects([]);
         }
       } catch (error) {
-        console.error("Error fetching projects:", error);
         setProjects([]);
       } finally {
         setLoading(false);

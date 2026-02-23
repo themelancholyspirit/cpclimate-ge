@@ -117,7 +117,7 @@ export const translations = {
     },
     contact: { en: "Contact", ka: "კონტაქტი" },
     aboutBody: {
-      en: "Strengthening climate resilience and environmental governance through data-driven analysis, community engagement, and policy advocacy in Poti, Georgia.",
+      en:"Introducing innovative approaches and strengthening the institutional responsibility and sustainability of partner organizations.",
       ka: "ვნერგავთ ინოვაციურ მიდგომებს და ვაძლიერებთ პარტნიორი ორგანიზაციების ინსტიტუციურ პასუხისმგებლობას და მდგრადობას.",
     },
     copyright: {
@@ -279,20 +279,20 @@ export const translations = {
       ka: "თანამონაწილეობისა და ჩართულობის ცენტრი",
     },
     heroSubtitle: {
-      en: "Turning evidence and citizen action into climate solutions",
+      en: "Introducing innovative approaches and strengthening the institutional responsibility and sustainability of partner organizations.",
       ka: "ვნერგავთ ინოვაციურ მიდგომებს და ვაძლიერებთ პარტნიორი ორგანიზაციების ინსტიტუციურ პასუხისმგებლობას და მდგრადობას.",
     },
     ctaMap: { en: "View Interactive Map", ka: "ინტერაქტიული რუკის ნახვა" },
     ctaProjects: { en: "Explore Our Projects", ka: "ჩვენი პროექტები" },
     whoWeAreTitle: { en: "Who We Are", ka: "ჩვენ შესახებ" },
     whoWeAreDesc: {
-      en: "CPC is a civic organization strengthening climate resilience and environmental governance through data-driven analysis, community engagement, and policy advocacy.",
+      en: "Since its establishment, the organization has been involved in monitoring public governance reform; the Center for Participation and Involvement (CPC) is actively involved in strengthening environmental policy, sustainable development, good governance, citizen engagement, and identifying women's needs.",
       ka: "დაარსებიდან დღემდე ორგანიზაცია მონაწილეობს საჯარო მმართველობის რეფორმის მონიტორინგში; „თანამონაწილეობისა და ჩართულობის ცენტრი „სიპისი“ აქტიურადაა ჩართული გარემოსდაცვითი პოლიტიკის, მდგარდი განვითარების, კარგი მმართველობის, მოქალაქეთა ჩართულობის, ქალთა საჭიროებების ინდენტიფიცირების გაძლიერების მიმართულებით.",
     },
     aboutCPC: { en: "About CPC", ka: "CPC-ის შესახებ" },
     whatWeDoTitle: { en: "What We Do", ka: "რას ვაკეთებთ" },
     evidenceTitle: {
-      en: "Evidence & Data",
+      en: "Environmental activities and advocacy",
       ka: "გარემოსდაცვითი აქტივობები და ადვოკატირება",
     },
     evidenceDesc: {
@@ -300,16 +300,16 @@ export const translations = {
       ka: "საბაზისო კვლევები, საველე შეფასებები, ეკოლოგიური და კლიმატური რისკების ანალიზი",
     },
     communityTitle: {
-      en: "Community Engagement",
+      en: "⁠Promoting citizen participation and engagement",
       ka: "⁠მოქალაქეთა თანამონაწილეობისა და ჩართულობის ხელშეწყობა",
     },
     communityDesc: {
-      en: "Citizen monitoring, awareness campaigns, inclusive participation models",
+      en: "Citizen monitoring, awareness raising, inclusive participation",
       ka: "მოქალაქეთა მონიტორინგი, ცნობიერების ამაღლება, ინკლუზიური მონაწილეობა",
     },
-    policyTitle: { en: "Policy & Advocacy", ka: "⁠საინფორმაციო კამპანიები და მონიტორინგი" },
+    policyTitle: { en: "⁠Information campaigns and monitoring", ka: "⁠საინფორმაციო კამპანიები და მონიტორინგი" },
     policyDesc: {
-      en: "Evidence-based recommendations and dialogue with local authorities",
+      en: "Mediator between local government and citizens",
       ka: "მედიატორი ადგილობრივ მმართველობასა და მოქალაქეებს შორის",
     },
     featuredProjectsTitle: {
@@ -331,7 +331,7 @@ export const translations = {
       ka: "საზოგადოება მოქმედებაში",
     },
     communityInActionDesc: {
-      en: "Citizens are co-creators of solutions through monitoring, events, and youth engagement.",
+      en: "CPC successfully plays the role of mediator between local government and citizens. At the same time, it is a leading organization in the areas of environmental protection, sustainable development, good governance, participatory democracy, ensuring citizen engagement, and advocating for vulnerable groups.",
       ka: "სიპისი წარმატებით ასრულებს მედიატორის როლს ადგილობრივ მმართველობასა და მოქალაქეებს შორის. ამავდროულად, არის ლიდერი ორგანიზაცია გარემოსდაცვითი, მდგრადი განვითარების, კარგი მმართველობის, მონაწილეობითი დემოკრატიის, მოქალაქეთა ჩართულობის უზრუნველყოფისა და მოწყვლადი  ჯგუფების ადვოკატირების მიმართულებით.",
     },
     partnersDonorsTitle: {
@@ -363,7 +363,7 @@ export const translations = {
     },
     getInvolvedTitle: { en: "Get Involved", ka: "ჩაერთეთ" },
     getInvolvedDesc: {
-      en: "Join us in protecting our environment and building climate resilience",
+      en: "Join us and get involved in various projects!",
       ka: "შემოგვიერთდით და ჩაერთეთ სხვადასხვა პროექტებში!",
     },
     becomeObserver: {

@@ -142,15 +142,12 @@ export function MapComponent({ activeLayer, onPointClick }: MapComponentProps) {
               if (Array.isArray(data)) {
                 setWaterPoints(data.map((p: any) => ({ ...p, entityType: "water" as const })));
               } else {
-                console.error("Water sampling points response is not an array");
                 setWaterPoints([]);
               }
             } else {
-              console.error("Failed to fetch water sampling points", waterRes.status);
               setWaterPoints([]);
             }
           } catch (err) {
-            console.error("Error fetching water sampling points:", err);
             setWaterPoints([]);
           }
         } else {
@@ -180,15 +177,12 @@ export function MapComponent({ activeLayer, onPointClick }: MapComponentProps) {
               if (Array.isArray(data)) {
                 setPollutionIndicators(data.map((p: any) => ({ ...p, entityType: "pollution" as const })));
               } else {
-                console.error("Pollution indicators response is not an array");
                 setPollutionIndicators([]);
               }
             } else {
-              console.error("Failed to fetch pollution indicators", pollutionRes.status);
               setPollutionIndicators([]);
             }
           } catch (err) {
-            console.error("Error fetching pollution indicators:", err);
             setPollutionIndicators([]);
           }
         } else {
@@ -211,31 +205,25 @@ export function MapComponent({ activeLayer, onPointClick }: MapComponentProps) {
               ? `/api/risk-layers?riskType=${riskType}&isActive=true`
               : "/api/risk-layers?isActive=true";
             
-            console.log("Fetching risk layers:", url, "for activeLayer:", activeLayer);
             const riskRes = await fetch(url);
             if (riskRes.ok) {
               const data = await riskRes.json();
-              console.log("Risk layers received:", data.length, "items");
               data.forEach((d: any) => console.log("  -", d.riskType, d.title));
               if (Array.isArray(data)) {
                 setRiskLayers(data.map((p: any) => ({ ...p, entityType: "risk" as const })));
               } else {
-                console.error("Risk layers response is not an array");
                 setRiskLayers([]);
               }
             } else {
-              console.error("Failed to fetch risk layers", riskRes.status);
               setRiskLayers([]);
             }
           } catch (err) {
-            console.error("Error fetching risk layers:", err);
             setRiskLayers([]);
           }
         } else {
           setRiskLayers([]);
         }
       } catch (error) {
-        console.error("Error fetching map data:", error);
         setWaterPoints([]);
         setPollutionIndicators([]);
         setRiskLayers([]);
@@ -263,7 +251,6 @@ export function MapComponent({ activeLayer, onPointClick }: MapComponentProps) {
       setClickedLocation({ lat, lng });
       setShowClickedMarker(true);
 
-      console.log(lat, lng);
       
       // Show the report prompt after 500ms delay
       setTimeout(() => {
@@ -286,13 +273,11 @@ export function MapComponent({ activeLayer, onPointClick }: MapComponentProps) {
         }),
       });
       if (response.ok) {
-        console.log("Report submitted successfully");
         // Optionally refresh map points to show new report
         setClickedLocation(null);
         setShowReportModal(false);
       }
     } catch (error) {
-      console.error("Error submitting report:", error);
     }
   };
 
@@ -449,7 +434,6 @@ export function MapComponent({ activeLayer, onPointClick }: MapComponentProps) {
             : "#64748b"; // default to slate
         }
       } catch (err) {
-        console.error("Error determining marker color:", err);
         color = "#22c55e"; // fallback to green
       }
 
@@ -573,7 +557,6 @@ export function MapComponent({ activeLayer, onPointClick }: MapComponentProps) {
             }
 
             if (!lat || !lng || typeof lat !== 'number' || typeof lng !== 'number') {
-              console.log(`Skipping risk layer ${layer.riskType} - no valid coordinates`);
               return null;
             }
 
@@ -589,7 +572,6 @@ export function MapComponent({ activeLayer, onPointClick }: MapComponentProps) {
               />
             );
           } catch (err) {
-            console.error("Error rendering risk layer marker:", layer.id, err);
             return null;
           }
         })}
@@ -625,7 +607,6 @@ export function MapComponent({ activeLayer, onPointClick }: MapComponentProps) {
               />
             );
           } catch (err) {
-            console.error("Error rendering pollution polygon:", indicator.id, err);
             return null;
           }
         })}
@@ -676,7 +657,6 @@ export function MapComponent({ activeLayer, onPointClick }: MapComponentProps) {
                 }
                 return new Date().toLocaleDateString("en-US", { month: "short", day: "2-digit", year: "numeric" });
               } catch (err) {
-                console.error("Error formatting date:", err);
                 return "N/A";
               }
             })();
@@ -698,7 +678,6 @@ export function MapComponent({ activeLayer, onPointClick }: MapComponentProps) {
                 }
                 return "Unknown";
               } catch (err) {
-                console.error("Error determining status badge:", err);
                 return "Unknown";
               }
             })();
@@ -747,7 +726,6 @@ export function MapComponent({ activeLayer, onPointClick }: MapComponentProps) {
             </div>
           );
           } catch (err) {
-            console.error("Error rendering tooltip:", err);
             return null;
           }
         })()}

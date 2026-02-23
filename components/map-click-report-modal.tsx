@@ -51,10 +51,6 @@ export function MapClickReportModal({
     reporterPhone: "",
   });
 
-  useEffect(() => {
-    console.log(formData);
-  }, [formData]);
-
   // Update coordinates when they change
   useEffect(() => {
     try {
@@ -69,9 +65,7 @@ export function MapClickReportModal({
           location: `${coordinates.lat.toFixed(6)}, ${coordinates.lng.toFixed(6)}`,
         }));
       }
-    } catch (error) {
-      console.error("Error updating coordinates:", error);
-    }
+    } catch (error) {}
   }, [coordinates]);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -106,16 +100,9 @@ export function MapClickReportModal({
             if (uploadResponse.ok) {
               const uploadResult = await uploadResponse.json();
               photoIds.push(uploadResult.data.id);
-              console.log("Photo uploaded successfully:", uploadResult.data.id);
             } else {
-              console.error(
-                "Failed to upload photo:",
-                await uploadResponse.text(),
-              );
-              // Continue with other photos even if one fails
             }
           } catch (uploadError) {
-            console.error("Error uploading photo:", uploadError);
             // Continue with other photos even if one fails
           }
         }
@@ -160,7 +147,6 @@ export function MapClickReportModal({
         reporterPhone: "",
       });
     } catch (error) {
-      console.error("Error submitting report:", error);
       // Show error toast
       toast({
         variant: "destructive",
@@ -340,15 +326,15 @@ export function MapClickReportModal({
                   try {
                     const files = Array.from(e?.target?.files || []);
                     setFormData({ ...formData, photos: files });
-                  } catch (error) {
-                    console.error("Error handling photo upload:", error);
-                  }
+                  } catch (error) {}
                 }}
               />
               {formData.photos && formData.photos.length > 0 && (
                 <div className="mt-2 text-sm text-muted-foreground">
-                  {formData.photos.length} {language === "en" ? "image" : "ფოტო"}
-                  {formData.photos.length > 1 ? "s" : ""} { language === "en" ? "selected" : "არჩეული" }
+                  {formData.photos.length}{" "}
+                  {language === "en" ? "image" : "ფოტო"}
+                  {formData.photos.length > 1 ? "s" : ""}{" "}
+                  {language === "en" ? "selected" : "არჩეული"}
                 </div>
               )}
             </div>

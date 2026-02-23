@@ -41,7 +41,6 @@ export default function NewsDetailPage() {
           setError(true);
         }
       } catch (error) {
-        console.error("Error fetching news article:", error);
         setError(true);
       } finally {
         setLoading(false);

@@ -68,7 +68,6 @@ export default function LandmarksPage() {
         day: "numeric",
       });
     } catch (error) {
-      console.error("Error formatting date:", error);
       return "N/A";
     }
   };
@@ -82,15 +81,12 @@ export default function LandmarksPage() {
           if (Array.isArray(data)) {
             setLandmarks(data);
           } else {
-            console.error("Landmarks response is not an array");
             setLandmarks([]);
           }
         } else {
-          console.error("Failed to fetch landmarks:", response.status);
           setLandmarks([]);
         }
       } catch (error) {
-        console.error("Error fetching landmarks:", error);
         setLandmarks([]);
       } finally {
         setLoading(false);

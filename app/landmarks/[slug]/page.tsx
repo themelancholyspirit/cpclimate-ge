@@ -44,7 +44,6 @@ export default function LandmarkDetailPage() {
           setError(true);
         }
       } catch (error) {
-        console.error("Error fetching landmark:", error);
         setError(true);
       } finally {
         setLoading(false);
@@ -160,21 +159,21 @@ export default function LandmarkDetailPage() {
           {/* Content */}
           {content && (
             <div
-              className="prose prose-lg max-w-none 
-                [&_h1]:text-3xl [&_h1]:font-bold [&_h1]:mb-4 [&_h1]:mt-8
-                [&_h2]:text-2xl [&_h2]:font-bold [&_h2]:mb-3 [&_h2]:mt-6
-                [&_h3]:text-xl [&_h3]:font-semibold [&_h3]:mb-2 [&_h3]:mt-4
-                [&_p]:text-base [&_p]:leading-relaxed [&_p]:mb-4 [&_p]:text-foreground/80
-                [&_ul]:list-disc [&_ul]:ml-6 [&_ul]:mb-4 [&_ul]:space-y-2
-                [&_ol]:list-decimal [&_ol]:ml-6 [&_ol]:mb-4 [&_ol]:space-y-2
-                [&_li]:text-base [&_li]:leading-relaxed
-                [&_a]:text-primary [&_a]:underline [&_a]:hover:text-primary/80
-                [&_strong]:font-semibold [&_strong]:text-foreground
-                [&_em]:italic
-                [&_blockquote]:border-l-4 [&_blockquote]:border-primary [&_blockquote]:pl-4 [&_blockquote]:italic [&_blockquote]:my-6 [&_blockquote]:text-muted-foreground
-                [&_img]:rounded-xl [&_img]:shadow-md [&_img]:my-6 [&_img]:w-full [&_img]:h-auto
-                [&_code]:bg-muted [&_code]:px-1.5 [&_code]:py-0.5 [&_code]:rounded [&_code]:text-sm
-                [&_pre]:bg-muted [&_pre]:p-4 [&_pre]:rounded-lg [&_pre]:overflow-x-auto [&_pre]:my-6"
+              className="prose prose-lg max-w-none min-w-0 break-words overflow-hidden
+      [&_h1]:text-3xl [&_h1]:font-bold [&_h1]:mb-4 [&_h1]:mt-8
+      [&_h2]:text-2xl [&_h2]:font-bold [&_h2]:mb-3 [&_h2]:mt-6
+      [&_h3]:text-xl [&_h3]:font-semibold [&_h3]:mb-2 [&_h3]:mt-4
+      [&_p]:text-base [&_p]:leading-relaxed [&_p]:mb-4 [&_p]:text-foreground/80
+      [&_ul]:list-disc [&_ul]:ml-6 [&_ul]:mb-4 [&_ul]:space-y-2
+      [&_ol]:list-decimal [&_ol]:ml-6 [&_ol]:mb-4 [&_ol]:space-y-2
+      [&_li]:text-base [&_li]:leading-relaxed
+      [&_a]:text-primary [&_a]:underline [&_a]:hover:text-primary/80 [&_a]:break-all
+      [&_strong]:font-semibold [&_strong]:text-foreground
+      [&_em]:italic
+      [&_blockquote]:border-l-4 [&_blockquote]:border-primary [&_blockquote]:pl-4 [&_blockquote]:italic [&_blockquote]:my-6 [&_blockquote]:text-muted-foreground
+      [&_img]:rounded-xl [&_img]:shadow-md [&_img]:my-6 [&_img]:w-full [&_img]:h-auto [&_img]:max-w-full
+      [&_code]:bg-muted [&_code]:px-1.5 [&_code]:py-0.5 [&_code]:rounded [&_code]:text-sm [&_code]:break-all
+      [&_pre]:bg-muted [&_pre]:p-4 [&_pre]:rounded-lg [&_pre]:overflow-x-auto [&_pre]:my-6 [&_pre]:max-w-full"
               dangerouslySetInnerHTML={{ __html: content }}
             />
           )}

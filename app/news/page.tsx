@@ -43,15 +43,12 @@ export default function NewsPage() {
           if (Array.isArray(mediaData)) {
             setMediaItems(mediaData);
           } else {
-            console.error("Media items response is not an array");
             setMediaItems([]);
           }
         } else {
-          console.error("Failed to fetch media items:", mediaResponse.status);
           setMediaItems([]);
         }
       } catch (error) {
-        console.error("Error fetching media items:", error);
         setMediaItems([]);
       } finally {
         setLoading(false);
@@ -72,7 +69,6 @@ export default function NewsPage() {
         day: "numeric",
       });
     } catch (error) {
-      console.error("Error formatting date:", error);
       return "N/A";
     }
   };
