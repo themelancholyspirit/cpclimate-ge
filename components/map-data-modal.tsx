@@ -105,7 +105,7 @@ const problem = {
 };
 
 export function MapDataModal({ point, onClose }: MapDataModalProps) {
-  const { t, language } = useLanguage();
+  const { language } = useLanguage();
 
   const capitalize = (str?: string | null) =>
     str && typeof str === "string" && str.length > 0
@@ -122,13 +122,17 @@ export function MapDataModal({ point, onClose }: MapDataModalProps) {
           <div className="flex items-start justify-between">
             <div className="flex-1">
               <CardTitle className="text-xl mb-2">
-                {language === "en" ? problem[point.title as keyof typeof problem]?.en : problem[point.title as keyof typeof problem]?.ka}
+                {language === "en"
+                  ? problem[point.title as keyof typeof problem]?.en
+                  : problem[point.title as keyof typeof problem]?.ka}
               </CardTitle>
               <CardDescription className="flex items-center gap-2">
                 <MapPin className="h-4 w-4" />
                 {point.lat !== undefined && point.lng !== undefined
                   ? `${point.lat.toFixed(4)}, ${point.lng.toFixed(4)}`
-                  : "Location unknown"}
+                  : language === "en"
+                  ? "Location unknown"
+                  : "ლოკაცია უცნობია"}
               </CardDescription>
             </div>
             <Button variant="ghost" size="icon" onClick={onClose}>
@@ -138,6 +142,25 @@ export function MapDataModal({ point, onClose }: MapDataModalProps) {
         </CardHeader>
 
         <CardContent>
+          {/* Reported At and Data Source */}
+          <div className="mb-2 space-y-1 text-sm">
+            {point.reportedAt && (
+              <div className="flex justify-between">
+                <span className="font-semibold">
+                  {language === "en" ? "Reported At:" : "შეტანილია:"}
+                </span>
+                <span>{new Date(point.reportedAt).toLocaleString()}</span>
+              </div>
+            )}
+            <div className="flex justify-between">
+              <span className="font-semibold">
+                {language === "en" ? "Data Source:" : "მონაცემების წყარო:"}
+              </span>
+              <span>{language === "en" ? "Citizen Report" : "სამოქალაქო ანგარიში"}</span>
+            </div>
+          </div>
+
+          {/* Description */}
           {point.description && (
             <div>
               <h4 className="font-semibold mb-1 text-sm">
