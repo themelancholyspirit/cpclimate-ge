@@ -204,7 +204,7 @@ export default function MapPage() {
                         activeLayer === "illegal_dump" ? "default" : "outline"
                       }
                       className="w-full justify-start text-sm"
-                      onClick={() => setActiveLayer("illegal_dump")}
+                      onClick={() => setActiveLayer("dump")}
                     >
                       <span className="w-3 h-3 rounded-full bg-red-700 mr-2"></span>
                       {t.map.layerIllegalDump[language]}
@@ -229,7 +229,7 @@ export default function MapPage() {
                     <Button
                       variant={activeLayer === "flood" ? "default" : "outline"}
                       className="w-full justify-start text-sm"
-                      onClick={() => setActiveLayer("flood")}
+                      onClick={() => setActiveLayer("flooding")}
                     >
                       <span className="w-3 h-3 rounded-full bg-cyan-500 mr-2"></span>
                       {t.map.layerFlood[language]}
@@ -239,7 +239,7 @@ export default function MapPage() {
                         activeLayer === "drainage" ? "default" : "outline"
                       }
                       className="w-full justify-start text-sm"
-                      onClick={() => setActiveLayer("drainage")}
+                      onClick={() => setActiveLayer("channels")}
                     >
                       <span className="w-3 h-3 rounded-full bg-teal-500 mr-2"></span>
                       {t.map.layerDrainage[language]}
@@ -249,7 +249,7 @@ export default function MapPage() {
                         activeLayer === "sea_intrusion" ? "default" : "outline"
                       }
                       className="w-full justify-start text-sm"
-                      onClick={() => setActiveLayer("sea_intrusion")}
+                      onClick={() => setActiveLayer("sea")}
                     >
                       <span className="w-3 h-3 rounded-full bg-indigo-500 mr-2"></span>
                       {t.map.layerSeaIntrusion[language]}
