@@ -5,29 +5,49 @@ import { prisma } from '@/lib/prisma'
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url)
-    const type = searchParams.get('type')
-    const status = searchParams.get('status')
+    const type = searchParams.get('type') // e.g., "water", "pollution", "report"
+    const status = searchParams.get('status') // optional filtering
 
-    // Fetch regular map points
-    const where: any = {}
-    if (type && type !== 'all') where.type = type
-    if (status) where.status = status
+    // Regular map_points
+    const mapPointsWhere: any = {}
+    if (type && type !== 'all') mapPointsWhere.type = type
+    if (status) mapPointsWhere.status = status
 
     const mapPoints = await prisma.mapPoint.findMany({
-      where,
+      where: mapPointsWhere,
       orderBy: { createdAt: 'desc' },
     })
 
-    // Note: Reports no longer have lat/lng fields, so they are not displayed on the map
-    // Only dedicated map_points are shown
+    // Include reports that have lat/lng and are verified/resolved
+    const reportWhere: any = { lat: { not: null }, lng: { not: null } }
+    if (status) reportWhere.status = status
+    if (type && type !== 'all') {
+      if (type !== 'report') reportWhere.id = undefined // skip if not requesting reports
+    }
 
-    return NextResponse.json(mapPoints)
+    const reports = await prisma.report.findMany({
+      where: reportWhere,
+      orderBy: { createdAt: 'desc' },
+    })
+
+    // Map reports into "mapPoints" shape
+    const reportMapPoints = reports.map((r) => ({
+      id: r.id,
+      type: 'report', // unified type
+      lat: r.lat!,
+      lng: r.lng!,
+      status: r.status,
+      title: r.reporterName,
+      description: r.description,
+      createdAt: r.createdAt,
+    }))
+
+    const allPoints = [...mapPoints, ...reportMapPoints]
+
+    return NextResponse.json(allPoints)
   } catch (error) {
     console.error('Error fetching map points:', error)
-    return NextResponse.json(
-      { error: 'Failed to fetch map points' },
-      { status: 500 }
-    )
+    return NextResponse.json({ error: 'Failed to fetch map points' }, { status: 500 })
   }
 }
 
