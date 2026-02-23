@@ -277,8 +277,8 @@ export function MapComponent({ activeLayer, onPointClick }: MapComponentProps) {
             <div className="font-semibold text-sm mb-2">{t.map.reportPromptTitle[language]}</div>
             <div className="text-xs text-muted-foreground mb-3">{t.map.reportPromptBody[language]}</div>
             <div className="flex gap-2">
-              <Button size="sm" onClick={() => { setShowReportModal(true); setShowReportPrompt(false); }}>Yes</Button>
-              <Button size="sm" variant="outline" onClick={() => { setShowReportPrompt(false); setClickedLocation(null); setShowClickedMarker(false); }}>Cancel</Button>
+              <Button size="sm" onClick={() => { setShowReportModal(true); setShowReportPrompt(false); }}>{language === "en" ? "Yes" : "კი"}</Button>
+              <Button size="sm" variant="outline" onClick={() => { setShowReportPrompt(false); setClickedLocation(null); setShowClickedMarker(false); }}>{language === "en" ? "Cancel" : "გაუქმება"}</Button>
             </div>
           </div>
         </div>
