@@ -83,15 +83,13 @@ model RiskLayer {
 
 // Legacy model - keeping for backwards compatibility
 model MapPoint {
-  type                 MapPointType
+  type                 IssueType
   lat                  Float
   lng                  Float
   status               MapPointStatus
   title                String
   description          String
-  metadata             Json?
   dataSource           String?        @db.VarChar(50)
-  infrastructureStatus String?        @db.VarChar(50)
   createdAt            DateTime       @default(now())
   id                   String         @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
 
@@ -748,21 +746,6 @@ enum DrainageChannelStatus {
   existing
   blocked
   damaged
-}
-
-// Legacy enums - keeping for backwards compatibility
-enum MapPointType {
-  water
-  pollution
-  wasteIssueType
-  illegal_dump
-  odor
-  flood
-  drainage
-  sea_intrusion
-  erosion
-  risk
-  infrastructure
 }
 
 enum MapPointStatus {

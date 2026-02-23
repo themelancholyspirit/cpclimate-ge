@@ -228,7 +228,6 @@ export function MapComponent({ activeLayer, onPointClick }: MapComponentProps) {
   return (
     <div className="relative w-full h-full">
       <GoogleMap
-        key={`map-${activeLayer}`}
         mapContainerStyle={mapContainerStyle}
         center={defaultCenter}
         zoom={13}
@@ -248,20 +247,6 @@ export function MapComponent({ activeLayer, onPointClick }: MapComponentProps) {
             title={point.entityType === "water" ? point.locationName : point.title}
           />
         ))}
-
-        {/* Polygons */}
-        {mapPoints.filter(p => p.geometryType === "polygon" && p.polygon).map(point => {
-          const coords = point.polygon?.coordinates?.[0]?.map((c: [number, number]) => ({ lat: c[1], lng: c[0] })) || [];
-          if (coords.length < 3) return null;
-          const color = point.entityType === "pollution" ? (
-            point.severity === "low" ? "#fb923c" :
-            point.severity === "medium" ? "#f97316" :
-            point.severity === "high" ? "#dc2626" : "#991b1b"
-          ) : "#06b6d4";
-          return <Polygon key={point.id} paths={coords} options={{
-            fillColor: color, fillOpacity: 0.35, strokeColor: color, strokeOpacity: 0.8, strokeWeight: 2
-          }} onClick={() => handleMarkerClick(point)} />;
-        })}
 
         {clickedLocation && showClickedMarker && (
           <Marker
