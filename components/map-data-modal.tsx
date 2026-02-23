@@ -57,12 +57,11 @@ const problemLabels = {
   water: { en: "Water Quality", ka: "წყლის ხარისხი" },
   waste: { en: "Waste Accumulation", ka: "ნარჩენების დაგროვება" },
   odor: { en: "Odor / Stagnation", ka: "სუნი / სტაგნაცია" },
-  drainage: { en: "Drainage Channels", ka: "სანიაღვრე არხები" },
+  dump: { en: "Illegal Dumping", ka: "არალეგალური ჩაღვრა" },
   flooding: { en: "Flood Zones", ka: "დატბორვის ზონები" },
-  channels: { en: "All Pollution", ka: "ყველა დაბინძურება" },
+  channels: { en: "Drainage channels", ka: "სანიაღვრე არხები" },
   sea: { en: "Sea Water Intrusion", ka: "ზღვის წყლის შეჭრა" },
   erosion: { en: "Erosion Sections", ka: "ეროზიის მონაკვეთები" },
-  risk: { en: "Other Climate Risks", ka: "სხვა კლიმატის რისკები" },
 };
 
 const entityTypeLabel: Record<EntityType, { en: string; ka: string }> = {

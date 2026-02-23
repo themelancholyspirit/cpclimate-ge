@@ -169,7 +169,6 @@ export const translations = {
       waste: { en: "Waste Dumping", ka: "ნარჩენების დაგროვება" },
       dump: { en: "Illegal Dumping", ka: "არალეგალური ჩაღვრა" },
       odor: { en: "Odor/Stagnation", ka: "სუნი/სტაგნაცია" },
-      drainage: { en: "Blocked Drainage", ka: "დატბორვილი დრენაჟი" },
       flooding: { en: "Flood Zones", ka: "დატბორვის ზონები" },
       channels: { en: "Drainage Channels", ka: "სანიაღვრე არხები" },
       sea: { en: "Sea Water Intrusion", ka: "ზღვის წყლის შეჭრა" },

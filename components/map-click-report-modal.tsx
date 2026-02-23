@@ -233,14 +233,14 @@ export function MapClickReportModal({
                     "Water Quality"}
                 </option>
                 <option value="waste">
-                  {t?.report?.issueTypeOptions?.waste?.[language] || "Waste"}
+                  {t?.report?.issueTypeOptions?.waste?.[language]}
+                </option>
+                <option value="dump">
+                  {t?.report?.issueTypeOptions?.dump?.[language] ||
+                    "Illegal Dumping"}
                 </option>
                 <option value="odor">
-                  {t?.report?.issueTypeOptions?.odor?.[language] || "Odor"}
-                </option>
-                <option value="drainage">
-                  {t?.report?.issueTypeOptions?.drainage?.[language] ||
-                    "Drainage"}
+                  {t?.report?.issueTypeOptions?.odor?.[language]}
                 </option>
                 <option value="flooding">
                   {t?.report?.issueTypeOptions?.flooding?.[language] ||
