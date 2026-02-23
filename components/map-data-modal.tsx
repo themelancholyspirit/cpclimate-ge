@@ -65,6 +65,45 @@ interface MapDataModalProps {
   onClose: () => void;
 }
 
+const problem = {
+  water: {
+    en: "Water Quality",
+    ka: "წყლის ხარისხი",
+  },
+  waste: {
+    en: "Waste Accumulation",
+    ka: "ნარჩენების დაგროვება",
+  },
+  odor: {
+    en: "Odor/Stagnation",
+    ka: "სუნი/სტაგნაცია",
+  },
+  drainage: {
+    en: "Drainage Channels",
+    ka: "სანიაღვრე არხები",
+  },
+  flooding: {
+    en: "Flood Zones",
+    ka: "დატბორვის ზონები",
+  },
+  channels: {
+    en: "All Pollution",
+    ka: "ყველა დაბინძურება",
+  },
+  sea: {
+    en: "Sea Water Intrusion",
+    ka: "ზღვის წყლის შეჭრა",
+  },
+  erosion: {
+    en: "Erosion Sections",
+    ka: "ეროზიის მონაკვეთები",
+  },
+  risk: {
+    en: "Other Climate Risks",
+    ka: "სხვა კლიმატის რისკები",
+  },
+};
+
 export function MapDataModal({ point, onClose }: MapDataModalProps) {
   const { t, language } = useLanguage();
 
@@ -83,12 +122,12 @@ export function MapDataModal({ point, onClose }: MapDataModalProps) {
           <div className="flex items-start justify-between">
             <div className="flex-1">
               <CardTitle className="text-xl mb-2">
-                {point.title || capitalize(point.entityType)}
+                {language === "en" ? problem[point.title as keyof typeof problem]?.en : problem[point.title as keyof typeof problem]?.ka}
               </CardTitle>
               <CardDescription className="flex items-center gap-2">
                 <MapPin className="h-4 w-4" />
                 {point.lat !== undefined && point.lng !== undefined
-                  ? `Lat: ${point.lat.toFixed(4)}, Lng: ${point.lng.toFixed(4)}`
+                  ? `${point.lat.toFixed(4)}, ${point.lng.toFixed(4)}`
                   : "Location unknown"}
               </CardDescription>
             </div>
@@ -102,7 +141,7 @@ export function MapDataModal({ point, onClose }: MapDataModalProps) {
           {point.description && (
             <div>
               <h4 className="font-semibold mb-1 text-sm">
-                {t.modals.dataModal.description[language] || "Description"}
+                {language === "en" ? "Description" : "აღწერა"}
               </h4>
               <p className="text-sm text-muted-foreground leading-relaxed">
                 {point.description}
