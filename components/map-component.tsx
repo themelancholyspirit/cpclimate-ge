@@ -30,8 +30,7 @@ export interface MapEntity {
   // Common fields
   title?: string;
   description?: string;
-  metadata?: any;
-
+  
   // Water-specific
   locationName?: string;
   status?: "normal" | "risk" | "problematic";
