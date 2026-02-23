@@ -68,7 +68,7 @@ model Landmark {
   content_en      String?
   content_ka      String?
   location_ka     String?
-  location_ge     String?
+  location_en     String?
   image           String?         @db.Uuid
   featured        Boolean         @default(false)
   date            DateTime
