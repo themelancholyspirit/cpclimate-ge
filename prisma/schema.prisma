@@ -801,6 +801,7 @@ enum IssueType {
   waste
   odor
   drainage
+  flooding
   channels
   sea
   erosion
