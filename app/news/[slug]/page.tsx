@@ -164,31 +164,29 @@ export default function NewsDetailPage() {
             </div>
           </div>
 
-          {/* Description */}
+          {/* Description - Lead/Intro Section */}
           {(language === "en"
             ? article.description_en
             : article.description_ka) && (
-            <div className="space-y-6">
-              <div
-                className="prose prose-lg max-w-none break-words
-        [&_h1]:text-3xl [&_h1]:font-bold [&_h1]:mb-4 [&_h1]:mt-8
-        [&_h2]:text-2xl [&_h2]:font-bold [&_h2]:mb-3 [&_h2]:mt-6
-        [&_h3]:text-xl [&_h3]:font-semibold [&_h3]:mb-2 [&_h3]:mt-4
-        [&_p]:text-base [&_p]:leading-relaxed [&_p]:mb-4 [&_p]:text-foreground/80 [&_p]:break-words [&_p]:overflow-wrap-anywhere
-        [&_strong]:font-semibold [&_strong]:text-foreground
-        [&_em]:italic
-        [&_ul]:list-disc [&_ul]:ml-6 [&_ul]:mb-4 [&_ul]:space-y-2
-        [&_ol]:list-decimal [&_ol]:ml-6 [&_ol]:mb-4 [&_ol]:space-y-2
-        [&_li]:text-base [&_li]:leading-relaxed [&_li]:break-words
-        [&_a]:text-orange-500 [&_a]:underline hover:[&_a]:text-orange-600 [&_a]:break-all
-        [&_blockquote]:border-l-4 [&_blockquote]:border-orange-500 [&_blockquote]:pl-4 [&_blockquote]:italic [&_blockquote]:my-6 [&_blockquote]:text-muted-foreground [&_blockquote]:break-words
-        [&_code]:bg-muted [&_code]:px-1.5 [&_code]:py-0.5 [&_code]:rounded [&_code]:text-sm [&_code]:break-words
-        [&_pre]:bg-muted [&_pre]:p-4 [&_pre]:rounded-lg [&_pre]:overflow-x-auto [&_pre]:my-6"
-              >
-                {language === "en"
-                  ? article.description_en
-                  : article.description_ka}
+            <div className="relative mb-10">
+              <div className="bg-gradient-to-r from-orange-50 to-slate-50 dark:from-orange-950/30 dark:to-slate-900/30 rounded-xl p-6 md:p-8 border-l-4 border-orange-500">
+                <p className="text-lg md:text-xl leading-relaxed text-foreground/90 font-medium">
+                  {language === "en"
+                    ? article.description_en
+                    : article.description_ka}
+                </p>
               </div>
+            </div>
+          )}
+
+          {/* Content Divider */}
+          {(language === "en" ? article.content_en : article.content_ka) && (
+            <div className="flex items-center gap-4 mb-8">
+              <div className="h-px flex-1 bg-border" />
+              <span className="text-sm font-medium text-muted-foreground uppercase tracking-wider">
+                {language === "en" ? "Full Article" : "სრული სტატია"}
+              </span>
+              <div className="h-px flex-1 bg-border" />
             </div>
           )}
 
