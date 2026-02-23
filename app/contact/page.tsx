@@ -151,7 +151,7 @@ export default function ContactPage() {
                       href="mailto:info@cpc-georgia.org"
                       className="text-sm text-muted-foreground hover:text-primary"
                     >
-                      info@cpc-georgia.org
+                      cpc.ngo@gmail.com
                     </a>
                   </div>
                 </div>
@@ -169,7 +169,7 @@ export default function ContactPage() {
                       href="tel:+995"
                       className="text-sm text-muted-foreground hover:text-primary"
                     >
-                      +995 XXX XXX XXX
+                      +995 568 401 006
                     </a>
                   </div>
                 </div>
@@ -177,10 +177,9 @@ export default function ContactPage() {
                 {/* Footer Note */}
                 <div className="pt-6 border-t border-border mt-auto">
                   <p className="text-sm text-muted-foreground leading-relaxed">
-                    We typically respond to inquiries within 24-48 hours. For
-                    urgent environmental concerns, please use our{" "}
+                    {language === "en" ? "We typically respond to inquiries within 24-48 hours. For urgent environmental concerns, please use our " : "ჩვენ, როგორც წესი, შეკითხვებს 24-48 საათის განმავლობაში ვპასუხობთ. გადაუდებელი გარემოსდაცვითი საკითხების შემთხვევაში, გთხოვთ, გამოიყენოთ ჩვენი "}
                     <a href="/map" className="text-primary hover:underline">
-                      interactive map
+                      {language === "en" ? "interactive map" : "ინტერაქტიული რუკა"}
                     </a>
                     .
                   </p>
@@ -246,7 +245,7 @@ export default function ContactPage() {
                     <Input
                       id="phone"
                       type="tel"
-                      placeholder="+995 XXX XXX XXX"
+                      placeholder="+995 568 401 006"
                       value={formData.phone}
                       onChange={handleChange}
                     />

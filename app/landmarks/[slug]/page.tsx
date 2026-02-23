@@ -196,17 +196,6 @@ export default function LandmarkDetailPage() {
             </div>
           )}
 
-          {/* Back to Landmarks */}
-          <div className="mt-12 pt-8 border-t border-border">
-            <Button asChild variant="ghost">
-              <Link href="/landmarks">
-                <ArrowLeft className="mr-2 h-4 w-4" />
-                {language === "en"
-                  ? "Back to Landmarks"
-                  : "უკან ღირსშესანიშნაობებზე"}
-              </Link>
-            </Button>
-          </div>
         </div>
       </div>
     </div>

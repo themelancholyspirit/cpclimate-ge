@@ -476,7 +476,7 @@ export default function HomePage() {
             <div className="text-center">
               <Button asChild variant="outline">
                 <Link href="/landmarks">
-                  {language === "en" ? "View All Landmarks" : "ყველა ლანდშაფტი"}
+                  {language === "en" ? "View All Landmarks" : "ყველა ღირსშესანიშნაობა"}
                   <ArrowRight className="ml-2 h-4 w-4" />
                 </Link>
               </Button>

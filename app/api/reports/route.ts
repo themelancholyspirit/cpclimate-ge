@@ -90,25 +90,6 @@ export async function POST(request: NextRequest) {
         status: "pending",
       },
     });
-
-    // Create ReportPhoto records for each uploaded photo
-    if (validPhotos.length > 0) {
-      try {
-        await prisma.reportPhoto.createMany({
-          data: validPhotos.map((photoId) => ({
-            reportId: report.id,
-            fileId: photoId,
-          })),
-        });
-        console.log(
-          `Linked ${validPhotos.length} photos to report ${report.id}`,
-        );
-      } catch (photoError) {
-        console.error("Error creating report photos:", photoError);
-        // Don't fail the entire request if photo linking fails
-      }
-    }
-
     // TODO: Send email notification to admin
     // TODO: Send confirmation email to reporter
 
