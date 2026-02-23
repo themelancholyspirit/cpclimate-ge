@@ -26,7 +26,7 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { type, lat, lng, status, title, description, metadata } = body;
+    const { type, lat, lng, status, title, description } = body;
 
     // Validate required fields
     if (!type || !lat || !lng || !status || !title || !description) {
@@ -44,7 +44,6 @@ export async function POST(request: NextRequest) {
         status,
         title,
         description,
-        metadata,
       },
     });
 
