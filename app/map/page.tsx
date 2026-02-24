@@ -11,22 +11,19 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { MapComponent } from "@/components/map-component";
-import { MapLegend } from "@/components/map-legend";
-import { MapInstructions } from "@/components/map-instructions";
 import { MapDataModal } from "@/components/map-data-modal";
 import { MapClickReportModal } from "@/components/map-click-report-modal";
-import {
-  AlertCircle,
-  Layers,
-  FileWarning,
-  ArrowLeft,
-  Info,
-} from "lucide-react";
-import Link from "next/link";
+import { Layers, ArrowLeft, Info } from "lucide-react";
 import { useLanguage } from "@/contexts/language-context";
+
+type MapPoint = {
+  type: string;
+};
 
 export default function MapPage() {
   const router = useRouter();
+  const { t, language } = useLanguage();
+
   const [activeLayer, setActiveLayer] = useState<string>("all");
   const [selectedPoint, setSelectedPoint] = useState<any>(null);
   const [isReportModalOpen, setIsReportModalOpen] = useState(false);
@@ -35,51 +32,83 @@ export default function MapPage() {
     lat: number;
     lng: number;
   } | null>(null);
-  const [stats, setStats] = useState({
-    normal: 0,
-    warning: 0,
-    problem: 0,
-    total: 0,
-  });
-  const { t, language } = useLanguage();
 
-  // Fetch stats from API
+  const [layerCounts, setLayerCounts] = useState({
+    all: 0,
+    water: 0,
+    waste: 0,
+    dump: 0,
+    odor: 0,
+    flooding: 0,
+    channels: 0,
+    sea: 0,
+    erosion: 0,
+  });
+
+  // Fetch map points and compute counts by type
   useEffect(() => {
-    async function fetchStats() {
+    async function fetchPoints() {
       try {
         const response = await fetch("/api/map-points");
-        if (response.ok) {
-          const points = await response.json();
-          if (Array.isArray(points)) {
-            const normal = points.filter(
-              (p: any) => p?.status === "normal",
-            ).length;
-            const warning = points.filter(
-              (p: any) => p?.status === "warning",
-            ).length;
-            const problem = points.filter(
-              (p: any) => p?.status === "problem",
-            ).length;
+        if (!response.ok) return;
 
-            setStats({
-              normal,
-              warning,
-              problem,
-              total: points.length,
-            });
-          } else {
-            setStats({ normal: 0, warning: 0, problem: 0, total: 0 });
+        const points: MapPoint[] = await response.json();
+        if (!Array.isArray(points)) return;
+
+        const counts = {
+          all: points.length,
+          water: 0,
+          waste: 0,
+          dump: 0,
+          odor: 0,
+          flooding: 0,
+          channels: 0,
+          sea: 0,
+          erosion: 0,
+        };
+
+        points.forEach((point) => {
+          if (counts.hasOwnProperty(point.type)) {
+            counts[point.type as keyof typeof counts]++;
           }
-        } else {
-          setStats({ normal: 0, warning: 0, problem: 0, total: 0 });
-        }
+        });
+
+        setLayerCounts(counts);
       } catch (error) {
-        setStats({ normal: 0, warning: 0, problem: 0, total: 0 });
+        console.error("Failed to fetch map points", error);
       }
     }
 
-    fetchStats();
+    fetchPoints();
   }, []);
+
+const CountBadge = ({
+  count,
+  active,
+}: {
+  count: number;
+  active: boolean;
+}) => (
+  <span
+    className={`
+      ml-auto inline-flex items-center justify-center
+      shrink-0
+      min-w-[28px]
+      h-5
+      px-2
+      text-[11px] font-semibold
+      rounded-full
+      transition-colors
+      ${
+        active
+          ? "bg-background/20 text-white backdrop-blur-sm"
+          : "bg-muted text-foreground"
+      }
+    `}
+  >
+    {count}
+  </span>
+);
 
   return (
     <div className="min-h-screen bg-background">
@@ -101,54 +130,15 @@ export default function MapPage() {
       {/* Header */}
       <div className="border-b border-border bg-muted/30">
         <div className="container mx-auto px-4 py-8">
-          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-            <h1 className="text-3xl md:text-4xl font-bold">
-              {t.map.title[language]}
-            </h1>
-            <Button
-              size="lg"
-              onClick={() => {
-                // General issue without specific location
-                setReportCoordinates(null);
-                setIsReportModalOpen(true);
-              }}
-              className="flex items-center gap-2"
-            >
-              <FileWarning className="h-5 w-5" />
-              {language === "en" ? "Report an Issue" : "პრობლემის მოხსენება"}
-            </Button>
-          </div>
+          <h1 className="text-3xl md:text-4xl font-bold">
+            {t.map.title[language]}
+          </h1>
         </div>
       </div>
 
       <div className="container mx-auto px-4 py-8">
-        <div className="mb-12">
-          <Card className="bg-gradient-to-br from-muted/40 to-muted/20 border-2">
-            <CardHeader className="pb-6">
-              <div className="flex items-center gap-3">
-                <div className="p-2 rounded-lg bg-primary/10">
-                  <Info className="h-6 w-6 text-primary" />
-                </div>
-                <div>
-                  <CardTitle className="text-2xl md:text-3xl">
-                    {t.map.instructionsTitle[language]}
-                  </CardTitle>
-                  <CardDescription className="text-base mt-1">
-                    {language === "en"
-                      ? "Learn how to interact with the map and report environmental issues"
-                      : "ისწავლეთ როგორ გამოიყენოთ რუკა და მოახსენოთ გარემოს პრობლემები"}
-                  </CardDescription>
-                </div>
-              </div>
-            </CardHeader>
-            <CardContent className="text-base">
-              <MapInstructions />
-            </CardContent>
-          </Card>
-        </div>
-
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 lg:h-[1000px]">
-          {/* Sidebar - Layer Controls */}
+          {/* Sidebar */}
           <div className="lg:col-span-1 flex flex-col gap-4 lg:h-full lg:overflow-y-auto">
             <Card className="flex-1">
               <CardHeader>
@@ -160,101 +150,117 @@ export default function MapPage() {
                   {t.map.layersCardDesc[language]}
                 </CardDescription>
               </CardHeader>
+
               <CardContent className="space-y-2">
+                {/* ALL */}
                 <Button
                   variant={activeLayer === "all" ? "default" : "outline"}
                   className="w-full justify-start"
                   onClick={() => setActiveLayer("all")}
                 >
                   {t.map.layerAll[language]}
+                  <CountBadge count={layerCounts.all} active={activeLayer === "all"} />
                 </Button>
 
-                {/* A. Water Quality Section */}
+                {/* WATER */}
                 <div className="pt-2">
                   <div className="text-xs font-semibold text-muted-foreground mb-1 px-2">
                     {language === "en" ? "Water Quality" : "წყლის ხარისხი"}
                   </div>
+
                   <Button
                     variant={activeLayer === "water" ? "default" : "outline"}
                     className="w-full justify-start"
                     onClick={() => setActiveLayer("water")}
                   >
-                    <span className="w-3 h-3 rounded-full bg-blue-500 mr-2"></span>
+                    <span className="w-3 h-3 min-w-[12px] min-h-[12px] flex-shrink-0 rounded-full bg-blue-500 mr-2"></span>
                     {t.map.layerWater[language]}
+                    <CountBadge count={layerCounts.water} active={activeLayer === "water"} />
                   </Button>
                 </div>
 
-                {/* B. Pollution Indicators Section */}
+                {/* POLLUTION */}
                 <div className="pt-2">
                   <div className="text-xs font-semibold text-muted-foreground mb-1 px-2">
                     {language === "en"
                       ? "Pollution Indicators"
                       : "დაბინძურების ინდიკატორები"}
                   </div>
+
                   <div className="pl-2 space-y-1 border-l-2 border-muted">
                     <Button
                       variant={activeLayer === "waste" ? "default" : "outline"}
                       className="w-full justify-start text-sm"
                       onClick={() => setActiveLayer("waste")}
                     >
-                      <span className="w-3 h-3 rounded-full bg-orange-500 mr-2"></span>
+                      <span className="w-3 h-3 min-w-[12px] min-h-[12px] flex-shrink-0 rounded-full bg-orange-500 mr-2"></span>
                       {t.map.layerWaste[language]}
+                      <CountBadge count={layerCounts.waste} active={activeLayer === "waste"} />
                     </Button>
+
                     <Button
-                      variant={
-                        activeLayer === "illegal_dump" ? "default" : "outline"
-                      }
+                      variant={activeLayer === "dump" ? "default" : "outline"}
                       className="w-full justify-start text-sm"
                       onClick={() => setActiveLayer("dump")}
                     >
-                      <span className="w-3 h-3 rounded-full bg-red-700 mr-2"></span>
+                      <span className="w-3 h-3 min-w-[12px] min-h-[12px] flex-shrink-0 rounded-full bg-red-700 mr-2"></span>
                       {t.map.layerIllegalDump[language]}
+                      <CountBadge count={layerCounts.dump} active={activeLayer === "dump"} />
                     </Button>
+
                     <Button
                       variant={activeLayer === "odor" ? "default" : "outline"}
                       className="w-full justify-start text-sm"
                       onClick={() => setActiveLayer("odor")}
                     >
-                      <span className="w-3 h-3 rounded-full bg-amber-500 mr-2"></span>
+                      <span className="w-3 h-3 min-w-[12px] min-h-[12px] flex-shrink-0 rounded-full bg-amber-500 mr-2"></span>
                       {t.map.layerOdor[language]}
+                      <CountBadge count={layerCounts.odor} active={activeLayer === "odor"} />
                     </Button>
                   </div>
                 </div>
 
-                {/* C. Climate & Infrastructure Risks Section */}
+                {/* RISK */}
                 <div className="pt-2">
                   <div className="text-xs font-semibold text-muted-foreground mb-1 px-2">
                     {language === "en" ? "Risk Layers" : "რისკის ფენები"}
                   </div>
+
                   <div className="pl-2 space-y-1 border-l-2 border-muted">
                     <Button
-                      variant={activeLayer === "flood" ? "default" : "outline"}
+                      variant={
+                        activeLayer === "flooding" ? "default" : "outline"
+                      }
                       className="w-full justify-start text-sm"
                       onClick={() => setActiveLayer("flooding")}
                     >
-                      <span className="w-3 h-3 rounded-full bg-cyan-500 mr-2"></span>
+                      <span className="w-3 h-3 min-w-[12px] min-h-[12px] flex-shrink-0 rounded-full bg-cyan-500 mr-2"></span>
                       {t.map.layerFlood[language]}
+                      <CountBadge count={layerCounts.flooding} active={activeLayer === "flooding"} />
                     </Button>
+
                     <Button
                       variant={
-                        activeLayer === "drainage" ? "default" : "outline"
+                        activeLayer === "channels" ? "default" : "outline"
                       }
                       className="w-full justify-start text-sm"
                       onClick={() => setActiveLayer("channels")}
                     >
-                      <span className="w-3 h-3 rounded-full bg-teal-500 mr-2"></span>
+                      <span className="w-3 h-3 min-w-[12px] min-h-[12px] flex-shrink-0 rounded-full bg-teal-500 mr-2"></span>
                       {t.map.layerDrainage[language]}
+                      <CountBadge count={layerCounts.channels} active={activeLayer === "channels"} />
                     </Button>
+
                     <Button
-                      variant={
-                        activeLayer === "sea_intrusion" ? "default" : "outline"
-                      }
+                      variant={activeLayer === "sea" ? "default" : "outline"}
                       className="w-full justify-start text-sm"
                       onClick={() => setActiveLayer("sea")}
                     >
-                      <span className="w-3 h-3 rounded-full bg-indigo-500 mr-2"></span>
+                      <span className="w-3 h-3 min-w-[12px] min-h-[12px] flex-shrink-0 rounded-full bg-indigo-500 mr-2"></span>
                       {t.map.layerSeaIntrusion[language]}
+                      <CountBadge count={layerCounts.sea} active={activeLayer === "sea"} />
                     </Button>
+
                     <Button
                       variant={
                         activeLayer === "erosion" ? "default" : "outline"
@@ -262,22 +268,17 @@ export default function MapPage() {
                       className="w-full justify-start text-sm"
                       onClick={() => setActiveLayer("erosion")}
                     >
-                      <span className="w-3 h-3 rounded-full bg-stone-500 mr-2"></span>
+                      <span className="w-3 h-3 min-w-[12px] min-h-[12px] flex-shrink-0 rounded-full bg-stone-500 mr-2"></span>
                       {t.map.layerErosion[language]}
+                      <CountBadge count={layerCounts.erosion} active={activeLayer === "erosion"} />
                     </Button>
                   </div>
                 </div>
               </CardContent>
-
-              <CardContent>
-                <MapLegend />
-              </CardContent>
             </Card>
-
-            {/* Removed Instructions Card from Sidebar */}
           </div>
 
-          {/* Map Area */}
+          {/* MAP */}
           <div className="lg:col-span-3 flex flex-col gap-6">
             <Card className="overflow-hidden p-0 flex-1">
               <div className="relative w-full h-[500px] md:h-[600px] lg:h-full">
@@ -288,63 +289,11 @@ export default function MapPage() {
                 />
               </div>
             </Card>
-
-            {/* Quick Stats */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              <Card>
-                <CardContent className="pt-6">
-                  <div className="text-center">
-                    <div className="text-2xl font-bold text-green-600">
-                      {stats.normal}
-                    </div>
-                    <div className="text-xs text-muted-foreground mt-1">
-                      {t.map.quickStatsNormal[language]}
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-              <Card>
-                <CardContent className="pt-6">
-                  <div className="text-center">
-                    <div className="text-2xl font-bold text-yellow-600">
-                      {stats.warning}
-                    </div>
-                    <div className="text-xs text-muted-foreground mt-1">
-                      {t.map.quickStatsRisk[language]}
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-              <Card>
-                <CardContent className="pt-6">
-                  <div className="text-center">
-                    <div className="text-2xl font-bold text-red-600">
-                      {stats.problem}
-                    </div>
-                    <div className="text-xs text-muted-foreground mt-1">
-                      {t.map.quickStatsProblem[language]}
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-              <Card>
-                <CardContent className="pt-6">
-                  <div className="text-center">
-                    <div className="text-2xl font-bold">{stats.total}</div>
-                    <div className="text-xs text-muted-foreground mt-1">
-                      {t.map.quickStatsReports[language]}
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
           </div>
         </div>
-
-        {/* Map Instructions - Below the map grid */}
       </div>
 
-      {/* Modal for point details */}
+      {/* Point Details Modal */}
       {selectedPoint && (
         <MapDataModal
           point={selectedPoint}
@@ -364,9 +313,7 @@ export default function MapPage() {
           setReportCoordinates(null);
         }}
         coordinates={reportCoordinates}
-        onSubmit={(data) => {
-          // Handle the submission here
-        }}
+        onSubmit={() => {}}
         setShowReportModal={setIsReportModalOpen}
       />
     </div>
