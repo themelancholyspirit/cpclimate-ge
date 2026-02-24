@@ -44,7 +44,8 @@ interface Landmark {
   title_ka: string;
   description_en: string;
   description_ka: string;
-  location?: string;
+  location_ka?: string;
+  location_en?: string;
   date: string;
   icon?: string;
   color?: string;
@@ -174,7 +175,7 @@ export default function LandmarksPage() {
                   <CardDescription className="flex flex-col gap-2">
                     <div className="flex items-center gap-2 text-xs">
                       <MapPin className="h-3 w-3" />
-                      <span>{landmark.location || (language === "en" ? "Location not specified" : "მდებარეობა არ არის მითითებული")}</span>
+                      <span>{language === "en" ? (landmark.location_en || "Location not specified") : (landmark.location_ka || "მდებარეობა არ არის მითითებული")}</span>
                     </div>
                   </CardDescription>
                 </CardHeader>

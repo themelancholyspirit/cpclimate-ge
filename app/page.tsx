@@ -84,7 +84,8 @@ interface Landmark {
   title_ka: string;
   description_en: string;
   description_ka: string;
-  location?: string;
+  location_ka?: string;
+  location_en?: string;
   date: string;
   headerImage: string | null;
 }
