@@ -15,11 +15,13 @@ import { Label } from "@/components/ui/label";
 import { X, MapPin, Camera, CheckCircle2, AlertCircle } from "lucide-react";
 import { useLanguage } from "@/contexts/language-context";
 import { useToast } from "@/hooks/use-toast";
+import { set } from "date-fns";
 
 interface MapClickReportModalProps {
   isOpen: boolean;
   onClose: () => void;
   coordinates: { lat: number; lng: number } | null;
+  setShowReportModal: (value: boolean) => void;
   onSubmit: (data: ReportData) => void;
 }
 
@@ -38,6 +40,7 @@ export function MapClickReportModal({
   onClose,
   coordinates,
   onSubmit,
+  setShowReportModal
 }: MapClickReportModalProps) {
   const { t, language } = useLanguage();
   const { toast } = useToast();
@@ -145,6 +148,8 @@ export function MapClickReportModal({
           </div>
         ),
       });
+
+      setShowReportModal(false);
       // Reset form
       setFormData({
         issueType: "",

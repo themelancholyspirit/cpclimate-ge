@@ -367,6 +367,7 @@ export default function MapPage() {
         onSubmit={(data) => {
           // Handle the submission here
         }}
+        setShowReportModal={setIsReportModalOpen}
       />
     </div>
   );

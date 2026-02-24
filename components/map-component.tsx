@@ -359,6 +359,7 @@ export function MapComponent({
         }}
         coordinates={clickedLocation}
         onSubmit={handleReportSubmit}
+        setShowReportModal={setShowReportModal}
       />
     </div>
   );
