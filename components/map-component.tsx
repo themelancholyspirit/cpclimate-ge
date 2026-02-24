@@ -90,7 +90,11 @@ const mapRestriction = {
 const defaultCenter = { lat: 42.1589, lng: 41.6712 };
 const mapContainerStyle = { width: "100%", height: "100%" };
 
-export function MapComponent({ activeLayer, onPointClick, setMapDataModalOpen }: MapComponentProps) {
+export function MapComponent({
+  activeLayer,
+  onPointClick,
+  setMapDataModalOpen,
+}: MapComponentProps) {
   const { t, language } = useLanguage();
   const [map, setMap] = useState<google.maps.Map | null>(null);
   const [mapPoints, setMapPoints] = useState<MapEntity[]>([]);
@@ -307,26 +311,24 @@ export function MapComponent({ activeLayer, onPointClick, setMapDataModalOpen }:
 
       {showReportPrompt && clickedLocation && (
         <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-50">
-          <div className="bg-white rounded-lg shadow-xl border p-4 pointer-events-auto">
-            <div className="font-semibold text-sm mb-2">
-              {t.map.reportPromptTitle[language]}
+          <div className="bg-white rounded-2xl shadow-2xl border border-gray-200 pointer-events-auto overflow-hidden w-64">
+            {/* Header */}
+            <div className="px-5 pt-5 pb-4 text-center">
+              <div className="font-semibold text-sm text-gray-900 mb-1.5">
+                {t.map.reportPromptTitle[language]}
+              </div>
+              <div className="text-xs text-muted-foreground leading-relaxed">
+                {t.map.reportPromptBody[language]}
+              </div>
             </div>
-            <div className="text-xs text-muted-foreground mb-3">
-              {t.map.reportPromptBody[language]}
-            </div>
-            <div className="flex gap-2">
-              <Button
-                size="sm"
-                onClick={() => {
-                  setShowReportModal(true);
-                  setShowReportPrompt(false);
-                }}
-              >
-                {language === "en" ? "Yes" : "კი"}
-              </Button>
-              <Button
-                size="sm"
-                variant="outline"
+
+            {/* Divider */}
+            <div className="h-px bg-gray-100" />
+
+            {/* Buttons */}
+            <div className="flex divide-x divide-gray-100">
+              <button
+                className="flex-1 py-2.5 text-xs text-muted-foreground hover:bg-gray-50 transition-colors"
                 onClick={() => {
                   setShowReportPrompt(false);
                   setClickedLocation(null);
@@ -334,12 +336,20 @@ export function MapComponent({ activeLayer, onPointClick, setMapDataModalOpen }:
                 }}
               >
                 {language === "en" ? "Cancel" : "გაუქმება"}
-              </Button>
+              </button>
+              <button
+                className="flex-1 py-2.5 text-xs font-semibold text-black hover:bg-blue-50 transition-colors"
+                onClick={() => {
+                  setShowReportModal(true);
+                  setShowReportPrompt(false);
+                }}
+              >
+                {language === "en" ? "Report" : "შეტყობინება"}
+              </button>
             </div>
           </div>
         </div>
       )}
-
       <MapClickReportModal
         isOpen={showReportModal}
         onClose={() => {
