@@ -15,6 +15,7 @@ import { MapDataModal } from "@/components/map-data-modal";
 import { MapClickReportModal } from "@/components/map-click-report-modal";
 import { Layers, ArrowLeft, Info } from "lucide-react";
 import { useLanguage } from "@/contexts/language-context";
+import { MapInstructions } from "@/components/map-instructions";
 
 type MapPoint = {
   type: string;
@@ -137,6 +138,33 @@ const CountBadge = ({
       </div>
 
       <div className="container mx-auto px-4 py-8">
+        
+        <div className="mb-12">
+          <Card className="bg-gradient-to-br from-muted/40 to-muted/20 border-2">
+            <CardHeader className="pb-6">
+              <div className="flex items-center gap-3">
+                <div className="p-2 rounded-lg bg-primary/10">
+                  <Info className="h-6 w-6 text-primary" />
+                </div>
+                <div>
+                  <CardTitle className="text-2xl md:text-3xl">
+                    {t.map.instructionsTitle[language]}
+                  </CardTitle>
+                  <CardDescription className="text-base mt-1">
+                    {language === "en"
+                      ? "Learn how to interact with the map and report environmental issues"
+                      : "ისწავლეთ როგორ გამოიყენოთ რუკა და მოახსენოთ გარემოს პრობლემები"}
+                  </CardDescription>
+                </div>
+              </div>
+            </CardHeader>
+            <CardContent className="text-base">
+              <MapInstructions />
+            </CardContent>
+          </Card>
+        </div>
+        
+        
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 lg:h-[1000px]">
           {/* Sidebar */}
           <div className="lg:col-span-1 flex flex-col gap-4 lg:h-full lg:overflow-y-auto">
