@@ -30,6 +30,7 @@ export default function MapPage() {
   const [activeLayer, setActiveLayer] = useState<string>("all");
   const [selectedPoint, setSelectedPoint] = useState<any>(null);
   const [isReportModalOpen, setIsReportModalOpen] = useState(false);
+  const [isMapDataModalOpen, setIsMapDataModalOpen] = useState(false);
   const [reportCoordinates, setReportCoordinates] = useState<{
     lat: number;
     lng: number;
@@ -346,7 +347,11 @@ export default function MapPage() {
       {selectedPoint && (
         <MapDataModal
           point={selectedPoint}
-          onClose={() => setSelectedPoint(null)}
+          onClose={() => () => {
+            setSelectedPoint(null);
+            setIsMapDataModalOpen(false);
+          }}
+          isOpen={isMapDataModalOpen}
         />
       )}
 

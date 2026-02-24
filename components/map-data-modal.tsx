@@ -11,6 +11,7 @@ import {
   ChevronRight,
 } from "lucide-react";
 import { useLanguage } from "@/contexts/language-context";
+import { useEffect } from "react";
 
 export type EntityType = "water" | "pollution" | "risk" | "report";
 export type GeometryType = "point" | "polygon" | "line";
@@ -49,6 +50,7 @@ export interface MapEntity {
 interface MapDataModalProps {
   point: MapEntity;
   onClose: () => void;
+  isOpen: boolean;
 }
 
 const BLUE = "#000000";
@@ -78,7 +80,7 @@ const severityLabels: Record<string, { en: string; ka: string }> = {
   critical: { en: "Critical", ka: "კრიტიკული" },
 };
 
-export function MapDataModal({ point, onClose }: MapDataModalProps) {
+export function MapDataModal({ point, onClose, isOpen }: MapDataModalProps) {
   const { language } = useLanguage();
 
   const title =
@@ -109,6 +111,14 @@ export function MapDataModal({ point, onClose }: MapDataModalProps) {
         },
       )
     : "—";
+
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "unset";
+    }
+  }, [isOpen]);
 
   return (
     <>
@@ -262,7 +272,6 @@ export function MapDataModal({ point, onClose }: MapDataModalProps) {
               </div>
             </div>
 
-
             {/* Description */}
             {point.description && (
               <div
@@ -289,7 +298,6 @@ export function MapDataModal({ point, onClose }: MapDataModalProps) {
                 </p>
               </div>
             )}
-
           </div>
 
           {/* Footer */}

@@ -51,6 +51,14 @@ export function MapClickReportModal({
     reporterPhone: "",
   });
 
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "unset";
+    }
+  }, [isOpen]);
+
   // Update coordinates when they change
   useEffect(() => {
     try {
