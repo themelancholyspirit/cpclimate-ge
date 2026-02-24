@@ -348,8 +348,8 @@ export default function MapPage() {
         <MapDataModal
           point={selectedPoint}
           onClose={() => () => {
-            setSelectedPoint(null);
             setIsMapDataModalOpen(false);
+            setSelectedPoint(null);
           }}
           isOpen={isMapDataModalOpen}
         />
