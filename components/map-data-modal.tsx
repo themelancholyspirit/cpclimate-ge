@@ -120,8 +120,6 @@ export function MapDataModal({ point, onClose, isOpen }: MapDataModalProps) {
     }
   }, [isOpen]);
 
-  if (!isOpen) return null;
-
   return (
     <>
       {/* Backdrop */}

@@ -11,6 +11,7 @@ import { Badge } from "@/components/ui/badge";
 import { MapClickReportModal } from "./map-click-report-modal";
 import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/contexts/language-context";
+import { set } from "date-fns";
 
 // MapEntity.ts
 export type EntityType = "water" | "pollution" | "risk" | "report";
@@ -66,6 +67,7 @@ export interface MapEntity {
 interface MapComponentProps {
   activeLayer: string;
   onPointClick: (point: MapEntity | null) => void;
+  setMapDataModalOpen: (isOpen: boolean) => void;
 }
 
 const riverOnlyStyle = [
@@ -88,7 +90,7 @@ const mapRestriction = {
 const defaultCenter = { lat: 42.1589, lng: 41.6712 };
 const mapContainerStyle = { width: "100%", height: "100%" };
 
-export function MapComponent({ activeLayer, onPointClick }: MapComponentProps) {
+export function MapComponent({ activeLayer, onPointClick, setMapDataModalOpen }: MapComponentProps) {
   const { t, language } = useLanguage();
   const [map, setMap] = useState<google.maps.Map | null>(null);
   const [mapPoints, setMapPoints] = useState<MapEntity[]>([]);
@@ -182,6 +184,7 @@ export function MapComponent({ activeLayer, onPointClick }: MapComponentProps) {
       if (hoverTimeout) clearTimeout(hoverTimeout);
       setHoveredMarkerId(point.id);
       setSelectedPoint(point);
+      setMapDataModalOpen(true);
     },
     [hoverTimeout],
   );

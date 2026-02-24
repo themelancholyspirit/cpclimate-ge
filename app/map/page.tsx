@@ -284,6 +284,7 @@ export default function MapPage() {
                 <MapComponent
                   activeLayer={activeLayer}
                   onPointClick={setSelectedPoint}
+                  setMapDataModalOpen={setIsMapDataModalOpen}
                 />
               </div>
             </Card>
