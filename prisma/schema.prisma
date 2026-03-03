@@ -53,6 +53,8 @@ model Project {
   createdAt       DateTime      @default(now())
   id              String        @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
 
+  directus_files  directus_files? @relation(fields: [headerImage], references: [id], onUpdate: NoAction, map: "media_items_image_foreign")
+
   @@index([status])
   @@index([featured])
   @@map("projects")
@@ -292,6 +294,7 @@ model directus_files {
   media_items                                                           MediaItem[]
   resources                                                             Resource[]
   landmarks                                                             Landmark[]
+  projects                                                              Project[]
 }
 
 model directus_flows {
