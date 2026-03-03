@@ -47,13 +47,13 @@ model Project {
   icon            String
   color           String
 
-  headerImage     String       @db.Uuid
+  headerImage     String?       @db.Uuid
   contentSections Json?
   featured        Boolean       @default(false)
   createdAt       DateTime      @default(now())
   id              String        @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
 
-  directus_files  directus_files? @relation(fields: [headerImage], references: [id], onUpdate: NoAction, map: "media_items_image_foreign")
+  directus_files  directus_files? @relation(fields: [headerImage], references: [id], onUpdate: NoAction, map: "projects_header_image_foreign")
 
   @@index([status])
   @@index([featured])
