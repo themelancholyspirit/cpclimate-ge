@@ -85,13 +85,13 @@ const mapRestriction = {
   latLngBounds: {
     east: 41.73217,
     north: 42.14222,
-    south: 42.10500,
+    south: 42.08500,
     west: 41.68410,
   },
   strictBounds: false,
 };
 
-const defaultCenter = { lat: 42.1236, lng: 41.7081 };
+const defaultCenter = { lat: 42.1136, lng: 41.7081 };
 const mapContainerStyle = { width: "100%", height: "100%" };
 
 export function MapComponent({
