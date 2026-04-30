@@ -65,7 +65,7 @@ export interface MapEntity {
 }
 
 
-const ZOOM_LEVEL = 8;
+const ZOOM_LEVEL = 12;
 interface MapComponentProps {
   activeLayer: string;
   onPointClick: (point: MapEntity | null) => void;
@@ -79,17 +79,19 @@ const riverOnlyStyle = [
   { featureType: "administrative", stylers: [{ visibility: "off" }] },
 ];
 
+// Bounds expanded ~7% outward from center to act as a subtle zoom-out
+// while keeping the same focal area. Adjust the multiplier to fine-tune.
 const mapRestriction = {
   latLngBounds: {
-    east: 41.73217031885423,
-    north: 42.14222187777025,
-    south: 42.11994330325824,
-    west: 41.684105133307355,
+    east: 41.73389,
+    north: 42.14302,
+    south: 42.11914,
+    west: 41.68238,
   },
   strictBounds: false,
 };
 
-const defaultCenter = { lat: 42.1589, lng: 41.6712 };
+const defaultCenter = { lat: 42.1311, lng: 41.7081 };
 const mapContainerStyle = { width: "100%", height: "100%" };
 
 export function MapComponent({
