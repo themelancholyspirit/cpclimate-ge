@@ -64,6 +64,8 @@ export interface MapEntity {
   type?: string;
 }
 
+
+const ZOOM_LEVEL = 8;
 interface MapComponentProps {
   activeLayer: string;
   onPointClick: (point: MapEntity | null) => void;
@@ -245,8 +247,8 @@ export function MapComponent({
       mapTypeControl: false,
       fullscreenControl: false,
       restriction: mapRestriction,
-      minZoom: 11,
-      maxZoom: 11,
+      minZoom: ZOOM_LEVEL,
+      maxZoom: ZOOM_LEVEL,
       mapTypeId: "terrain",
       draggable: true,
       scrollwheel: false,
@@ -272,7 +274,7 @@ export function MapComponent({
       <GoogleMap
         mapContainerStyle={mapContainerStyle}
         center={defaultCenter}
-        zoom={11}
+        zoom={ZOOM_LEVEL}
         onLoad={onLoad}
         onUnmount={onUnmount}
         options={mapOptions}
