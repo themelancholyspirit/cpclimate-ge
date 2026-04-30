@@ -293,7 +293,10 @@ export function MapDataModal({ point, onClose, isOpen }: MapDataModalProps) {
                     {language === "en" ? "Description" : "აღწერა"}
                   </span>
                 </div>
-                <p className="text-sm leading-relaxed" style={{ color: BLUE }}>
+                <p
+                  className="text-sm leading-relaxed break-words [overflow-wrap:anywhere] whitespace-pre-wrap"
+                  style={{ color: BLUE }}
+                >
                   {point.description}
                 </p>
               </div>
