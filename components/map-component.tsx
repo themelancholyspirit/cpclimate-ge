@@ -245,9 +245,8 @@ export function MapComponent({
       mapTypeControl: false,
       fullscreenControl: false,
       restriction: mapRestriction,
-      minZoom: 12.5,
-      maxZoom: 12.5,
-      isFractionalZoomEnabled: true,
+      minZoom: 12,
+      maxZoom: 12,
       mapTypeId: "terrain",
       draggable: true,
       scrollwheel: false,
@@ -273,7 +272,7 @@ export function MapComponent({
       <GoogleMap
         mapContainerStyle={mapContainerStyle}
         center={defaultCenter}
-        zoom={12.5}
+        zoom={12}
         onLoad={onLoad}
         onUnmount={onUnmount}
         options={mapOptions}
