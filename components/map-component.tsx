@@ -79,19 +79,19 @@ const riverOnlyStyle = [
   { featureType: "administrative", stylers: [{ visibility: "off" }] },
 ];
 
-// Bounds expanded ~7% outward from center to act as a subtle zoom-out
-// while keeping the same focal area. Adjust the multiplier to fine-tune.
+// Keep original east/west/north so horizontal zoom matches the original framing,
+// but extend the south edge to reveal more of the southern area.
 const mapRestriction = {
   latLngBounds: {
-    east: 41.73389,
-    north: 42.14302,
-    south: 42.11914,
-    west: 41.68238,
+    east: 41.73217,
+    north: 42.14222,
+    south: 42.10500,
+    west: 41.68410,
   },
   strictBounds: false,
 };
 
-const defaultCenter = { lat: 42.1311, lng: 41.7081 };
+const defaultCenter = { lat: 42.1236, lng: 41.7081 };
 const mapContainerStyle = { width: "100%", height: "100%" };
 
 export function MapComponent({
